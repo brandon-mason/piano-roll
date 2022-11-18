@@ -1,0 +1,53 @@
+version: '3.9'
+services:
+  react-piano:
+    build:
+      context: .
+      dockerfile: react.dockerfile
+    volumes:
+      - reactVolume:/client
+      - ./client:/build/client:ro
+      - ./client/node_modules:/build/client/node_modules
+    ports:
+      - 3000:3000
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - REACT_APP_URL = 'http://localhost:3001';
+    depends_on:
+      - node-piano
+  node-piano:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3001:3001
+    volumes:
+      - nodeVolume:/server
+      - .:/build
+      - ./server/node_modules:/build/server/node_modules
+    environment:
+      - PORT=3001
+    depends_on:
+      - mongo-piano
+  mongo-piano:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpass
+    volumes:
+      - mongo:/var/opt/mongo
+  mongo-express-piano:
+    image: mongo-express
+    restart: always
+    ports:
+      - 3081:3081
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo-piano
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: rootpass
+      ME_CONFIG_MONGODB_URL: mongodb://root:rootpass@mongo-piano:27017
+volumes:
+  reactVolume:
+  nodeVolume:
+  mongo:
