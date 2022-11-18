@@ -7,7 +7,8 @@ def main():
     count = 0
     for file in os.listdir():
         old_name = os.listdir()[count]
-        new_name = old_name.replace('GrandPiano ', '').replace(' mf', '')
+        # new_name = old_name.replace('GrandPiano ', '').replace(' mf', '')
+        new_name = old_name.replace('4', '')
         os.rename(old_name, new_name)
         count += 1
         print(new_name)
