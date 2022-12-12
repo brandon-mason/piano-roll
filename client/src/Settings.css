@@ -1,0 +1,14 @@
+#bpm-spacer {
+  /* background-color: black; */
+  width: 20px;
+  height: auto;
+  z-index: 1;
+}
+
+#bpm-draggable {
+  background-color: black;
+  width: 20px;
+  height: auto;
+  position: relative;
+  z-index: -1;
+}

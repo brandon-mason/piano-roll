@@ -1,0 +1,80 @@
+#midi {
+  display: grid;
+  grid-template:
+    'labels' 'midi' / 8% 92%;
+}
+
+  #midi-note-labels {
+    display: inherit;
+  }
+
+    .note-label {
+      border: none;
+      outline: black inset 2px;
+      padding: 6px 6px;
+      display: inline-block;
+      text-align: end;
+    }
+
+      .note-label.natural {
+        background-color: white;
+        color: black;
+      }
+      .note-label.accidental {
+        background-color: black;
+        color: white;
+      }
+  #midi-grid {
+    display: grid;
+    /* grid-template: 100% / repeat(4, 25%) */
+  }
+    .midi-grid-measure {
+      display: grid;
+      /* grid-template-rows: repeat(12, 8.33%);
+      grid-template-columns: repeat(32, 3.125%); */
+      margin: 0;
+    }
+
+      .midi-note {
+        background-color: #89938a;
+        border: none;
+        outline: #323933 solid 1px;
+        color: white;
+        padding: 6px 6px;
+        text-align: center;
+        text-decoration: none;
+        font-size: 13px;
+        margin: inherit;
+      }
+      
+      .midi-note.active {
+        background-color: #4CAF50; /* Green */
+        color: white;
+      }
+
+        .midi-note.note-1 {
+          grid-column: span 32;
+        }
+        .midi-note.note-2 {
+          grid-column: span 16;
+        }
+        .midi-note.note-4 {
+          grid-column: span 8;
+        }
+        .midi-note.note-8 {
+          grid-column: span 4
+        }
+        .midi-note.note-16 {
+          grid-column-end: span 2;
+        }
+        .midi-note.note-32 {
+          grid-column: span 1;
+        }
+
+#bpm-slider {
+  position: relative;
+  appearance: slider-vertical;
+  height: 20px;
+  z-index: 0;
+}
+
