@@ -9,7 +9,8 @@ function App() {
   const [sound, setSound] = useState('GrandPiano');
   const [octave, setOctave] = useState(3);
   const [volume, setVolume] = useState('2mf');
-  const [subdiv, setSubdiv] = useState('8');
+  const [numMeasures, setNumMeasures] = useState(4);
+  const [subdiv, setSubdiv] = useState('4');
   const [notesPlayed, setNotesPlayed] = useState([]);
   const [soundDetails, setSoundDetails] = useState({});
 
@@ -32,16 +33,14 @@ function App() {
       .then(res => {
         soundDetails = res.data;
       }).catch(err => console.error(err));
-      console.log(soundDetails)
     setSoundDetails(soundDetails);
     return soundDetails;
   }
-  console.log(soundDetails)
   return (
     <div className="App">
-      <Settings soundDetails={soundDetails} sound={sound} octave={parseInt(octave)} volume={volume} handleChangeSound={setSound} handleChangeOctave={setOctave} handleChangeVolume={setVolume} handleChangeSubdiv={setSubdiv} />
+      <Settings soundDetails={soundDetails} sound={sound} octave={parseInt(octave)} volume={volume} numMeasures={numMeasures} subdiv={subdiv} handleChangeSound={setSound} handleChangeOctave={setOctave} handleChangeVolume={setVolume} handleChangeSubdiv={setSubdiv} handleChangeNumMeasures={setNumMeasures} />
       <Piano soundDetails={soundDetails} sound={sound} octave={parseInt(octave)} volume={volume} pianoRollNotes={notesPlayed} />
-      <PianoRoll soundDetails={soundDetails} sound={sound} octave={parseInt(octave)} subdiv={parseInt(subdiv)} onNotePlayed={setNotesPlayed} />
+      <PianoRoll soundDetails={soundDetails} sound={sound} octave={parseInt(octave)} numMeasures={numMeasures} subdiv={parseInt(subdiv)} onNotePlayed={setNotesPlayed} />
     </div>
   );
 }

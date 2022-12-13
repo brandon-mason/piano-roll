@@ -1,37 +1,27 @@
-import {React, useRef} from 'react';
+import {React, useState, useEffect, useRef} from 'react';
+// import  {DraggableNumber} from './libs/draggable-number'
 import './Settings.css'
 import transparent from './tranparency.png';
 
 function BpmSlider() {
+  const [rendered, setRendered] = useState(0);
   const ref = useRef(null);
-  var drag;
 
-
-  // useEffect(() => {
-  //   const changeBpm = (e) => {
-  //     console.log(drag);
+  // useEffect(() => { 
+  //   const el = ref.current;
+  //   if(el && rendered === 0) {
+  //     console.log('h', rendered, el)
+  //     new DraggableNumber(el, {
+  //         min: 1,
+  //         max: 999,
+  //         changeCallback: function(val) {console.log("on change: " + val);},
+  //         endCallback: function(val) {console.log("on end: " + val);}
+  //     });
+  //     setRendered(1);
   //   }
-  
-  //   const element = ref.current;
-  //   element.addEventListener('click', changeBpm);
-  //   element.addEventListener('mousedown', () => drag = false);
-  //   element.addEventListener('mousemove', () => drag = true);
-  //   return() => {
-  //     element.removeEventListener('click', changeBpm);
-  //     element.removeEventListener('mousedown', () => drag = false);
-  //     element.removeEventListener('mousemove', () => drag = true);
-  //   }
-  // });
+  // }, [ref.current]);
 
-  // return <input type='range' ref={ref} id='bpm-slider' name='bpm' min='1' max='300'/>
-  return (
-    <div>
-      <img src={transparent} id='bpm-spacer' ref={ref} />
-      <div>
-        <img src={transparent} id='bpm-draggable' />
-      </div>
-    </div>
-  )
+  // return <input ref={ref} class="numeric-input" value="100" />;
 }
 
 function Settings(props) {
@@ -58,7 +48,6 @@ function Settings(props) {
     if(Object.keys(props.soundDetails).length > 0) {
       var volumes = [];
       var octavesObj = props.soundDetails[props.sound][props.octave];
-      console.log(octavesObj)
       octavesObj.forEach((volume) => {
         volumes.push(<option key={volume} value={volume}>{volume.replace(/[0-9]/g, '')}</option>);
       });
@@ -66,8 +55,17 @@ function Settings(props) {
     return volumes;
   }
 
+  function renderNumMeasures() {
+    var measureOpts = [];
+    for(var i = 1; i < 9; i++) {
+      measureOpts.push(<option key={i} value={i}>{i}</option>);
+    }
+    return measureOpts;
+  }
+
   return (
     <div id='selectors'>
+      {/* <BpmSlider /> */}
       <select name='sound' id='sound-selector' value={props.sound} onChange={(e) => props.handleChangeSound(e.target.value)}>
         {renderSounds()}
       </select>
@@ -77,8 +75,10 @@ function Settings(props) {
       <select name='volume' id='volume-selector' value={props.volume} onChange={(e) => props.handleChangeVolume(e.target.value)}>
         {renderVolumes()}
       </select>
-      <BpmSlider />
-      <select name='subdiv' id='subdiv-selector' defaultValue={'8'} onChange={(e) => props.handleChangeSubdiv(e.target.value)}>
+      <select name='measure-amount' id='measure-amt-selector' value={props.numMeasures} onChange={(e) => props.handleChangeNumMeasures(e.target.value)}>
+        {renderNumMeasures()}
+      </select>
+      <select name='subdiv' id='subdiv-selector' value={props.subdiv} onChange={(e) => props.handleChangeSubdiv(e.target.value)}>
         <option value='1'>1</option>
         <option value='2'>1/2</option>
         <option value='4'>1/4</option>
