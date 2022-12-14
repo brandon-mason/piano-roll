@@ -114,6 +114,10 @@ function Grid(props) {
   );
 }
 
+function MidiRecorder() {
+  
+}
+
 function PianoRoll(props) {
   const [labels, setLabels] = useState([]);
   const [octaveArray, setOctaveArray] = useState([]);
