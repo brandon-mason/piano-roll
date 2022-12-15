@@ -7,7 +7,7 @@ import qwertyNote from './note-to-qwerty-key';
 function KeyNoteInputField(props) {
   const ref = useRef(null);
   const [controller, setController] = useState({});
-  const [keyDown, setKeyDown] = useState(false);
+  // const [keyDown, setKeyDown] = useState(false);
 
   useEffect(() => {
     const onKeyDown = (e) => {
@@ -19,7 +19,7 @@ function KeyNoteInputField(props) {
       } else if(controller[keyCode]) {
         setController((controller) => ({...controller, [keyCode]: {pressed: true}}));
       }
-      if(!keyDown) setKeyDown(true);
+      // if(!keyDown) setKeyDown(true);
     }
 
     const onKeyUp = (e) => {
@@ -40,39 +40,51 @@ function KeyNoteInputField(props) {
     };
   });
 
-  const [time, setTime] = useState(Date.now())
+  // const [time, setTime] = useState(Date.now());
 
   //THIS CAN POSSIBLY BE SIMPLIFIED!!!
   useEffect(() => {
-    setTimeout(() => {
-      const timeSinceLastCall = Date.now() - time;
-      if(timeSinceLastCall > 50) {
-        if(keyDown) {
-          let keysPressed = [];
-          const handlePress = (key) => {
-            qwertyNote.forEach((keyNote) => {
-              if(keyNote.key === key) {
-                keysPressed.push(key); // SEND ARRAY OF NOTES FROM HERE ☺️
-                return true;
-              }
-            });
-            return false;
-          };
-          Object.keys(controller).forEach((key) => {
-            if(controller[key].pressed) {
-              handlePress(key);
-              controller[key].pressed = false;
-            }
-          });
-          props.onNotePlayed(keysPressed);
-        } else {
-          props.onNotePlayed([])
-        }
-      } else {
-        props.onNotePlayed()
-      }
-      setTime(Date.now());
-    }, 50);
+    // console.log(keyDown)
+    // console.log('controller', controller)
+    // setTimeout(() => {
+    //   const timeSinceLastCall = Date.now() - time;
+    //   if(timeSinceLastCall > 50) {
+    //     if(keyDown) {
+    //       let keysPressed = [];
+    //       const handlePress = (key) => {
+    //         qwertyNote.some((keyNote) => {
+
+    //           // console.log(86, keyNote.key, key)
+
+    //           if(keyNote.key === key) {
+    //             keysPressed.push(key); // SEND ARRAY OF NOTES FROM HERE ☺️
+    //             return true;
+    //           }
+    //         });
+    //         return false;
+    //       };
+
+    //       // Object.keys(controller).forEach((key) => {
+    //       //   if(controller[key].pressed) {
+    //       //     handlePress(key);
+    //       //     // controller[key].pressed = false;
+    //       //     // controller[key].played = false;
+
+    //       //     console.log('keysPressed', keysPressed);
+
+    //       //   } 
+    //       // });
+    //       // props.onNotePlayed(keysPressed);
+    //       // props.onNotePlayed(controller);
+    //     // } else {
+    //       // props.onNotePlayed(controller);
+    //     }
+    //   // } else {
+    //     // props.onNotePlayed(controller)
+    //   }
+    //   setTime(Date.now());
+    // }, 50);
+    props.onNotePlayed(controller)
     // eslint-disable-next-line
   }, [controller]);
 
@@ -81,57 +93,12 @@ function KeyNoteInputField(props) {
   )
 }
 
-// function PianoRoll(props) {
-  
-// }
-
-function getSound() {
-  // TODO
-  // Will fetch the directory name of the current sound files being used
-  return 'GrandPiano';
-}
-
-function convertToNote(qwertyKey) {
-  let note;
-  qwertyNote.forEach((keyNote) => {
-    return (keyNote.key === qwertyKey) ? note = keyNote.note : '';
-  });
-  if(note.includes('#')) note = note.replace('#', '%23');
-  return note;
-}
-
-function convertToOctave(qwertyKey) {
-  let octave;
-  qwertyNote.forEach(keyNote => {
-    return (keyNote.key === qwertyKey) ? octave = keyNote.octave : '';
-  });
-  return octave;
-}
-
-// function renderSounds() {
-//   // TODO
-//   // Get sounds list from mongodb
-//   return <option value='GrandPiano'>Grand Piano</option>;
-// }
-
-// function renderOctaves() {
-//   return (<>
-//     <option value='3'>3</option>
-//     <option value='4'>4</option>
-//   </>)
-// }
-
-// function renderVolumes() {
-//   return (<>
-//     <option value='mf'>mf</option>
-//   </>)
-// }
-
 function Piano(props) {
   const [fetchedOctaves, setFetchedOctaves] = useState([]);
-  const [keysPressed, setKeysPressed] = useState([]);
+  const [keysPressed, setKeysPressed] = useState({});
   const [currentOctave, setCurrentOctave] = useState({});
-  const [octaveMinMax, setOctaveMinMax] = useState([])
+  const [prevNotes, setPrevNotes] = useState({});
+  const [octaveMinMax, setOctaveMinMax] = useState([]);
 
   // useEffect(() => {
   //   function fetchSounds() {
@@ -232,7 +199,7 @@ function Piano(props) {
       octaveFetched = false;
       if(octave._src === url) {
       octaveFetched = true;
-      } 
+      }
       return octaveFetched;
     });
 
@@ -263,6 +230,10 @@ function Piano(props) {
   }, [props.pianoRollNotes])
 
   useEffect(() => {
+    
+  }, [fetchedOctaves])
+
+  useEffect(() => {
     // function playNote() {
     //   keysPressed.forEach((key) => {
     //     currentOctave[key].play();
@@ -270,22 +241,57 @@ function Piano(props) {
     // }
     function playNote() {
       let note;
-      console.log(keysPressed)
-      keysPressed.forEach((key) => {
+      let octave;
+      let id;
+      const prevNotesTemp = prevNotes;
+      // console.log(keysPressed)
+      // let notes = ['a', 'd', 'g'];
+      // console.log(prevNotes);
+      Object.keys(keysPressed).forEach((key) => {
+      // notes.forEach((key) => {
         qwertyNote.forEach((qwerty) => {
-          // console.log(currentOctave[qwerty.octave]);
-          if(qwerty.key === key && currentOctave[qwerty.octave]) {
-            note = qwerty.note;
+          
+          // console.log(qwerty.key, key, !keysPressed[key].pressed , prevNotes[note])
+
+          note = qwerty.note;
+          octave = qwerty.octave
+
+          // if(qwerty.key === key) {
+          //   console.log(key, note, !keysPressed[key].pressed, prevNotes[note])
+          // }
+
+          if(qwerty.key === key && currentOctave[octave] && keysPressed[key].pressed && !prevNotes[note + octave]) {
+            // console.log('haa')
+            // console.log(qwerty.key, key, note);
             // console.log(currentOctave[qwerty.octave])
-            currentOctave[qwerty.octave].play(note);
+            id = currentOctave[octave].play(note);
+            prevNotesTemp[note + octave] = id;
+            // setPrevNotes((prevNotes) => ({...prevNotes, [note]: id}));
+            // currentOctave[qwerty.octave].play(note);
+            // setKeysPressed((keysPressed) => ({...keysPressed, [key]: {played: true}}));
+            return true;
+          } else if(qwerty.key === key && currentOctave[octave] && !keysPressed[key].pressed && prevNotes[note + octave]) {
+            // console.log('hee')
+            // id = currentOctave[qwerty.octave].play(note)
+            Object.keys(prevNotes).some((playedNote) => {
+              // console.log(playedNote, prevNotes[note + octave])
+              if(playedNote === note + octave) {
+                currentOctave[octave].fade(1, 0, 300, prevNotes[note + octave]);
+              }
+            });
+            // setPrevNotes((prevNotes) => ({...prevNotes, [note]: null}));
+            prevNotesTemp[note + octave] = null;
+            return true;
+            // currentOctave[qwerty.octave].fade(1, 0, 500);
           }
         });
       })
+      setPrevNotes(prevNotesTemp);
     }
     // console.log(keysPressed)
-    if(keysPressed.length !== 0) {
+    if(Object.keys(keysPressed).length !== 0) {
       playNote();
-      setKeysPressed([]);
+      // setKeysPressed({});
     }
 
   }, [keysPressed])
@@ -311,10 +317,14 @@ function Piano(props) {
   //   setVolume(e.target.value);
   // }
 
-  function setNoteProps(noteOctaves) {
-    noteOctaves.forEach((key) => {
-      setKeysPressed((keysPressed) => [...keysPressed, key]);
-    });
+  function setNoteProps(controller) {
+
+    // console.log('noteOctaves', controller)
+
+    // noteOctaves.forEach((key) => {
+    //   setKeysPressed((keysPressed) => [...keysPressed, key]);
+    // });
+      setKeysPressed(controller);
   }
 
   // let piano = qwertyNote.map((keyNote) => {
@@ -324,26 +334,9 @@ function Piano(props) {
   // return piano;
 
   return (
-    // <div id='selectors'>
-    //   <select name='sound' id='sound-selector' onChange={(e) => handleChangeSound(e)}>
-    //     {renderSounds()}
-    //   </select>
-    //   <select name='octave' id='octave-selector' onChange={(e) => handleChangeOctave(e)}>
-    //     {renderOctaves()}
-    //   </select>
-    //   <select name='volume' id='volume-selector' onChange={(e) => handleChangeVolume(e)}>
-    //     {renderVolumes()}
-    //   </select>
     <>
-      {/* <PianoRoll /> */}
-      {/* <Settings handleChangeSound={setSound} handleChangeOctave={setOctave} handleChangeVolume={setVolume} /> */}
-
-      <KeyNoteInputField key='KeyNoteInputField' onNotePlayed={setNoteProps} />
-      {/* <PianoRoll onNotePlayed={setNoteProps} octave={octave} /> */}
-      
-      {/* <KeyNoteInputField /> */}
-      </>
-    // </div>
+      <KeyNoteInputField key='KeyNoteInputField' onNotePlayed={setNoteProps} keysPressed={keysPressed}/>
+    </>
   );
 }
 

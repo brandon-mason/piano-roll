@@ -3,31 +3,6 @@ import axios from 'axios';
 import './Piano-roll.css';
 import qwertyNote from './note-to-qwerty-key';
 
-function BpmSlider() {
-  const ref = useRef(null);
-  var drag;
-
-
-
-  // useEffect(() => {
-  //   const changeBpm = (e) => {
-  //     console.log(drag);
-  //   }
-  
-  //   const element = ref.current;
-  //   element.addEventListener('click', changeBpm);
-  //   element.addEventListener('mousedown', () => drag = false);
-  //   element.addEventListener('mousemove', () => drag = true);
-  //   return() => {
-  //     element.removeEventListener('click', changeBpm);
-  //     element.removeEventListener('mousedown', () => drag = false);
-  //     element.removeEventListener('mousemove', () => drag = true);
-  //   }
-  // });
-  return <div id='bpm-draggable' ref={ref}></div>
-  // return <input type='range' ref={ref} id='bpm-slider' name='bpm' min='1' max='300'/>
-}
-
 function Key(props) {
   const ref = useRef(null);
 
@@ -42,7 +17,7 @@ function Key(props) {
     <button type='button' ref={ref} id={noteName.toLowerCase() + props.octave + '-label'} className={(props.note.length > 1) ? 'note-label accidental' : 'note-label natural'} onClick={() => handleClick()}>
       {props.note + props.octave}
     </button>
-  )
+  );
 }
 
 function NoteTrack(props) {
@@ -69,7 +44,7 @@ function NoteTrack(props) {
     //     {props.note + props.octave}
     // </button>
     <div id={props.note+props.octave + '-measure '} className='note-measure' ></div>
-  )
+  );
 }
 
 function Grid(props) {
@@ -114,8 +89,8 @@ function Grid(props) {
   );
 }
 
-function MidiRecorder() {
-  
+function TimeTracker() {
+
 }
 
 function PianoRoll(props) {
