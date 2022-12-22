@@ -1,14 +1,12 @@
-#bpm-spacer {
-  /* background-color: black; */
-  width: 20px;
-  height: auto;
-  z-index: 1;
+#selectors {
+  background-color: aquamarine;
+  position: sticky;
+  top: 0;
+  transform-style: preserve-3d;
+  z-index: 3;
 }
 
-#bpm-draggable {
-  background-color: black;
-  width: 20px;
-  height: auto;
-  position: relative;
-  z-index: -1;
+.recording-button.active {
+  color: white;
+  background-color: red;
 }

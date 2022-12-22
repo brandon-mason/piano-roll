@@ -1,5 +1,12 @@
 #key-note-input {
-    position: sticky;
+    position: absolute;
     top: 0;
-    z-index: -1;
+    left: 0;
+    color: transparent;
+    background-color: transparent;
+    /* z-index: -1; */
+    transform: translateZ(-10px);
+}
+#key-note-input:focus {
+    outline: none;
 }

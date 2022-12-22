@@ -5,7 +5,8 @@
 }
 
   #midi-note-labels {
-    display: inherit;
+    /* display: inherit; */
+    /* position: absolute; */
   }
 
     .note-label {
@@ -14,6 +15,7 @@
       padding: 6px 6px;
       display: inline-block;
       text-align: end;
+      width: 100%;
     }
 
       .note-label.natural {
@@ -24,22 +26,59 @@
         background-color: black;
         color: white;
       }
-  #midi-grid {
+      .note-label.active {
+        background-color: rgb(246, 34, 34);
+        color: white;
+      }
+
+  #track-position {
+    display: absolute;
+    grid-area: 1 / 2;
+    position: sticky;
+    width: 3px;
+    /* background-size: 2px; */
+    /* background-image: linear-gradient(0.25turn, red 2px, transparent 2px); */
+    border-right: solid 4px red;
+    z-index: 2;
+  }
+  #midi-track {
     display: grid;
-    /* background: linear-gradient(90deg, #dedede 1%, transparent 1%) 1px 0, #1e1e1e; */
+    grid-area: 1 / 2;
+    grid-template-columns: 100%;
+    grid-template-rows: 100%;
+    /* background-image: linear-gradient(0.25turn, black 2px, transparent 2px); */
+    background-color: grey;
+    /* background-repeat: round;  */
+    width: 100%;
+    z-index: 1;
     /* grid-template: 100% / repeat(4, 25%) */
   }
+    
     .note-measure {
       outline: black solid 1px;
       /* outline-style: ; */
     }
-
-    .midi-grid-measure {
+    
+    #subdivs {
       display: grid;
-      background-image: linear-gradient(90deg, black 2px, transparent 2px);
-      /* background-size: 100px 1px; */
-      background-color: grey;
-      background-repeat: space;
+      grid-column: 1;
+      grid-row: 1;
+      /* transform-style: preserve-3d; */
+    }
+      .subdivision {
+        border-left: solid 1px;
+      }
+
+    #measures {
+      display: grid;
+      grid-column: 1;
+      grid-row: 1;
+      /* background-image: linear-gradient(0.25turn, black 2px, transparent 2px);
+      background-position: right;
+      background-repeat: round; */
+      width: 100%;
+      /* z-index: -1; */
+      /* transform: translateZ(-10px); */
       /* background: linear-gradient(90deg, #dedede 1px, transparent 1px) 1px 0, #1e1e1e; */
       /* grid-template-rows: repeat(12, 8.33%);
       grid-template-columns: repeat(32, 3.125%); */

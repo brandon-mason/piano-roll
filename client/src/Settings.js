@@ -1,9 +1,9 @@
 import {React, useState, useEffect, useRef} from 'react';
 // import  {DraggableNumber} from './libs/draggable-number'
-import './Settings.css'
+import './Settings.css';
 import transparent from './tranparency.png';
 
-function BpmSlider() {
+function BpmSlider(props) {
   const [rendered, setRendered] = useState(0);
   const ref = useRef(null);
 
@@ -21,10 +21,16 @@ function BpmSlider() {
   //   }
   // }, [ref.current]);
 
-  // return <input ref={ref} class="numeric-input" value="100" />;
+  return <input ref={ref} className="bpm-input" defaultValue={props.bpm} onChange={(e) => props.midiDispatch({type: 'bpm', bpm: parseInt(e.target.value)})} />;
 }
 
 function Settings(props) {
+  useEffect(() => {
+    if(document.getElementById('key-note-input')) {
+      document.getElementById('selectors').appendChild(document.getElementById('key-note-input'));
+    }
+  }, [])
+
   function renderSounds() {
     var sounds = [];
     Object.keys(props.soundDetails).forEach((sound) => {
@@ -63,22 +69,24 @@ function Settings(props) {
     return measureOpts;
   }
 
+  const recordingClassName = `recording-button${(props.mode === 'recording') ? ' active' : ''}`;
+
   return (
     <div id='selectors'>
-      {/* <BpmSlider /> */}
-      <select name='sound' id='sound-selector' value={props.sound} onChange={(e) => props.handleChangeSound(e.target.value)}>
+      <BpmSlider bpm={props.bpm} midiDispatch={props.midiDispatch} />
+      <select name='sound' id='sound-selector' value={props.sound} onChange={(e) => {props.pianoDispatch({type: 'sound', sound: e.target.value})}}>
         {renderSounds()}
       </select>
-      <select name='octave' id='octave-selector' value={props.octave} onChange={(e) => props.handleChangeOctave(e.target.value)}>
+      <select name='octave' id='octave-selector' value={props.octave} onChange={(e) => {props.pianoDispatch({type: 'octave', octave: parseInt(e.target.value)})}}>
         {renderOctaves()}
       </select>
-      <select name='volume' id='volume-selector' value={props.volume} onChange={(e) => props.handleChangeVolume(e.target.value)}>
+      <select name='volume' id='volume-selector' value={props.volume} onChange={(e) => {props.pianoDispatch({type: 'volume', volume: e.target.value})}}>
         {renderVolumes()}
       </select>
-      <select name='measure-amount' id='measure-amt-selector' value={props.numMeasures} onChange={(e) => props.handleChangeNumMeasures(e.target.value)}>
+      <select name='measure-amount' id='measure-amt-selector' value={props.numMeasures} onChange={(e) => {props.midiDispatch({type: 'numMeasures', numMeasures: e.target.value})}}>
         {renderNumMeasures()}
       </select>
-      <select name='subdiv' id='subdiv-selector' value={props.subdiv} onChange={(e) => props.handleChangeSubdiv(e.target.value)}>
+      <select name='subdiv' id='subdiv-selector' value={props.subdiv} onChange={(e) => {props.midiDispatch({type: 'subdiv', subdiv: parseInt(e.target.value)})}}>
         <option value='1'>1</option>
         <option value='2'>1/2</option>
         <option value='4'>1/4</option>
@@ -86,6 +94,7 @@ function Settings(props) {
         <option value='16'>1/16</option>
         <option value='32'>1/32</option>
       </select>
+      <button type='button' className={recordingClassName} onClick={() => {props.midiDispatch({type: 'mode', mode: (props.mode === 'keyboard') ? 'recording' : 'keyboard'})}}>O</button>
     </div>
     )
 }
