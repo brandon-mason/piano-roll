@@ -1,9 +1,13 @@
-import {React, useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 // import  {DraggableNumber} from './libs/draggable-number'
-import './Settings.css';
-import transparent from './tranparency.png';
+import './settings.css';
 
-function BpmSlider(props) {
+interface BpmSliderProps {
+  bpm: number;
+  midiDispatch: Function;
+}
+
+function BpmSlider(props: BpmSliderProps) {
   const [rendered, setRendered] = useState(0);
   const ref = useRef(null);
 
@@ -24,25 +28,40 @@ function BpmSlider(props) {
   return <input ref={ref} className="bpm-input" defaultValue={props.bpm} onChange={(e) => props.midiDispatch({type: 'bpm', bpm: parseInt(e.target.value)})} />;
 }
 
-function Settings(props) {
+interface SettingsProps {
+  soundDetails: Object;
+  sound: string;
+  octave: number;
+  volume: string;
+  numMeasures: number;
+  subdiv: number;
+  bpm: number;
+  mode: string;
+  pianoDispatch: Function;
+  midiDispatch: Function;
+}
+
+function Settings(props: SettingsProps) {
   useEffect(() => {
-    if(document.getElementById('key-note-input')) {
-      document.getElementById('selectors').appendChild(document.getElementById('key-note-input'));
+    const selectors: HTMLElement = document.getElementById('selectors')!;
+    const keyNoteInput: HTMLElement = document.getElementById('key-note-input')!;
+    if(selectors && keyNoteInput) {
+      selectors.appendChild(keyNoteInput);
     }
   }, [])
 
   function renderSounds() {
-    var sounds = [];
-    Object.keys(props.soundDetails).forEach((sound) => {
+    let sounds: Array<JSX.Element> = [];
+    Object.keys(props.soundDetails).forEach((sound: string) => {
       sounds.push(<option key={sound} value={sound}>{sound}</option>);
     });
     return sounds;
   }
   
   function renderOctaves() {
+    var octaves: JSX.Element[] = [];
     if(Object.keys(props.soundDetails).length > 0) {
-      var octaves = [];
-      var soundObj = props.soundDetails[props.sound];
+      let soundObj = props.soundDetails[props.sound as keyof typeof props.soundDetails];
       Object.keys(soundObj).forEach((octave) => {
         octaves.push(<option key={octave} value={octave}>{octave}</option>);
       });
@@ -53,8 +72,9 @@ function Settings(props) {
   function renderVolumes() {
     if(Object.keys(props.soundDetails).length > 0) {
       var volumes = [];
-      var octavesObj = props.soundDetails[props.sound][props.octave];
-      octavesObj.forEach((volume) => {
+      let octavesObj: Object = props.soundDetails[props.sound as keyof typeof props.soundDetails];
+      var octavesArr: any = octavesObj[props.octave.toString() as keyof typeof octavesObj];
+      octavesArr.forEach((volume: string) => {
         volumes.push(<option key={volume} value={volume}>{volume.replace(/[0-9]/g, '')}</option>);
       });
     }
@@ -77,7 +97,7 @@ function Settings(props) {
       <select name='sound' id='sound-selector' value={props.sound} onChange={(e) => {props.pianoDispatch({type: 'sound', sound: e.target.value})}}>
         {renderSounds()}
       </select>
-      <select name='octave' id='octave-selector' value={props.octave} onChange={(e) => {props.pianoDispatch({type: 'octave', octave: parseInt(e.target.value)})}}>
+      <select name='octave' id='octave-selector' value={props.octave} onChange={(e) => {props.pianoDispatch({type: 'octave', octave: e.target.value})}}>
         {renderOctaves()}
       </select>
       <select name='volume' id='volume-selector' value={props.volume} onChange={(e) => {props.pianoDispatch({type: 'volume', volume: e.target.value})}}>

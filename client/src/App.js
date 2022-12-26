@@ -1,9 +1,9 @@
 import {useState, useEffect} from 'react'
-import axios from 'axios';
+// import axios from 'axios';
 import './App.css';
-import Settings from './Settings'
-import Piano from './Piano';
-import PianoRoll from './Piano-roll';
+// import Settings from './Settings'
+// import Piano from './Piano';
+// import PianoRoll from './Piano-roll';
 import MidiRecorder from './Midi-Recorder';
 
 function App() {

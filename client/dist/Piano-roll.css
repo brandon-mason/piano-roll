@@ -36,6 +36,8 @@
     grid-area: 1 / 2;
     position: sticky;
     width: 3px;
+    /* background-size: 2px; */
+    /* background-image: linear-gradient(0.25turn, red 2px, transparent 2px); */
     border-right: solid 4px red;
     z-index: 2;
   }

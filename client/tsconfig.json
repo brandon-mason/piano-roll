@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "allowJs": true,
+    "jsx": "react-jsx",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "target": "esnext",
+    "watch": true,
+    "lib": ["dom", "ES2022"],
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "paths": {
+      "@node_modules/*": ["../node_modules/*"],
+    },
+    "moduleResolution": "node",
+  },
+}

@@ -1,22 +1,39 @@
-import React, {useState, useEffect, useLayoutEffect, useRef} from 'react';
+import React, {useState, useEffect, useLayoutEffect, useRef, useMemo} from 'react';
 import axios from 'axios';
 import './Piano-roll.css';
-import qwertyNote from './note-to-qwerty-key';
+const qwertyNote = require('./note-to-qwerty-key');
 
-function Key(props) {
-  const ref = useRef(null);
+interface KeyProps {
+  key: string;
+  qwertyKey: string;
+  note: string;
+  altNote: string;
+  octave: string;
+  onNotePlayed: Function;
+}
+
+function Key(props: KeyProps) {
+  const ref = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    const onPointerDown = (e) => {
-      if(e.repeat) {return;}
+    const onPointerDown = (e: PointerEvent) => {
+      // if(e.repeat) {return;}
+      // console.error([props.qwertyKey, parseInt(props.octave), true])
+      // props.onNotePlayed([props.qwertyKey, {octave: parseInt(props.octave), pressed: true, pianoRoll: true}]);
       props.onNotePlayed([props.qwertyKey, parseInt(props.octave), true]);
+      // props.onNotePlayed({[props.qwertyKey]: {octave: props.octave, pressed: true}});
     }
 
-    const onPointerUp = (e) => {
+    const onPointerUp = (e: PointerEvent) => {
+      // console.error([props.qwertyKey, parseInt(props.octave), false])
+      let keydownE = new KeyboardEvent('keyup', {
+        key: props.qwertyKey,
+      })
+      // props.onNotePlayed([props.qwertyKey, {octave: parseInt(props.octave), pressed: false, pianoRoll: true}]);
       props.onNotePlayed([props.qwertyKey, parseInt(props.octave), false]);
     }
 
-    const element = ref.current;
+    const element = ref.current!;
     element.addEventListener('pointerdown', onPointerDown);
     element.addEventListener('pointerup', onPointerUp);
     return () => {
@@ -28,10 +45,6 @@ function Key(props) {
   let noteName;
 
   (props.note.includes('#')) ? noteName = props.note.replace('#', 'sharp') : noteName = props.note.replace('b', 'flat');
-  
-  function handleClick() {
-    props.onNotePlayed([props.note, props.octave]);
-  }
 
   return (
     <button type='button' ref={ref} id={noteName.toLowerCase() + props.octave + '-label'} className={(props.note.length > 1) ? 'note-label accidental' : 'note-label natural'}> {/* onClick={() => handleClick()}> */}
@@ -40,9 +53,16 @@ function Key(props) {
   );
 }
 
-function NoteTrack(props) {
+interface NoteTrackProps {
+  key: string;
+  note: string;
+  octave: string;
+  subdiv: number;
+}
+
+function NoteTrack(props: NoteTrackProps) {
   // const [active, setActive] = useState();
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
 
   // useEffect(() => {
   //   var element = ref.current;
@@ -53,7 +73,7 @@ function NoteTrack(props) {
   // }, [props.subdiv]);
 
   function addNote() {
-    var element = ref.current;
+    const element = ref.current!;
     element.classList.toggle('active');
     // setActive(active === true ? false : true);
   }
@@ -67,40 +87,81 @@ function NoteTrack(props) {
   );
 }
 
-function NoteLabels(props) {
-  const [labels, setLabels] = useState([]);
+interface NoteLabelsProps {
+  octaveArray: string[];
+  octave: string;
+  onNotePlayed: Function
+}
+
+function NoteLabels(props: NoteLabelsProps) {
+  const [labels, setLabels] = useState<JSX.Element[]>();
+  const memoNoteLabels = useMemo<JSX.Element[]>((): JSX.Element[] => {
+    // console.log(props.octave)
+    let gridLabelOctaves = [];
+    let gridLabels: JSX.Element[] = [];
+    for(var x = props.octaveArray.length - 1; x >= 0; x--) {
+      for(var y = 11; y >= 0; y--) {
+        // console.log(props.octaveArray[x]);
+        gridLabelOctaves.push(<Key key={qwertyNote[y].note + props.octaveArray[x]} qwertyKey={qwertyNote[y].key} note={qwertyNote[y].note} altNote={qwertyNote[y].altNote} octave={props.octaveArray[x]} onNotePlayed={sendNoteProps} />);
+      }
+      // console.log(gridLabelOctaves)
+      gridLabels.push(<div key={x} id={`${x}-octave`} className='note-label-octaves'>{gridLabelOctaves}</div>);
+      gridLabelOctaves = [];
+    }
+    // console.log(gridLabels)
+    if(gridLabels.length === props.octaveArray.length) {
+      return gridLabels;
+      // setLabels(gridLabels);
+      // props.sendLabels(<div id='midi-grid-labels'>{gridLabels}</div>);
+    }
+    return [];
+    // return <div id='midi-note-labels'>{gridLabels}</div>
+  }, [props.octaveArray]);
+
   useEffect(() => {
+    console.log('g' + props.octave + '-label')
     var element = document.getElementById('g' + props.octave + '-label');
     if(element) {
       element.scrollIntoView({block: 'center'});
     }
-  }, [props.octave, labels]);
+  }, [props.octave, memoNoteLabels]);
 
-  useLayoutEffect(() => {
-    // console.log(props.octave)
-    let gridLabels = [];
-    for(var x = props.octaveArray.length - 1; x >= 0; x--) {
-      for(var y = 11; y >= 0; y--) {
-        // console.log(props.octaveArray[x]);
-        gridLabels.push(<Key key={qwertyNote[y].note + props.octaveArray[x]} qwertyKey={qwertyNote[y].key} note={qwertyNote[y].note} altNote={qwertyNote[y].altNote} octave={props.octaveArray[x]} volume={props.volume} onNotePlayed={sendNoteProps} />);
-      }
-    }
-    // console.log(gridLabels)
-    if(gridLabels.length === 12 * props.octaveArray.length) {
-      setLabels(gridLabels);
-      // props.sendLabels(<div id='midi-grid-labels'>{gridLabels}</div>);
-    }
-  }, [props.octaveArray]);
+  // useLayoutEffect(() => {
+  //   // console.log(props.octave)
+  //   let gridLabelOctaves = [];
+  //   let gridLabels: JSX.Element[] = [];
+  //   for(var x = props.octaveArray.length - 1; x >= 0; x--) {
+  //     for(var y = 11; y >= 0; y--) {
+  //       // console.log(props.octaveArray[x]);
+  //       gridLabelOctaves.push(<Key key={qwertyNote[y].note + props.octaveArray[x]} qwertyKey={qwertyNote[y].key} note={qwertyNote[y].note} altNote={qwertyNote[y].altNote} octave={props.octaveArray[x]} onNotePlayed={sendNoteProps} />);
+  //     }
+  //     console.log(gridLabelOctaves)
+  //     gridLabels.push(<div key={x} id={`${x}-octave`}>{gridLabelOctaves}</div>);
+  //     gridLabelOctaves = [];
+  //   }
+  //   console.log(gridLabels)
+  //   if(gridLabels.length === 12 * props.octaveArray.length) {
+  //     setLabels(gridLabels);
+  //     // props.sendLabels(<div id='midi-grid-labels'>{gridLabels}</div>);
+  //   }
+  // }, [props.octaveArray]);
 
-  function sendNoteProps(qwertyKey) {
-    props.onNotePlayed(qwertyKey);
+  function sendNoteProps(keyPressed: any[]) {
+    props.onNotePlayed(keyPressed);
   }
-
-  return <div id='midi-note-labels'>{labels}</div>
+  // console.log(memoNoteLabels)
+  return <div id='midi-note-labels'>{memoNoteLabels}</div>
+  // return memoNoteLabels
 }
 
-function Grid(props) {
-  const [grid, setMidi] = useState([]);
+interface GridProps {
+  octaveArray: string[];
+  numMeasures: number;
+  subdiv: number;
+}
+
+function Grid(props: GridProps) {
+  const [grid, setGrid] = useState<JSX.Element[]>();
   // const [labels, setLabels] = useState([]);
 
   // useEffect(() => {
@@ -137,7 +198,7 @@ function Grid(props) {
         gridMidi.push(<div key='subdivs' id='subdivs' style={{gridTemplateColumns: 'repeat(' + props.subdiv * props.numMeasures + ', auto)'}}>{gridSubdivisions}</div>)
         gridMidi.push(<div key='measures' id='measures' style={{/*backgroundSize: bgSizeTrack / props.subdiv + '%'*/}}>{gridMeasure}</div>);
       // }
-      setMidi(gridMidi);
+      setGrid(gridMidi);
       // setLabels(gridLabels)
       // props.sendLabels(<div id='midi-grid-labels'>{gridLabels}</div>);
     }
@@ -153,7 +214,7 @@ function Grid(props) {
   // const bgSize = (100);
   // const gridTemp = {gridTemplate: '100% / repeat(' + props.numMeasures + ', auto)'};
 
-  return grid;
+  return <>{grid}</>;
   // return (
     // <div id='midi'>
     //   <div id='midi-note-labels'>{labels}</div>
@@ -172,10 +233,21 @@ function TimeTracker() {
 
 }
 
-function PianoRoll(props) {
+interface PianoRollProps {
+  soundDetails: Object;
+  time: number;
+  midiLength: number;
+  sound: string
+  octave: string;
+  numMeasures: number;
+  subdiv: number;
+  onNotePlayed: Function;
+}
+
+function PianoRoll(props: PianoRollProps) {
   const ref = useRef(null);
   const [labels, setLabels] = useState([]);
-  const [octaveArray, setOctaveArray] = useState([]);
+  const [octaveArray, setOctaveArray] = useState(['']);
   const bgSizeTrack = 100 / props.numMeasures;
 
   // useEffect(() => {
@@ -199,30 +271,30 @@ function PianoRoll(props) {
 
   });
 
-  function sendNoteProps(qwertyKey) {
-    // console.log(qwertyKey)
-    props.onNotePlayed(qwertyKey);
+  function sendNoteProps(keyPressed: any[]) {
+    // console.error(keyPressed)
+    props.onNotePlayed(keyPressed);
   }
 
-  function renderLabels(noteLabels) {
-    setLabels(noteLabels);
-  }
+  // function renderLabels(noteLabels) {
+  //   setLabels(noteLabels);
+  // }
 
   function getOctaveArray() {
     Object.keys(props.soundDetails).some((key) => {
       if(key === props.sound) {
         // console.log(Object.keys(props.soundDetails[key]))
-        setOctaveArray(Object.keys(props.soundDetails[key]));
-        return Object.keys(props.soundDetails[key]);
+        setOctaveArray(Object.keys(props.soundDetails[key as keyof typeof props.soundDetails]));
+        return Object.keys(props.soundDetails[key as keyof typeof props.soundDetails]);
       } else {
         return [];
       }
     })
   }
   
-  function trackPosition(time, midiLength) {
-    const position = {left: `${8 + time / 6000 / midiLength}%`}
-    return <div id='track-position' style={position}></div>
+  function trackPosition() {
+    const position = {left: `${8 + props.time / props.midiLength * 92}%`};
+    return <div id='track-position' style={position}></div>;
   }
 
   return (
@@ -237,8 +309,8 @@ function PianoRoll(props) {
         <option value='32'>1/32</option>
       </select> */}
       <div id='midi'>
-        <NoteLabels octaveArray={octaveArray} octave={props.octave} volume={props.volume} onNotePlayed={sendNoteProps} />
-        {trackPosition(props.time, props.midiLength)}
+        <NoteLabels octaveArray={octaveArray} octave={props.octave} onNotePlayed={sendNoteProps} />
+        {trackPosition()}
         <div id='midi-track' style={{backgroundSize: bgSizeTrack + '%'}}>
           <Grid octaveArray={octaveArray} numMeasures={props.numMeasures} subdiv={props.subdiv} />
         </div>
