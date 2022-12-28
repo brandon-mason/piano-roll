@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const jsx_runtime_1 = require("react/jsx-runtime");
 const react_1 = require("react");
 // import  {DraggableNumber} from './libs/draggable-number'
-require("./settings.css");
+require("./Settings.css");
 function BpmSlider(props) {
     const [rendered, setRendered] = (0, react_1.useState)(0);
     const ref = (0, react_1.useRef)(null);

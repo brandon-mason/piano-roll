@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const jsx_runtime_1 = require("react/jsx-runtime");
 const react_1 = require("react");
-require("./Midi-Recorder.css");
+require("./MidiRecorder.css");
 const qwertyNote = require('./note-to-qwerty-key-obj');
 // interface MidiRecord {
 //   [time: number]: KeysPressed;

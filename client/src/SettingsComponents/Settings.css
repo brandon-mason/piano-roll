@@ -1,0 +1,36 @@
+#selectors {
+  background-color: aquamarine;
+  position: sticky;
+  top: 0;
+  transform-style: preserve-3d;
+  z-index: 3;
+}
+
+.stop-button {
+  color: white;
+  background-color: black;
+}
+
+.recording-button {
+  color: white;
+  background-color: black;
+}
+
+.playing-button {
+  color: white;
+  background-color: black;
+}
+.stop-button:active {
+  color: orange;
+  /* background-color: yellow; */
+}
+
+.recording-button.active {
+  color: red;
+  /* background-color: red; */
+}
+
+.playing-button.active {
+  color: green;
+  /* background-color: green; */
+}

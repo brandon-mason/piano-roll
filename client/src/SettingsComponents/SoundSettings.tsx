@@ -1,23 +1,24 @@
 import React, {useState, useEffect, useRef} from 'react';
+import {SoundSettingsProps, IOctavesObj} from '../Interfaces';
 // import  {DraggableNumber} from './libs/draggable-number'
-import './settings.css';
+import './Settings.css';
 
-interface BpmSliderProps {
-  bpm: number;
-  midiDispatch: Function;
-}
+// interface BpmSliderProps {
+//   bpm: number;
+//   midiDispatch: Function;
+// }
 
-interface SoundSettingsProps {
-  soundDetails: {
-    [sound: string]: {
-      [octave: string]: string[]
-    }
-  };
-  sound: string;
-  octave: number;
-  volume: string;
-  pianoDispatch: Function;
-}
+// interface SoundSettingsProps {
+//   soundDetails: {
+//     [sound: string]: {
+//       [octave: string]: string[]
+//     }
+//   };
+//   sound: string;
+//   octave: number;
+//   volume: string;
+//   pianoDispatch: Function;
+// }
 
 function Settings(props: SoundSettingsProps) {
 
@@ -38,20 +39,35 @@ function Settings(props: SoundSettingsProps) {
     return sounds;
   }
   
+  // no clue why this doesnt work
+  // function renderOctavesFor() {
+  //   let octaves: JSX.Element[] = [];
+  //   let soundObj = props.soundDetails[props.sound as keyof typeof props.soundDetails];
+  //   console.log(soundObj)
+  //   let octaveKeys = Object.keys(props.soundDetails[props.sound as keyof typeof props.soundDetails]);
+  //   if(octaveKeys.length > 0) {
+  //     for(let i = octaveKeys.length; i > 0; i--) {
+  //       octaves.push(<option key={octaveKeys[i]} value={octaveKeys[i]}>{octaveKeys[i]}</option>);
+  //     };
+  //   }
+  //   console.log(Object.keys(props.soundDetails))
+  //   return octaves;
+  // }
+
   function renderOctaves() {
     let octaves: JSX.Element[] = [];
     if(Object.keys(props.soundDetails).length > 0) {
       let soundObj = props.soundDetails[props.sound as keyof typeof props.soundDetails];
-      Object.keys(soundObj).forEach((octave) => {
+      Object.keys(soundObj).slice().reverse().forEach((octave) => {
         octaves.push(<option key={octave} value={octave}>{octave}</option>);
       });
     }
     return octaves;
   }
 
-  interface IOctavesObj {
-    [octave: number]: string[];
-  }
+  // interface IOctavesObj {
+  //   [octave: number]: string[];
+  // }
   
   function renderVolumes(): JSX.Element[] {
     let volumes: JSX.Element[] = [];
@@ -73,7 +89,7 @@ function Settings(props: SoundSettingsProps) {
       <select name='sound' id='sound-selector' value={props.sound} onChange={(e) => {props.pianoDispatch({type: 'sound', sound: e.target.value})}}>
         {renderSounds()}
       </select>
-      <select name='octave' id='octave-selector' value={props.octave} onChange={(e) => {props.pianoDispatch({type: 'octave', octave: e.target.value})}}>
+      <select name='octave' id='octave-selector' value={props.octave} onChange={(e) => {props.pianoDispatch({type: 'octave', octave: parseInt(e.target.value)})}}>
         {renderOctaves()}
       </select>
       <select name='volume' id='volume-selector' value={props.volume} onChange={(e) => {props.pianoDispatch({type: 'volume', volume: e.target.value})}}>

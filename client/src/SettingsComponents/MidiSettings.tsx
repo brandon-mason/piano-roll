@@ -1,6 +1,7 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { MidiSettingsProps } from '../Interfaces';
 // import  {DraggableNumber} from './libs/draggable-number'
-import './settings.css';
+import './Settings.css';
 
 interface BpmSliderProps {
   bpm: number;
@@ -11,31 +12,17 @@ function BpmSlider(props: BpmSliderProps) {
   const [rendered, setRendered] = useState(0);
   const ref = useRef(null);
 
-  // useEffect(() => { 
-  //   const el = ref.current;
-  //   if(el && rendered === 0) {
-  //     console.log('h', rendered, el)
-  //     new DraggableNumber(el, {
-  //         min: 1,
-  //         max: 999,
-  //         changeCallback: function(val) {console.log("on change: " + val);},
-  //         endCallback: function(val) {console.log("on end: " + val);}
-  //     });
-  //     setRendered(1);
-  //   }
-  // }, [ref.current]);
-
   return <input ref={ref} className="bpm-input" defaultValue={props.bpm} onChange={(e) => props.midiDispatch({type: 'bpm', bpm: parseInt(e.target.value)})} />;
 }
 
-interface MidiSettingsProps {
-  soundDetails: Object;
-  numMeasures: number;
-  subdiv: number;
-  bpm: number;
-  mode: string;
-  midiDispatch: Function;
-}
+// interface MidiSettingsProps {
+//   soundDetails: Object;
+//   numMeasures: number;
+//   subdiv: number;
+//   bpm: number;
+//   mode: string;
+//   midiDispatch: Function;
+// }
 
 function MidiSettings(props: MidiSettingsProps) {
 
@@ -48,6 +35,7 @@ function MidiSettings(props: MidiSettingsProps) {
   }
 
   const recordingClassName = `recording-button${(props.mode === 'recording') ? ' active' : ''}`;
+  const playingClassName = `playing-button${(props.mode === 'playing') ? ' active' : ''}`;
 
   return (
     <>
@@ -63,7 +51,9 @@ function MidiSettings(props: MidiSettingsProps) {
         <option value='16'>1/16</option>
         <option value='32'>1/32</option>
       </select>
-      <button type='button' className={recordingClassName} onClick={() => {props.midiDispatch({type: 'mode', mode: (props.mode === 'keyboard') ? 'recording' : 'keyboard'})}}>O</button>
+      <button type='button' className='stop-button' onClick={() => {props.midiDispatch({type: 'mode', mode: 'stop'})}}>■</button>
+      <button type='button' className={recordingClassName} onClick={() => {props.midiDispatch({type: 'mode', mode: (props.mode === 'keyboard') ? 'recording' : 'keyboard'})}}>●</button>
+      <button type='button' className={playingClassName} onClick={() => {props.midiDispatch({type: 'mode', mode: (props.mode === 'keyboard') ? 'playing' : 'keyboard'})}}>▶</button>
     </>
     )
 }

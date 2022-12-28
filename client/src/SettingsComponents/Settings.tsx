@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 // import  {DraggableNumber} from './libs/draggable-number'
-import './settings.css';
+import './Settings.css';
 
 interface BpmSliderProps {
   bpm: number;

@@ -36,88 +36,9 @@
     grid-area: 1 / 2;
     position: sticky;
     width: 3px;
-    border-right: solid 4px red;
+    border-right: solid 3px black;
     z-index: 2;
   }
-  #midi-track {
-    display: grid;
-    grid-area: 1 / 2;
-    grid-template-columns: 100%;
-    grid-template-rows: 100%;
-    /* background-image: linear-gradient(0.25turn, black 2px, transparent 2px); */
-    background-color: grey;
-    /* background-repeat: round;  */
-    width: 100%;
-    z-index: 1;
-    /* grid-template: 100% / repeat(4, 25%) */
-  }
-    
-    .note-measure {
-      outline: black solid 1px;
-      /* outline-style: ; */
-    }
-    
-    #subdivs {
-      display: grid;
-      grid-column: 1;
-      grid-row: 1;
-      /* transform-style: preserve-3d; */
-    }
-      .subdivision {
-        border-left: solid 1px;
-      }
-
-    #measures {
-      display: grid;
-      grid-column: 1;
-      grid-row: 1;
-      /* background-image: linear-gradient(0.25turn, black 2px, transparent 2px);
-      background-position: right;
-      background-repeat: round; */
-      width: 100%;
-      /* z-index: -1; */
-      /* transform: translateZ(-10px); */
-      /* background: linear-gradient(90deg, #dedede 1px, transparent 1px) 1px 0, #1e1e1e; */
-      /* grid-template-rows: repeat(12, 8.33%);
-      grid-template-columns: repeat(32, 3.125%); */
-      /* margin: 0; */
-    }
-
-      .midi-note {
-        background-color: #89938a;
-        border: none;
-        outline: #323933 solid 1px;
-        color: white;
-        padding: 6px 6px;
-        text-align: center;
-        text-decoration: none;
-        font-size: 13px;
-        margin: inherit;
-      }
-      
-      .midi-note.active {
-        background-color: #4CAF50; /* Green */
-        color: white;
-      }
-
-        .midi-note.note-1 {
-          grid-column: span 32;
-        }
-        .midi-note.note-2 {
-          grid-column: span 16;
-        }
-        .midi-note.note-4 {
-          grid-column: span 8;
-        }
-        .midi-note.note-8 {
-          grid-column: span 4
-        }
-        .midi-note.note-16 {
-          grid-column-end: span 2;
-        }
-        .midi-note.note-32 {
-          grid-column: span 1;
-        }
 
 #bpm-slider {
   position: relative;
