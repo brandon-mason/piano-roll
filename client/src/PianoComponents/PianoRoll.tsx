@@ -56,6 +56,7 @@ function NoteLabels(props: NoteLabelsProps) {
     for(var x = props.octaveArray.length - 1; x >= 0; x--) {
       for(var y = 11; y >= 0; y--) {
         gridLabels.push(<Key key={qwertyNote[y].note + props.octaveArray[x]} qwertyKey={qwertyNote[y].key} note={qwertyNote[y].note} altNote={qwertyNote[y].altNote} octave={props.octaveArray[x]} />);
+        gridLabelOctaves.push(<Key key={qwertyNote[y].note + props.octaveArray[x]} qwertyKey={qwertyNote[y].key} note={qwertyNote[y].note} altNote={qwertyNote[y].altNote} octave={props.octaveArray[x]} />);
       }
 
       gridLabelOctaves.push(<div key={x} id={`${x}-octave`} className='note-label-octaves'>{gridLabels}</div>);

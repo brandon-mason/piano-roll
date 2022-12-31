@@ -40,6 +40,8 @@ function midiReducer(state: MidiState, action: any) {
       return {...state, bpm: action.bpm};
     case 'metronome':
       return {...state, metronome: action.metronome};
+    case 'metronome':
+      return {...state, metronome: action.metronome};
     case 'mode':
       return {...state, mode: action.mode};
     default:
