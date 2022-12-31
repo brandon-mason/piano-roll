@@ -5,26 +5,15 @@ const react_1 = require("react");
 const axios_1 = require("axios");
 const SoundSettings_1 = require("./SettingsComponents/SoundSettings");
 const MidiSettings_1 = require("./SettingsComponents/MidiSettings");
+const TimerButtons_1 = require("./SettingsComponents/TimerButtons");
+const KbFunctions_1 = require("./ToolComponents/KbFunctions");
 const KeyNoteInput_1 = require("./ToolComponents/KeyNoteInput");
 const Timer_1 = require("./ToolComponents/Timer");
 const MidiRecorder_1 = require("./MidiRecorder");
 const Piano_1 = require("./Piano");
-const Piano_roll_1 = require("./Piano-roll");
+const PianoRoll_1 = require("./PianoRoll");
+const Grid_1 = require("./Grid");
 require("./App.css");
-// interface Reducer<State, Action> {
-//   (state: State, action: Action): State;
-// }
-// interface SoundState {
-//   sound: string;
-//   octave: number;
-//   volume: string;
-// };
-// interface SoundAction {
-//   type: string;
-//   sound?: string;
-//   octave?: number;
-//   volume?: string;
-// }
 function soundReducer(state, action) {
     switch (action.type) {
         case 'sound':
@@ -37,19 +26,6 @@ function soundReducer(state, action) {
             return state;
     }
 }
-// interface MidiState {
-//   numMeasures: number;
-//   subdiv: number;
-//   bpm: number;
-//   mode: string;
-// }
-// interface MidiAction {
-//   type: string;
-//   numMeasures?: number;
-//   subdiv?: number;
-//   bpm?: number;
-//   mode?: string;
-// }
 function midiReducer(state, action) {
     switch (action.type) {
         case 'numMeasures':
@@ -58,37 +34,39 @@ function midiReducer(state, action) {
             return { ...state, subdiv: action.subdiv };
         case 'bpm':
             return { ...state, bpm: action.bpm };
+        case 'metronome':
+            return { ...state, metronome: action.metronome };
         case 'mode':
             return { ...state, mode: action.mode };
         default:
             return state;
     }
 }
-// interface KeysPressed {
-//   [key: string]: {
-//     octave: number;
-//     pressed: boolean;
-//     time: number;
-//   };
-// }
-// interface Midi {
-//   [time: number]: KeysPressed;
-// }
 function App() {
     const [soundDetails, setSoundDetails] = (0, react_1.useState)({});
-    const [soundState, soundDispatch] = (0, react_1.useReducer)(soundReducer, { sound: 'GrandPiano', octave: 3, volume: '2mf' });
-    const [midiState, midiDispatch] = (0, react_1.useReducer)(midiReducer, { numMeasures: 4, subdiv: 4, bpm: 120, mode: 'keyboard' });
-    const [keysPressed, setKeysPressed] = (0, react_1.useState)({});
-    const [time, setTime] = (0, react_1.useState)(0);
+    const [soundState, soundDispatch] = (0, react_1.useReducer)(soundReducer, { octave: 3, sound: 'GrandPiano', volume: '2mf' });
+    const [midiState, midiDispatch] = (0, react_1.useReducer)(midiReducer, { bpm: 120, metronome: 'off', mode: 'keyboard', numMeasures: 4, ppq: 32, subdiv: 4 });
+    const [octaveMinMax, setOctaveMinMax] = (0, react_1.useState)([0, 0]);
+    const [controlsPressed, setControlsPressed] = (0, react_1.useState)('');
+    const selectorsRef = (0, react_1.useRef)(null);
+    ;
+    const ppq = 24;
+    const midiLength = (0, react_1.useMemo)(() => midiState.numMeasures * 4 / (midiState.bpm / 60 / 1000), [midiState.bpm, midiState.numMeasures]); // number of beats / bpm in ms
+    const pulseRate = (0, react_1.useMemo)(() => midiState.ppq * midiState.bpm / 60 / 1000, [midiState.bpm, midiState.ppq]); // ppq / bpm in ms
+    const [time, setTime] = (0, react_1.useState)(0); // 24 * 120 /60/1000 * 16 /(120/60/1000)
     const [pulseNum, setPulseNum] = (0, react_1.useState)(0);
+    const [keysPressed, setKeysPressed] = (0, react_1.useState)({});
     const [playback, setPlayback] = (0, react_1.useState)({});
+    const [metPlay, setMetPlay] = (0, react_1.useState)(false);
     const [pianoRollKey, setPianoRollKey] = (0, react_1.useState)([]);
     const pianoRollKeyRef = (0, react_1.useRef)(null);
     const labelsRef = (0, react_1.useRef)(null);
+    const [noteTracks, setNoteTracks] = (0, react_1.useState)(null);
+    const noteTracksRef = (0, react_1.useRef)(null);
     // const [soundDetails, setSoundDetails] = useState({});
     (0, react_1.useEffect)(() => {
-        console.log(soundState);
-    }, [soundState]);
+        // console.error(midiState)
+    }, [midiState]);
     (0, react_1.useEffect)(() => {
         async function getSoundDetails() {
             const url = 'http://localhost:3001/api/sounds/';
@@ -112,25 +90,48 @@ function App() {
         getSoundDetails();
     }, []);
     (0, react_1.useEffect)(() => {
-        console.log(pulseNum, 1000 / (midiState.bpm / 60) * midiState.numMeasures * 4);
+        if (Object.keys(soundDetails).length > 0) {
+            let octavesArray = Object.keys(soundDetails[soundState.sound]);
+            let octaveNums = [];
+            octavesArray.forEach((octave) => {
+                octaveNums.push(parseInt(octave));
+            });
+            let result = [Math.min(...octaveNums) + 1, Math.max(...octaveNums) + 1];
+            setOctaveMinMax(result);
+        }
+    }, [soundDetails]);
+    (0, react_1.useEffect)(() => {
+        // console.log(pulseNum , 1000 / (midiState.bpm / 60) * midiState.numMeasures * 4)
         if (time > 1000 / (midiState.bpm / 60) * midiState.numMeasures * 4)
             midiDispatch({ type: 'mode', mode: 'keyboard' });
     }, [time]);
     (0, react_1.useEffect)(() => {
         if (midiState.mode === 'stop' || midiState.mode === 'keyboard') {
-            let tempOutput = JSON.stringify(playback).replaceAll('true', 'false');
-            setPlayback(JSON.parse(tempOutput));
+            let tempPlayback = JSON.stringify(playback).replaceAll('true', 'false');
+            setPlayback(JSON.parse(tempPlayback));
         }
     }, [midiState.mode]);
-    function setNoteProps(controller) {
-        setKeysPressed(controller);
+    function getOctaveArray() {
+        let octaveArray = [];
+        Object.keys(soundDetails).some((key) => {
+            if (key === soundState.sound) {
+                Object.keys(soundDetails[key]).forEach((octave) => {
+                    octaveArray.push(parseInt(octave));
+                });
+            }
+        });
+        return octaveArray;
     }
     function pianoRollKeysPressed(keyPressed) {
         pianoRollKeyRef.current = keyPressed;
     }
-    function handlePlayback(midi) {
-        setPlayback(midi);
+    function metPlayed(dut) {
+        setMetPlay(dut);
     }
-    return ((0, jsx_runtime_1.jsxs)("div", { className: "App", children: [(0, jsx_runtime_1.jsxs)("div", { id: 'selectors', children: [(0, jsx_runtime_1.jsx)(SoundSettings_1.default, { soundDetails: soundDetails, sound: soundState.sound, octave: soundState.octave, volume: soundState.volume, pianoDispatch: soundDispatch }), (0, jsx_runtime_1.jsx)(MidiSettings_1.default, { soundDetails: soundDetails, numMeasures: midiState.numMeasures, subdiv: midiState.subdiv, bpm: midiState.bpm, mode: midiState.mode, midiDispatch: midiDispatch })] }), (0, jsx_runtime_1.jsx)(KeyNoteInput_1.default, { octave: soundState.octave, onNotePlayed: setNoteProps, pianoRollKey: pianoRollKeyRef.current }), (0, jsx_runtime_1.jsx)(Timer_1.default, { mode: midiState.mode, bpm: midiState.bpm, midiLength: 1000 / (midiState.bpm / 60) * midiState.numMeasures * 4, time: time, pulseNum: pulseNum, handleSetTime: setTime, handleSetPulseNum: setPulseNum, midiDispatch: midiDispatch }), (0, jsx_runtime_1.jsx)(MidiRecorder_1.default, { soundDetails: soundDetails, soundState: soundState, midiState: midiState, keysPressed: keysPressed, time: pulseNum, handlePlayback: handlePlayback, soundDispatch: soundDispatch, midiDispatch: midiDispatch }), (0, jsx_runtime_1.jsx)(Piano_1.default, { soundDetails: soundDetails, sound: soundState.sound, octave: soundState.octave, volume: soundState.volume, mode: midiState.mode, keysPressed: keysPressed, pianoRollKey: pianoRollKey, playback: playback, labelsRef: labelsRef }), (0, jsx_runtime_1.jsx)(Piano_roll_1.default, { soundDetails: soundDetails, time: time, midiLength: 1000 / (midiState.bpm / 60) * midiState.numMeasures * 4, playback: playback, sound: soundState.sound, octave: soundState.octave, numMeasures: midiState.numMeasures, subdiv: midiState.subdiv, labelsRef: labelsRef, handleNotePlayed: pianoRollKeysPressed })] }));
+    function clearControls() {
+        setControlsPressed('');
+    }
+    const bgSizeTrack = 100 / midiState.numMeasures;
+    return ((0, jsx_runtime_1.jsxs)("div", { className: "App", children: [(0, jsx_runtime_1.jsxs)("div", { ref: selectorsRef, id: 'selectors', children: [(0, jsx_runtime_1.jsx)(SoundSettings_1.default, { soundDetails: soundDetails, sound: soundState.sound, octave: soundState.octave, volume: soundState.volume, pianoDispatch: soundDispatch }), (0, jsx_runtime_1.jsx)(MidiSettings_1.default, { soundDetails: soundDetails, numMeasures: midiState.numMeasures, subdiv: midiState.subdiv, bpm: midiState.bpm, mode: midiState.mode, midiDispatch: midiDispatch }), (0, jsx_runtime_1.jsx)(TimerButtons_1.default, { metPlay: metPlay, metronome: midiState.metronome, mode: midiState.mode, pulseNum: pulseNum, midiDispatch: midiDispatch }), (0, jsx_runtime_1.jsx)(KbFunctions_1.default, { controlsPressed: controlsPressed, metronome: midiState.metronome, mode: midiState.mode, octaveMinMax: octaveMinMax, selectorsRef: selectorsRef, clearControls: clearControls, midiDispatch: midiDispatch, soundDispatch: soundDispatch })] }), (0, jsx_runtime_1.jsxs)("div", { id: 'midi', children: [(0, jsx_runtime_1.jsx)(PianoRoll_1.default, { labelsRef: labelsRef, midiLength: midiLength, noteTracksRef: noteTracksRef, numMeasures: midiState.numMeasures, octave: soundState.octave, playback: playback, pulseNum: pulseNum, pulseRate: pulseRate, sound: soundState.sound, soundDetails: soundDetails, subdiv: midiState.subdiv, time: pulseNum, handleNotePlayed: pianoRollKeysPressed }), (0, jsx_runtime_1.jsx)("div", { id: 'midi-track', style: { backgroundSize: bgSizeTrack + '%' }, children: (0, jsx_runtime_1.jsx)(Grid_1.default, { octaveArray: getOctaveArray(), noteTracksRef: noteTracksRef, numMeasures: midiState.numMeasures, subdiv: midiState.subdiv, setNoteTracks: setNoteTracks }) })] }), (0, jsx_runtime_1.jsx)(KeyNoteInput_1.default, { octave: soundState.octave, pianoRollKey: pianoRollKeyRef.current, pulseNum: pulseNum, onControlsPressed: setControlsPressed, onNotePlayed: setKeysPressed }), (0, jsx_runtime_1.jsx)(Timer_1.default, { bpm: midiState.bpm, metronome: midiState.metronome, midiLength: midiLength, time: time, mode: midiState.mode, ppq: ppq, pulseNum: pulseNum, pulseRate: pulseRate, handleMetPlay: metPlayed, handleSetTime: setTime, handleSetPulseNum: setPulseNum, midiDispatch: midiDispatch }), (0, jsx_runtime_1.jsx)(MidiRecorder_1.default, { soundDetails: soundDetails, midiState: midiState, keysPressed: keysPressed, midiLength: midiLength, pulseNum: pulseNum, pulseRate: pulseRate, noteTracks: noteTracks, noteTracksRef: noteTracksRef, setPlayback: setPlayback, soundDispatch: soundDispatch, midiDispatch: midiDispatch }), (0, jsx_runtime_1.jsx)(Piano_1.default, { soundDetails: soundDetails, sound: soundState.sound, octave: soundState.octave, octaveMinMax: octaveMinMax, volume: soundState.volume, mode: midiState.mode, keysPressed: keysPressed, pianoRollKey: pianoRollKey, playback: playback, labelsRef: labelsRef })] }));
 }
 exports.default = App;

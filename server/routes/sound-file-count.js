@@ -24,8 +24,8 @@ function traverseFiles(soundPath) {
       }
     });
     directories.forEach((directory) => {
-      console.log('//////////////////////////////////////////////////////////////////////')
-      console.log('t', traverseFiles(directory));
+      // console.log('//////////////////////////////////////////////////////////////////////')
+      // console.log('t', traverseFiles(directory));
       count += traverseFiles(directory);
     });
 }

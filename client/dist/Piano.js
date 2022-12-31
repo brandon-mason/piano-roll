@@ -62,43 +62,11 @@ function OctavesInView(props) {
     }, [props.octave]);
     return null;
 }
-// interface PianoProps {
-//   soundDetails: Object;
-//   sound: string;
-//   octave: number;
-//   volume: string;
-//   mode: string;
-//   keysPressed: KeysPressed;
-//   pianoRollKey: any[];
-//   playback: KeysPressed;
-//   labelsRef: React.RefObject<HTMLDivElement>;
-// }
-// interface KeysPressed {
-//   [key: string]: {
-//     octave: number;
-//     pressed: boolean;
-//     time: number;
-//   };
-// }
-// interface IKeys {
-//   octave: number;
-//   pressed: boolean;
-//   pianoRoll: boolean;
-// }
-// interface FetchedSounds {
-//   [octaves: number]: {
-//     [volume: string]: any;
-//   };
-// }
-// interface prevNotes {
-//   [note: string]: number;
-// }
 function Piano(props) {
     const [fetchedSounds, setFetchedSounds] = (0, react_1.useState)({});
     // const [keysPressed, setKeysPressed] = useState<KeysPressed>({});
     const [octavesInView, setOctavesInView] = (0, react_1.useState)([]);
     const [prevNotes, setPrevNotes] = (0, react_1.useState)({});
-    const [octaveMinMax, setOctaveMinMax] = (0, react_1.useState)([0, 0]);
     const [output, setOutput] = (0, react_1.useState)({ ...props.playback, ...props.keysPressed });
     (0, react_1.useEffect)(() => {
         setOutput(props.keysPressed);
@@ -106,6 +74,7 @@ function Piano(props) {
     (0, react_1.useEffect)(() => {
         setOutput(props.playback);
     }, [props.playback]);
+    (0, react_1.useEffect)(() => console.log(prevNotes), [prevNotes]);
     //old way to get octaves using sound prop changes
     (0, react_1.useEffect)(() => {
         function fetchSounds() {
@@ -113,10 +82,10 @@ function Piano(props) {
             let octaveExists1 = true;
             let url0 = 'http://localhost:3001/sounds/' + props.sound + '/' + props.octave + '/' + props.volume;
             let url1 = 'http://localhost:3001/sounds/' + props.sound + '/' + (props.octave + 1) + '/' + props.volume;
-            if (props.octave < octaveMinMax[0] - 1) {
+            if (props.octave < props.octaveMinMax[0] - 1) {
                 octaveExists0 = false;
             }
-            if (props.octave + 1 > octaveMinMax[1] - 1) {
+            if (props.octave + 1 > props.octaveMinMax[1] - 1) {
                 octaveExists1 = false;
             }
             if (octaveExists0 || octaveExists1) {
@@ -182,7 +151,7 @@ function Piano(props) {
                 }
             }
         }
-        if (octaveMinMax.length === 2) {
+        if (props.octaveMinMax.length === 2) {
             // fetchSounds();
         }
     }, [props.sound, props.octave, props.volume]);
@@ -200,7 +169,7 @@ function Piano(props) {
         };
         const fetchOnScroll = (e) => {
             console.log(e);
-            if (element?.childElementCount === octaveMinMax[1]) {
+            if (element?.childElementCount === props.octaveMinMax[1]) {
                 let children = element.children;
                 for (let i = 0; i < children.length; i++) {
                     let child = children[i];
@@ -234,7 +203,7 @@ function Piano(props) {
         return (() => {
             // if(element) window.removeEventListener('scroll', fetchOnScroll);
         });
-    }, [octaveMinMax[1]]);
+    }, [props.octaveMinMax[1]]);
     //old load sounds on click
     (0, react_1.useEffect)(() => {
         if (props.pianoRollKey.length > 0) {
@@ -281,31 +250,36 @@ function Piano(props) {
     //   }
     // }, [fetchedSounds])
     (0, react_1.useEffect)(() => {
+        // console.log(props.keysPressed, prevNotes)
         function playNote() {
-            let note;
+            let key;
             let octave;
+            // let key: string;
+            let qwertyOctave;
             let noteName;
             const prevNotesTemp = prevNotes;
-            Object.keys(output).forEach((key) => {
+            Object.keys(output).forEach((noteOct) => {
+                // console.log(noteOct)
+                let key = output[noteOct].key;
+                let note = noteOct.replace(/[0-9]/g, '');
+                let octave = parseInt(noteOct.replace(/\D/g, ''));
                 qwertyNote.forEach((qwerty) => {
-                    note = qwerty.note;
-                    octave = qwerty.octave;
-                    // console.log(props.keysPressed[key as keyof typeof props.keysPressed].octave + octave < octaveMinMax[1])
-                    if (output[key].octave + octave < octaveMinMax[1]) {
-                        if (qwerty.key === key && fetchedSounds[output[key].octave + octave][props.volume]) {
-                            (note.includes('#')) ? noteName = note.replace('#', 'sharp') + (output[key].octave + octave) : noteName = note.replace('b', 'flat') + (output[key].octave + octave);
+                    qwertyOctave = qwerty.octave;
+                    if (octave + qwertyOctave < props.octaveMinMax[1]) {
+                        if (key === qwerty.key && fetchedSounds[octave + qwertyOctave][props.volume]) {
+                            (note.includes('#')) ? noteName = note.replace('#', 'sharp') + (octave + qwertyOctave) : noteName = note.replace('b', 'flat') + (octave + qwertyOctave);
                             let labelElem = document.getElementById(noteName.toLowerCase() + '-label');
-                            if (output[key].pressed && (!prevNotes[noteName] || prevNotes[noteName] === 0)) {
-                                let sound = fetchedSounds[output[key].octave + octave][props.volume];
+                            if (output[noteOct].pressed && (!prevNotes[noteName] || prevNotes[noteName] === 0)) {
+                                let sound = fetchedSounds[octave + qwertyOctave][props.volume];
                                 let soundId = sound.play(note);
                                 prevNotesTemp[noteName] = soundId;
                                 labelElem.classList.toggle('active');
                             }
-                            else if (!output[key].pressed && prevNotes[noteName] > 0) {
+                            else if (!output[noteOct].pressed && prevNotes[noteName] > 0) {
                                 labelElem.classList.toggle('active');
                                 Object.keys(prevNotes).some((playedNote) => {
                                     if (playedNote === noteName) {
-                                        fetchedSounds[output[key].octave + octave][props.volume].fade(1, 0, 300, prevNotes[noteName]);
+                                        fetchedSounds[octave + qwertyOctave][props.volume].fade(1, 0, 300, prevNotes[noteName]);
                                     }
                                 });
                                 prevNotesTemp[noteName] = 0;
@@ -319,19 +293,7 @@ function Piano(props) {
         if (Object.keys(output).length !== 0) {
             playNote();
         }
-        console.log(output);
     }, [output]);
-    (0, react_1.useEffect)(() => {
-        if (Object.keys(props.soundDetails).length > 0) {
-            let octavesArray = Object.keys(props.soundDetails[props.sound]);
-            let octaveNums = [];
-            octavesArray.forEach((octave) => {
-                octaveNums.push(parseInt(octave));
-            });
-            let result = [Math.min(...octaveNums) + 1, Math.max(...octaveNums) + 1];
-            setOctaveMinMax(result);
-        }
-    }, [props.soundDetails]);
     (0, react_1.useEffect)(() => {
     }, [props.sound, props.octave, props.volume]);
     function loadSound(url) {
@@ -355,10 +317,6 @@ function Piano(props) {
         });
         return octaveSound;
     }
-    function handlePlayback(midi) {
-        // setOutputState(midi);
-        // props.onNotePlayed(controller)
-    }
     function setView(toFetch) {
         // console.log(toFetch)
         let notFetched = [];
@@ -380,6 +338,6 @@ function Piano(props) {
         }
         // if(toFetch.length > 0) setFetchedSounds(fetchedSounds)
     }
-    return ((0, jsx_runtime_1.jsx)(jsx_runtime_1.Fragment, { children: (0, jsx_runtime_1.jsx)(OctavesInView, { octaveMax: octaveMinMax[1], labelsRef: props.labelsRef, octave: props.octave, handleViewChange: setView }) }));
+    return ((0, jsx_runtime_1.jsx)(jsx_runtime_1.Fragment, { children: (0, jsx_runtime_1.jsx)(OctavesInView, { octaveMax: props.octaveMinMax[1], labelsRef: props.labelsRef, octave: props.octave, handleViewChange: setView }) }));
 }
 exports.default = Piano;

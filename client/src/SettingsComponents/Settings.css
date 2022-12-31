@@ -10,27 +10,33 @@
   color: white;
   background-color: black;
 }
+  .stop-button:active {
+    color: orange;
+    /* background-color: yellow; */
+  }
 
 .recording-button {
   color: white;
   background-color: black;
 }
+  .recording-button.active {
+    color: red;
+    /* background-color: red; */
+  }
 
 .playing-button {
   color: white;
   background-color: black;
 }
-.stop-button:active {
-  color: orange;
-  /* background-color: yellow; */
-}
+  .playing-button.active {
+    color: green;
+    /* background-color: green; */
+  }
 
-.recording-button.active {
-  color: red;
-  /* background-color: red; */
+.metronome-button {
+  color: aliceblue;
+  background-color: black;
 }
-
-.playing-button.active {
-  color: green;
-  /* background-color: green; */
-}
+  .metronome-button.active {
+    color: aquamarine;
+  }

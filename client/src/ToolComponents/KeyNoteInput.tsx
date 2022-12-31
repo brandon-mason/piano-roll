@@ -1,49 +1,53 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { KeyNoteInputProps } from '../Interfaces';
-import PianoRoll from '../Piano-roll';
-
-
-// interface IQwertyNote {
-//   key: string;
-//   note: string;
-//   altNote?: string,
-//   octave: number;
-  
-// }
-
-// interface KeyNoteInputProps {
-//   octave: number;
-//   onNotePlayed: Function;
-//   pianoRollKey: any[] | null;
-// }
+import { KeysPressed, KeyNoteInputProps } from '../Interfaces';
+const qwertyNote = require('../note-to-qwerty-key-obj');
+const kbControls = require('../keyboard-controls');
 
 function KeyNoteInput(props: KeyNoteInputProps) {
   const ref = useRef<HTMLInputElement>(null);
-  const [controller, setController] = useState({});
+  const [controller, setController] = useState<KeysPressed>({});
+
+  useEffect(() => {
+    // console.error(props.pulseNum)
+  }, [props.pulseNum])
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if(e.repeat) {return}
-
+      if(e.repeat) {
+        // setController((controller) => ({...controller, [note + octave]: {...controller[note + octave], ...{end: props.pulseNum}}}));
+        return;
+      };
+      // console.log(e.key)
+      if(Object.keys(kbControls).includes(e.key)) {
+        e.preventDefault();
+        props.onControlsPressed(e.key);
+      }
+      if(!Object.keys(qwertyNote).includes(e.key)) {
+        return;
+      }
       let octave = props.octave;
       let pressed = true;
       if(parseInt(e.code)) {
         octave = parseInt(e.code);
       }
+      let note = qwertyNote[e.key.toLowerCase()].note; // toLowerCase() is for caps lock
+      
       // console.warn('KEY DOWN')
-      let key = e.key.toLowerCase(); // toLowerCase() is for caps lock
-      setController((controller) => ({...controller, [key]: {octave: octave, pressed: true, time: 0}}));
+      // console.warn(qwertyNote[key])
+      // setController((controller) => ({...controller, [note + octave]: {...controller[note + octave], ...{key: e.key.toLowerCase(), pressed: true, start: props.pulseNum, end: props.pulseNum + 1}}}));
+      setController((controller) => ({...controller, [note + octave]: {...controller[note + octave], ...{key: e.key.toLowerCase(), pressed: true, start: props.pulseNum, end: -1}}}));
     }
 
     const onKeyUp = (e: KeyboardEvent) => {
+      if(!Object.keys(qwertyNote).includes(e.key)) return;
       let octave = props.octave;
       let pressed = false
       if(parseInt(e.code)) {
         octave = parseInt(e.code);
       }
       // console.warn('KEY UP')
-      let key = e.key.toLowerCase();
-      setController((controller) => ({...controller, [key]: {octave: octave, pressed: false, time: 0}}));
+      let note = qwertyNote[e.key.toLowerCase()].note;
+      setController((controller) => ({...controller, [note + octave]: {...controller[note + octave], ...{key: e.key.toLowerCase(), pressed: false, end: props.pulseNum}}}));
     }
 
     const element = ref.current!;
@@ -53,7 +57,7 @@ function KeyNoteInput(props: KeyNoteInputProps) {
       element.removeEventListener('keydown', onKeyDown);
       element.removeEventListener('keyup', onKeyUp);
     };
-  }, [props.octave]);
+  }, [props.octave, props.pulseNum]);
 
   useEffect(() => {
   if(props.pianoRollKey) {
@@ -64,7 +68,7 @@ function KeyNoteInput(props: KeyNoteInputProps) {
     }
     if(props.pianoRollKey.length > 0) {
       console.log(props.pianoRollKey)
-      setController((controller) => ({...controller, [props.pianoRollKey![0]]: {octave: props.pianoRollKey![1], pressed: props.pianoRollKey![2], time: 0}}));
+      setController((controller) => ({...controller, [props.pianoRollKey![0]]: {octave: props.pianoRollKey![1], pressed: props.pianoRollKey![2], start: props.pulseNum, end: -1}}));
     }
   }
   }, [props.pianoRollKey]);
@@ -80,12 +84,14 @@ function KeyNoteInput(props: KeyNoteInputProps) {
 
   useEffect(() => {
     props.onNotePlayed(controller);
-    // console.log(controller)
+    // console.warn(controller)
     // eslint-disable-next-line
   }, [controller]);
 
   return (
-    <input type='text' ref={ref} id='key-note-input'></input>
+    <>
+      <input type='text' ref={ref} id='key-note-input'></input>
+    </>
   )
 }
 

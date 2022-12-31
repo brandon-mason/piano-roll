@@ -1,0 +1,8 @@
+{
+  " ": "play",
+  "b": "stop",
+  "n": "record",
+  "m": "metronome",
+  "x": "octaveUp",
+  "z": "octaveDown"
+}

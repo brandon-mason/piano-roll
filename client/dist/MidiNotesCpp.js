@@ -6,31 +6,21 @@ const react_dom_1 = require("react-dom");
 require("./MidiNotes.css");
 // const myWorker = new Worker('./ToolComponents/midiNoteWorker')
 const qwertyNote = require('./note-to-qwerty-key-obj');
-function MidiNote(props) {
-}
 function MidiNotes(props) {
     const [count, setCount] = (0, react_1.useState)(0);
     const [widths, setWidths] = (0, react_1.useState)({});
-    const [clickCoords, setClickCoords] = (0, react_1.useState)([]);
     const [midiNoteProps, setMidiNoteProps] = (0, react_1.useState)({});
-    (0, react_1.useEffect)(() => console.log(clickCoords), [clickCoords]);
-    (0, react_1.useEffect)(() => {
-        function printMousePos(e) {
-            setClickCoords([e.clientX, e.clientY]);
-        }
-        if (props.noteTracksRef.current) {
-            props.noteTracksRef.current.addEventListener('dblclick', printMousePos);
-        }
-        return () => {
-            if (props.noteTracksRef.current)
-                props.noteTracksRef.current.removeEventListener('dblclick', printMousePos);
-        };
-    });
+    // const []
     (0, react_1.useEffect)(() => {
         Object.keys(props.keysPressed).forEach((noteOct) => {
             // setWidths()
             if (props.keysPressed[noteOct].start) {
+                if (noteOct === 'E3')
+                    console.log(noteOct, props.keysPressed[noteOct].start);
                 if (props.keysPressed[noteOct].end === -1 && !widths[props.keysPressed[noteOct].start + noteOct]) {
+                    console.error(props.keysPressed[noteOct].start);
+                    if (noteOct === 'E3')
+                        console.log('|||||||||||||||||||', noteOct, props.keysPressed[noteOct].start);
                     setWidths((widths) => ({ ...widths, [props.keysPressed[noteOct].start + noteOct]: { start: props.keysPressed[noteOct].start } }));
                 }
                 else {
@@ -40,7 +30,7 @@ function MidiNotes(props) {
         });
     }, [props.pulseNum, props.keysPressed]);
     (0, react_1.useEffect)(() => {
-        // console.warn(widths)
+        console.warn(widths);
     }, [widths]);
     (0, react_1.useEffect)(() => {
         const addNoteBox = () => {
@@ -72,9 +62,9 @@ function MidiNotes(props) {
                                     className: 'midi-note',
                                     style: {
                                         height: `${props.noteTracksRef.current.offsetHeight / props.noteTracksRef.current.children.length - 2}px`,
-                                        top: ``,
                                         left: `${.08 * window.innerWidth + (props.keysPressed[noteOct].start / (props.midiLength * props.pulseRate)) * props.noteTracksRef.current.offsetWidth}px`,
                                         width: `${width / (props.midiLength * props.pulseRate) * props.noteTracksRef.current.offsetWidth}px`,
+                                        // width: `10px`,
                                     }
                                 },
                                 keyPressed: props.keysPressed[noteOct],

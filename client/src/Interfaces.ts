@@ -6,11 +6,21 @@ export interface QwertyNote {
   octave: number;
 }
 
-export interface KeysPressed {
+export interface QwertyNoteObj {
   [key: string]: {
+    note: string;
+    altNote?: string,
+    octave: number;
+  }
+}
+
+export interface KeysPressed {
+  [note: string]: {
+    key: string;
     octave: number;
     pressed: boolean;
-    time: number;
+    start?: number;
+    end?: number;
   };
 };
 
@@ -33,18 +43,21 @@ export interface SoundAction {
 }
 
 export interface MidiState {
-  numMeasures: number;
-  subdiv: number;
   bpm: number;
+  metronome: string;
   mode: string;
+  numMeasures: number;
+  ppq: number;
+  subdiv: number;
 }
 
 export interface MidiAction {
   type: string;
-  numMeasures?: number;
-  subdiv?: number;
   bpm?: number;
   mode?: string;
+  numMeasures?: number;
+  ppq?: number;
+  subdiv?: number;
 }
 
 export interface Midi {
@@ -81,25 +94,42 @@ export interface MidiSettingsProps {
 //Key-Note-Input.tsx interfaces (1)
 export interface KeyNoteInputProps {
   octave: number;
-  onNotePlayed: Function;
   pianoRollKey: any[] | null;
+  pulseNum: number;
+  onControlsPressed: Function;
+  onNotePlayed: Function;
 }
 
 //Timer.tsx interfaces (1)
-export interface TimerProps {
-  mode: string;
-  bpm: number;
+export interface MetronomeProps {
+  metronome: string;
   midiLength: number;
-  time: number;
+  mode: string;
+  ppq: number;
   pulseNum: number;
+  pulseRate: number;
+  handleMetPlay: Function;
+  midiDispatch: React.Dispatch<any>;
+}
+
+export interface TimerProps {
+  bpm: number;
+  mode: string;
+  metronome: string;
+  midiLength: number;
+  ppq: number;
+  pulseNum: number;
+  pulseRate: number;
+  time: number;
   handleSetTime: Function;
   handleSetPulseNum: Function;
-  midiDispatch: React.Dispatch<any>
+  handleMetPlay: Function;
+  midiDispatch: React.Dispatch<any>;
 }
 
 //MidiRecorder.tsx interfaces (3)
 export interface MidiRecord {
-  [time: number]: KeysPressed;
+  [pulse: number]: KeysPressed;
 }
 
 export interface MidiRecorderProps {
@@ -109,26 +139,16 @@ export interface MidiRecorderProps {
       displayName: string;
     }
   }
-  soundState: {
-    sound: any;
-    octave: number;
-    volume: string;
-  };
-  midiState: {
-    numMeasures: any;
-    subdiv: number;
-    bpm: number;
-    mode: string;
-  }
+  midiState: MidiState
   keysPressed: KeysPressed;
-  time: number;
-  handlePlayback: Function;
+  midiLength: number;
+  noteTracks: HTMLCollection | null;
+  pulseNum: number;
+  pulseRate: number
+  noteTracksRef: React.RefObject<HTMLDivElement>;
+  setPlayback: Function;
   soundDispatch: React.Dispatch<any>;
   midiDispatch: React.Dispatch<any>;
-}
-
-export interface obj {
-  [time: number]: KeysPressed;
 }
 
 // Piano.tsx interfaces (5)
@@ -141,21 +161,22 @@ export interface OctavesInViewProps {
 }
 
 export interface PianoProps {
-  soundDetails: Object;
-  sound: string;
-  octave: number;
-  volume: string;
-  mode: string;
   keysPressed: KeysPressed;
-  pianoRollKey: any[];
-  playback: KeysPressed;
   labelsRef: React.RefObject<HTMLDivElement>;
+  mode: string;
+  octave: number;
+  octaveMinMax: number[];
+  playback: KeysPressed;
+  pianoRollKey: any[];
+  sound: string;
+  soundDetails: Object;
+  volume: string;
 }
 
 export interface Keys {
   octave: number;
-  pressed: boolean;
   pianoRoll: boolean;
+  pressed: boolean;
 }
 
 export interface FetchedSounds {
@@ -170,30 +191,33 @@ export interface PrevNotes {
 
 // PianoRoll.tsx interfaces ()
 export interface KeyProps {
-  key: string;
-  qwertyKey: string;
-  note: string;
   altNote: string;
+  key: string;
+  note: string;
   octave: number;
+  qwertyKey: string;
   handleNotePlayed: Function;
 }
 
 export interface NoteLabelsProps {
-  octaveArray: string[];
-  octave: number;
   labelsRef: React.RefObject<HTMLDivElement>;
+  octaveArray: number[];
+  octave: number;
   handleNotePlayed: Function
 }
 
 export interface PianoRollProps {
-  soundDetails: Object;
-  time: number;
   midiLength: number;
-  playback: KeysPressed;
-  sound: string
-  octave: number;
+  noteTracksRef: React.RefObject<HTMLDivElement>;
   numMeasures: number;
+  playback: KeysPressed;
+  pulseNum: number
+  pulseRate: number
+  octave: number;
+  sound: string
+  soundDetails: Object;
   subdiv: number;
+  time: number;
   labelsRef: React.RefObject<HTMLDivElement>;
   handleNotePlayed: Function;
 }
@@ -207,7 +231,11 @@ export interface NoteTrackProps {
 }
 
 export interface GridProps {
-  octaveArray: string[];
+  octaveArray: number[];
   numMeasures: number;
   subdiv: number;
+  noteTracksRef: React.RefObject<HTMLDivElement>;
+  setNoteTracks: Function;
 }
+
+// MidiNotes.tsx interfaces
