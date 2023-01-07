@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #### 1.0.0 (2023-01-12)
 
 ##### New Features
@@ -16,3 +17,20 @@
 
 * **client:**  Exporting is now available. - fix(client): CSS colors are now tied to variables. (f35f779c)
 
+=======
+- Sat Dec 31 10:47:52 2022 -0600 Recorded notes now appear on the grid as they are played; Added a metronome; Added keyboard controls for play, pause, stop, and metronome on/off
+- Tue Dec 27 20:01:20 2022 -0600 Notes played on keyboard can now be recorded and played back; Also added play, pause, and stop controls
+- Sun Dec 25 21:13:07 2022 -0600 Delete .vscode
+- Sun Dec 25 21:10:11 2022 -0600 Converted to typescript.
+- Thu Dec 22 15:15:57 2022 -0600 Added functional timer and replaced unnecessary useState with useReducer
+- Thu Dec 15 08:58:50 2022 -0600 Piano component can now detect when keys are unpressed and will adjust sound accordingly; Set up components for midi recording.
+- Wed Dec 14 12:46:32 2022 -0600 Cleaning up
+- Mon Dec 12 19:02:04 2022 -0600 add/remove measures; grid changes with selected subdivision
+- Sun Dec 11 20:52:03 2022 -0600 .DS_Store & .gitignore
+- Sun Dec 11 20:49:58 2022 -0600 Added all octaves for Piano as well as dynamic options for sound, octave, and volume
+- Sun Dec 11 20:29:17 2022 -0600 Removing nested repos
+- Sun Dec 11 16:01:43 2022 -0600 Added audio files and components
+- Sun Dec 11 15:49:46 2022 -0600 Added all octaves for Piano as well as dynamic options for sound, octave, and volume
+- Fri Nov 18 06:09:04 2022 -0600 Simplified
+- Thu Nov 17 19:18:47 2022 -0600 Progress so far
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)

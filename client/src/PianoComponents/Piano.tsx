@@ -5,6 +5,24 @@ import axios from 'axios';
 import './Piano.css';
 const qwertyNote = require('../Tools/note-to-qwerty-key-obj');
 
+<<<<<<< HEAD
+=======
+// interface IQwertyNote {
+//   key: string;
+//   note: string;
+//   altNote?: string,
+//   octave: number;
+  
+// }
+
+// interface OctavesInViewProps {
+//   octaveMax: number;
+//   labelsRef: React.RefObject<HTMLDivElement>;
+//   octave: number;
+//   handleViewChange: Function;
+// }
+
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
 function OctavesInView(props: OctavesInViewProps) {
   const [toFetch, setToFetch] = useState<number[]>([]);
   const observer = useRef<IntersectionObserver | null>(null);
@@ -27,8 +45,14 @@ function OctavesInView(props: OctavesInViewProps) {
       let toFetchTemp: number[] = [];
       entries.forEach((entry) => {
         if(entry.isIntersecting) {
+<<<<<<< HEAD
           toFetchTemp.push(parseInt(entry.target.getAttribute('id')!.substring(0, 1)));
           // console.log(toFetchTemp)
+=======
+          // console.log(entry.target)
+          toFetchTemp.push(parseInt(entry.target.getAttribute('id')!.substring(0, 1)));
+
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
         }
       });
 
@@ -61,6 +85,7 @@ function OctavesInView(props: OctavesInViewProps) {
 
 function Piano(props: PianoProps) {
   const [fetchedSounds, setFetchedSounds] = useState<FetchedSounds>({});
+<<<<<<< HEAD
   const [prevNotes, setPrevNotes] = useState<PrevNotes>({});
   const [keysRecorded, setKeysRecorded] = useState<string[]>([])
   const [playbackOff, setPlaybackOff] = useState<KeysPressed>({})
@@ -148,6 +173,224 @@ function Piano(props: PianoProps) {
           qwertyOctave = qwertyNote[qwertyKey].octave;
           if(octave < props.octaveMinMax[1]) {
             if(qwertyKey === key && fetchedSounds[octave][props.volume]) {
+=======
+  // const [keysPressed, setKeysPressed] = useState<KeysPressed>({});
+  const [octavesInView, setOctavesInView] = useState([]);
+  const [prevNotes, setPrevNotes] = useState({});
+  const [output, setOutput] = useState<KeysPressed>({...props.playback, ...props.keysPressed})
+
+  useEffect(() => {
+    setOutput(() => ({...props.keysPressed, ...props.playback}))
+  }, [props.keysPressed, props.playback])
+  
+  useEffect(() => {
+    // setOutput((output) => ({...output, ...props.playback}))
+  }, [props.playback])
+
+  // useEffect(() => console.log(prevNotes), [prevNotes])
+
+  //old way to get octaves using sound prop changes
+  useEffect(() => {
+    function fetchSounds() {
+      let octaveExists0 = true;
+      let octaveExists1 = true;
+      let url0 = 'http://localhost:3001/sounds/Instruments/' + props.sound + '/' + props.octave + '/' + props.volume;
+      let url1 = 'http://localhost:3001/sounds/Instruments/' + props.sound + '/' + (props.octave + 1) + '/' + props.volume;
+
+
+      if(props.octave < props.octaveMinMax[0] - 1) {
+        octaveExists0 = false;
+      }
+      if(props.octave + 1 > props.octaveMinMax[1] - 1) {
+        octaveExists1 = false;
+      }
+
+      if(octaveExists0 || octaveExists1) {
+        if(fetchedSounds[props.octave as keyof typeof fetchedSounds]) {
+          Object.keys(fetchedSounds[props.octave as keyof typeof fetchedSounds]).some((key) => {
+            var octave: any = fetchedSounds[props.octave as keyof typeof fetchedSounds][key];
+            if(!octave) {
+              return false;
+            } else if(octave._src === url0 + '.webm' || octave._src === url0 + '.mp3') {
+              var octave0 = octave;
+            } else if(octave._src === url1 || octave._src === url1 + '.webm') {
+              var octave1 = octave;
+            } 
+            return octave0 !== undefined && octave1 !== undefined;
+          });
+        }
+        if(octaveExists0) {
+          var octave0 = new Howl({
+            src: [url0 + '.webm', url0 + '.mp3'],
+            sprite: {
+              C: [0, 4999],
+              'C#': [5000, 4999],
+              D: [10000, 4999],
+              Eb: [15000, 4999],
+              E: [20000, 4999],
+              F: [25000, 4999],
+              'F#': [30000, 4999],
+              G: [35000, 4999],
+              'G#': [40000, 4999],
+              A: [45000, 4999],
+              Bb: [50000, 4999],
+              B: [55000, 5000],
+            },
+            onplayerror: function() {
+              octave0.once('unlock', function() {
+                octave0.play();
+              });
+            }
+          });
+          setFetchedSounds((fetchedSounds) => ({...fetchedSounds, [props.octave]: {[props.volume]: octave0}}));
+        }
+        if(octaveExists1) {
+          var octave1 = new Howl({
+            src: [url1 + '.webm', url1 + '.mp3'],
+            sprite: {
+              C: [0, 4999],
+              'C#': [5000, 4999],
+              D: [10000, 4999],
+              Eb: [15000, 4999],
+              E: [20000, 4999],
+              F: [25000, 4999],
+              'F#': [30000, 4999],
+              G: [35000, 4999],
+              'G#': [40000, 4999],
+              A: [45000, 4999],
+              Bb: [50000, 4999],
+              B: [55000, 5000],
+            },
+          });
+          setFetchedSounds((fetchedSounds) => ({...fetchedSounds, [props.octave + 1]: {[props.volume]: octave1}}));
+        }
+      }
+    }
+    if(props.octaveMinMax.length === 2) {
+      // fetchSounds();
+    }
+  }, [props.sound, props.octave, props.volume]);
+
+  const [domLoaded, setDomLoaded] = useState(false);
+  const listenerCreated = React.useRef(false);
+
+  //attempt to make sounds load on scroll
+  useEffect(() => {
+    // const fetchedSoundsCopy = JSON.parse(JSON.stringify(fetchedSounds));
+    const fetchedSoundsCopy = fetchedSounds;
+    let element = document.getElementById('midi-note-labels');
+    let octaveNotFetched = false;
+    const inView = (rect: DOMRect) => {
+      return (
+        rect.top + rect.height >= 0 &&
+        rect.bottom - rect.height <= (window.innerHeight || document.documentElement.clientHeight)
+      );
+    }
+    const fetchOnScroll = (e: Event) => {
+      console.log(e)
+      if(element?.childElementCount === props.octaveMinMax[1]) {
+        let children = element.children;
+        for(let i = 0; i < children.length; i++) {
+          let child = children[i];
+          let rect = child.getBoundingClientRect();
+          if(inView(rect)) {
+            let octave = parseInt(children[i].getAttribute('id')!.substring(0, 1));
+            let url = 'http://localhost:3001/sounds/Instruments/' + props.sound + '/' + octave + '/' + props.volume;
+            let fsKeys = Object.keys(fetchedSounds);
+            if(fsKeys.length > 0) {
+              fsKeys.some((key: any) => {
+                if(key[props.volume as keyof typeof key]._src !== url + '.webm' || key[props.volume as keyof typeof key]._src !== url + '.mp3') {
+                  octaveNotFetched = true;
+                }
+                if(octaveNotFetched) {
+                  fetchedSoundsCopy[octave] = {[props.volume]: loadSound(url)};
+                  console.log("loaded sound: ", fetchedSoundsCopy[octave]);
+                }
+              });
+            } else {
+              fetchedSoundsCopy[octave] = {[props.volume]: loadSound(url)}
+              console.log("loaded sound: ", fetchedSoundsCopy[octave]);
+            };
+          }
+        }
+        setFetchedSounds(fetchedSoundsCopy);
+      }
+    }
+    // if(element) window.addEventListener('scroll', fetchOnScroll);
+    return (() => {
+      // if(element) window.removeEventListener('scroll', fetchOnScroll);
+    })
+  }, [props.octaveMinMax[1]])
+
+  //old load sounds on click
+  // useEffect(() => {
+  //   if(props.pianoRollKey.length > 0) {
+  //     let octaveSound: any;
+  //     let octaveFetched = false;
+  //     let url = 'http://localhost:3001/sounds/Instruments/' + props.sound + '/' + props.pianoRollKey[1] + '/' + props.volume;
+
+  //     if(fetchedSounds[props.pianoRollKey[1] as keyof typeof fetchedSounds]) {
+  //       Object.keys(fetchedSounds[props.pianoRollKey[1] as keyof typeof fetchedSounds]).some((key) => {
+  //         octaveSound = fetchedSounds[props.pianoRollKey[1] as keyof typeof fetchedSounds][key];
+  //         if(octaveSound._src === url + '.webm' || octaveSound._src === url + '.mp3') {
+  //           octaveFetched = true;
+  //         }
+  //         return octaveFetched;
+  //       });
+  //     }
+  //     if(!octaveFetched) {
+  //       octaveSound = new Howl({
+  //         src: [url + '.webm', url + 'mp3'],
+  //         sprite: {
+  //           C: [0, 4999],
+  //           'C#': [5000, 4999],
+  //           D: [10000, 4999],
+  //           Eb: [15000, 4999],
+  //           E: [20000, 4999],
+  //           F: [25000, 4999],
+  //           'F#': [30000, 4999],
+  //           G: [35000, 4999],
+  //           'G#': [40000, 4999],
+  //           A: [45000, 4999],
+  //           Bb: [50000, 4999],
+  //           B: [55000, 5000],
+  //         },
+  //       });
+  //       // setFetchedOctaves((fetchedSounds) => ({...fetchedSounds, [props.pianoRollKey[1]]: {[props.volume]: octaveSound}}));
+  //     }
+  //   }
+  // }, /*[props.pianoRollKey]*/);
+
+  // attempt at getting rid of lag before button clicks
+  // useEffect(() => {
+  //   if(Object.keys(fetchedSounds).length > 0) {
+  //     let sound1 = fetchedSounds[props.octave][props.volume];
+  //     let id = sound1.play('C');
+  //     sound1.stop(id);
+  //   }
+  // }, [fetchedSounds])
+
+  useEffect(() => {
+    // console.log(props.keysPressed, prevNotes)
+    function playNote() {
+      let key: string;
+      let octave: number;
+      // let key: string;
+      let qwertyOctave: number;
+      let noteName: string;
+      const prevNotesTemp: PrevNotes = prevNotes;
+      Object.keys(output).forEach((noteOct) => {
+        // console.error(output)
+        let key = output[noteOct].key;
+        let note = noteOct.replace(/[0-9]/g, '');
+        let octave = parseInt(noteOct.replace(/\D/g,''));
+        Object.keys(qwertyNote).forEach((qwertyKey) => {
+          qwertyOctave = qwertyNote[qwertyKey].octave;
+          // console.log(octave)
+          if(octave < props.octaveMinMax[1]) {
+            if(qwertyKey === key && fetchedSounds[octave][props.volume]) {
+              // console.log(key, noteOct, octave, qwertyOctave);
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
               (note.includes('#')) ? noteName = note.replace('#', 'sharp') + (octave) : noteName = note.replace('b', 'flat') + (octave);
               let labelElem = document.getElementById(noteName.toLowerCase() + '-label')!;
               if(output[noteOct].pressed && (!prevNotes[noteName as keyof typeof prevNotes] || prevNotes[noteName as keyof typeof prevNotes] === 0)) {
@@ -162,13 +405,18 @@ function Piano(props: PianoProps) {
                     fetchedSounds[octave][props.volume].fade(1, 0, 300, prevNotes[noteName as keyof typeof prevNotes]);
                   }
                 });
+<<<<<<< HEAD
                 prevNotesTemp[noteName] = 0;
+=======
+                prevNotesTemp[noteName as keyof typeof prevNotesTemp] = 0;
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
               }
             }
           }
         });
       })
       setPrevNotes(prevNotesTemp);
+<<<<<<< HEAD
 
       // setPlaybackOff({})
     }
@@ -258,6 +506,19 @@ function Piano(props: PianoProps) {
   useEffect(() => {
     // if(props.pulseNum === unpausePulse) setPlaybackOn({})
   }, [props.pulseNum]);
+=======
+    }
+    if(Object.keys(output).length !== 0) {
+      playNote();
+    }
+  }, [output])
+
+  
+
+  useEffect(() => {
+
+  }, [props.sound, props.octave, props.volume]);
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
 
   function loadSound(url: string) {
     let octaveSound: any;
@@ -277,12 +538,16 @@ function Piano(props: PianoProps) {
           Bb: [50000, 4999],
           B: [55000, 5000],
         },
+<<<<<<< HEAD
         volume: .75,
+=======
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
       });
       return octaveSound;
   }
 
   function setView(toFetch: number[]) {
+<<<<<<< HEAD
     let notFetched: number[] = [];
     // console.log(toFetch)
     for(let i = 0; i < toFetch.length; i++) {
@@ -295,6 +560,28 @@ function Piano(props: PianoProps) {
         setFetchedSounds((fetchedSounds) => ({...fetchedSounds, [toFetch[i]]: {[props.volume]: loadSound(url)}}))
       }
     }
+=======
+    // console.log(toFetch)
+    let notFetched: number[] = [];
+    // let fsCopy = fetchedSounds;
+    // console.log("current sounds", fetchedSounds)
+    for(let i = 0; i < toFetch.length; i++) {
+      let url = 'http://localhost:3001/sounds/Instruments/' + props.sound + '/' + toFetch[i] + '/' + props.volume;
+      // console.log(!fetchedSounds[toFetch[i]])
+      if(!fetchedSounds[toFetch[i]] || fetchedSounds[toFetch[i]][props.volume]._src != url + '.webm' || fetchedSounds[toFetch[i]][props.volume]._src != url + '.mp3') {
+        // console.log(toFetch[i])
+        notFetched.push(toFetch[i]);
+      }
+      
+      // console.log(notFetched, toFetch)
+      if(notFetched.length > 0) {
+        // console.error('before', fetchedSounds)
+        setFetchedSounds((fetchedSounds) => ({...fetchedSounds, [toFetch[i]]: {[props.volume]: loadSound(url)}}))
+        // console.error('after', fetchedSounds)
+      }
+    }
+    // if(toFetch.length > 0) setFetchedSounds(fetchedSounds)
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
   }
 
   return (

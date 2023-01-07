@@ -19,8 +19,13 @@ export interface QwertyNoteObj {
 export interface KeyPressed {
   key?: string
   pressed: boolean;
+<<<<<<< HEAD
   start: number;
   end: number;
+=======
+  start?: number;
+  end?: number;
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
 }
 
 export interface KeysPressed {
@@ -57,21 +62,32 @@ export interface MidiState {
 export interface MidiAction {
   type: string;
   bpm?: number;
+<<<<<<< HEAD
   mode: string;
+=======
+  mode?: string;
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
   numMeasures?: number;
   ppq?: number;
   subdiv?: number;
 }
 
 export interface ControlsState {
+<<<<<<< HEAD
   export: boolean;
+=======
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
   undo: boolean;
 }
 
 export interface ControlsAction {
   type: string;
+<<<<<<< HEAD
   export: boolean;
   undo?: boolean;
+=======
+  undo: boolean;
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
 }
 
 export interface Midi {
@@ -143,7 +159,11 @@ export interface TimerProps {
 
 //MidiRecorder.tsx interfaces (3)
 export interface MidiRecorded {
+<<<<<<< HEAD
   [pulse: string]: KeysPressed;
+=======
+  [pulse: number]: KeysPressed;
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
 }
 
 export interface MidiRecorderProps {
@@ -164,6 +184,10 @@ export interface MidiRecorderProps {
   controlsDispatch: React.Dispatch<any>;
   midiDispatch: React.Dispatch<any>;
   setPlayback: Function;
+<<<<<<< HEAD
+=======
+  soundDispatch: React.Dispatch<any>;
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
 }
 
 // Piano.tsx interfaces (5)
@@ -176,13 +200,20 @@ export interface OctavesInViewProps {
 }
 
 export interface PianoProps {
+<<<<<<< HEAD
   pulseNum: number;
+=======
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
   keysPressed: KeysPressed;
   labelsRef: React.RefObject<HTMLDivElement>;
   mode: string;
   octave: number;
   octaveMinMax: number[];
+<<<<<<< HEAD
   playback: MidiRecorded;
+=======
+  playback: KeysPressed;
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
   sound: string;
   soundDetails: Object;
   volume: string;
@@ -195,7 +226,11 @@ export interface Keys {
 }
 
 export interface FetchedSounds {
+<<<<<<< HEAD
   [octaves: string]: {
+=======
+  [octaves: number]: {
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
     [volume: string]: any;
   };
 }
@@ -257,7 +292,11 @@ export interface GridProps {
 export interface MidiNoteInfo {
   [noteStart: string]: {
     key: string;
+<<<<<<< HEAD
     keyPressed: KeyPressed;
+=======
+    keyPressed?: KeyPressed;
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
     noteTrackId: string;
     noteTracksRef: React.RefObject<HTMLDivElement>;
     props: {
@@ -294,7 +333,11 @@ export interface MidiNotes {
 export interface Widths {
   [noteStart: string]: {
     start: number;
+<<<<<<< HEAD
     end: number;
+=======
+    end?: number;
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
   };
 }
 

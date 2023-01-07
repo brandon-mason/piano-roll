@@ -78,6 +78,11 @@ function Timer(props: TimerProps) {
       clearInterval(date);
       if(props.pulseNum >= props.midiLength * props.pulseRate || props.mode === 'stop') {
         console.log('reset timer')
+<<<<<<< HEAD
+=======
+        props.handleSetPulseNum(0);
+        props.handleSetTime(0);
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
         return;
       }
     }

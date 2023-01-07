@@ -10,4 +10,8 @@ const workercode = () => {
   }
 };
 
+<<<<<<< HEAD
 module.exports = workercode
+=======
+module.exports = 
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)

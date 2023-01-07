@@ -5,6 +5,7 @@ const qwertyNote = require('../Tools/note-to-qwerty-key');
 
 function Key(props: KeyProps) {
   const ref = useRef<HTMLButtonElement>(null);
+<<<<<<< HEAD
   useEffect(() => {
     const onPointerDown = () => {
       let input = document.getElementById('key-note-input');
@@ -14,17 +15,36 @@ function Key(props: KeyProps) {
       });
       console.log(props.octave)
       if(input) input.dispatchEvent(keydown);
+=======
+
+  useEffect(() => {
+    const onPointerDown = () => {
+      let input = document.getElementById('key-note-input');
+      let keydownE = new KeyboardEvent('keydown', {
+        key: props.qwertyKey,
+        code: props.octave + ' ' + true,
+      });
+      if(input) input.dispatchEvent(keydownE);
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
       // props.handleNotePlayed([props.qwertyKey, parseInt(props.octave), true]);
     }
 
     const onPointerUp = () => {
       let input = document.getElementById('key-note-input');
+<<<<<<< HEAD
       let keyup = new KeyboardEvent('keyup', {
         key: props.qwertyKey,
         code: props.octave.toString(),
       });
       console.log(props.octave)
       if(input) input.dispatchEvent(keyup);
+=======
+      let keydownE = new KeyboardEvent('keyup', {
+        key: props.qwertyKey,
+        code: props.octave + ' ' + false,
+      });
+      if(input) input.dispatchEvent(keydownE);
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
       // props.handleNotePlayed([props.qwertyKey, parseInt(props.octave), false]);
     }
 
@@ -50,11 +70,16 @@ function Key(props: KeyProps) {
 
 function NoteLabels(props: NoteLabelsProps) {
   const memoNoteLabels = useMemo<JSX.Element[]>(() => {
+<<<<<<< HEAD
     let gridLabelOctaves: JSX.Element[] = [];
+=======
+    let gridLabelOctaves = [];
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
     let gridLabels: JSX.Element[] = [];
 
     for(var x = props.octaveArray.length - 1; x >= 0; x--) {
       for(var y = 11; y >= 0; y--) {
+<<<<<<< HEAD
         gridLabels.push(<Key key={qwertyNote[y].note + props.octaveArray[x]} qwertyKey={qwertyNote[y].key} note={qwertyNote[y].note} altNote={qwertyNote[y].altNote} octave={props.octaveArray[x]} />);
         gridLabelOctaves.push(<Key key={qwertyNote[y].note + props.octaveArray[x]} qwertyKey={qwertyNote[y].key} note={qwertyNote[y].note} altNote={qwertyNote[y].altNote} octave={props.octaveArray[x]} />);
       }
@@ -66,6 +91,19 @@ function NoteLabels(props: NoteLabelsProps) {
     if(gridLabelOctaves.length === props.octaveArray.length) {
       return gridLabelOctaves;
     }
+=======
+        gridLabelOctaves.push(<Key key={qwertyNote[y].note + props.octaveArray[x]} qwertyKey={qwertyNote[y].key} note={qwertyNote[y].note} altNote={qwertyNote[y].altNote} octave={props.octaveArray[x]} />);
+      }
+
+      gridLabels.push(<div key={x} id={`${x}-octave`} className='note-label-octaves'>{gridLabelOctaves}</div>);
+      gridLabelOctaves = [];
+    }
+    
+    if(gridLabels.length === props.octaveArray.length) {
+      return gridLabels;
+    }
+
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
     return [];
   }, [props.octaveArray]);
 
@@ -76,6 +114,13 @@ function NoteLabels(props: NoteLabelsProps) {
       element.scrollIntoView({block: 'center'});
     }
   }, [memoNoteLabels]);
+<<<<<<< HEAD
+=======
+
+  function sendNoteProps(keyPressed: any[]) {
+    // props.handleNotePlayed(keyPressed);
+  }
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
   return <div ref={props.labelsRef} id='midi-note-labels'>{memoNoteLabels}</div>
 }
 

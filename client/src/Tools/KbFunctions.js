@@ -32,7 +32,11 @@ function KbFunctions(props) {
         props.selectorsRef.current.children[i].className = `stop-button${(props.mode === 'stop') ? ' active' : ''}`;
       }
     }
+<<<<<<< HEAD
     props.midiDispatch({type: 'mode', mode: (props.mode === 'keyboard') ? 'stop' : 'keyboard'})
+=======
+    props.midiDispatch({type: 'mode', mode: 'stop'})
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
     setTimeout(() => props.midiDispatch({type: 'mode', mode: 'keyboard'}));
     props.clearControls();
   }
@@ -60,7 +64,11 @@ function KbFunctions(props) {
   function octaveUp() {
     for(let i = 0; i < props.selectorsRef.current.children.length; i++) {
       if(props.selectorsRef.current.children[i].id === 'octave-selector') {
+<<<<<<< HEAD
         let newOctave = parseInt(props.selectorsRef.current.children[i].value) + 1;
+=======
+        let newOctave = (parseInt(props.selectorsRef.current.children[i].value) + 1).toString();
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
         if(newOctave < props.octaveMinMax[1]) props.soundDispatch({type: 'octave', octave: newOctave})
       }
     }
@@ -70,7 +78,11 @@ function KbFunctions(props) {
   function octaveDown() {
     for(let i = 0; i < props.selectorsRef.current.children.length; i++) {
       if(props.selectorsRef.current.children[i].id === 'octave-selector') {
+<<<<<<< HEAD
         let newOctave = parseInt(props.selectorsRef.current.children[i].value) - 1;
+=======
+        let newOctave = (parseInt(props.selectorsRef.current.children[i].value) - 1).toString();
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
         if(newOctave >= props.octaveMinMax[0] - 1) props.soundDispatch({type: 'octave', octave: newOctave})
       }
     }

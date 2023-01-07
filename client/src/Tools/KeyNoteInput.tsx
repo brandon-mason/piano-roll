@@ -28,10 +28,15 @@ function KeyNoteInput(props: KeyNoteInputProps) {
       }
       let octave = props.octave + qwertyNote[e.key.toLowerCase()].octave;
       let pressed = true;
+<<<<<<< HEAD
       console.log(e.code)
       if(parseInt(e.code) - parseInt(e.code) === 0) {
         octave = parseInt(e.code);
         console.log(octave)
+=======
+      if(parseInt(e.code)) {
+        octave = parseInt(e.code);
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
       }
       let note = qwertyNote[e.key.toLowerCase()].note; // toLowerCase() is for caps lock
       
@@ -45,16 +50,24 @@ function KeyNoteInput(props: KeyNoteInputProps) {
       if(!Object.keys(qwertyNote).includes(e.key)) return;
       let octave = props.octave + qwertyNote[e.key.toLowerCase()].octave;
       let pressed = false
+<<<<<<< HEAD
       if(parseInt(e.code) - parseInt(e.code) === 0) {
+=======
+      if(parseInt(e.code)) {
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
         octave = parseInt(e.code);
       }
       // console.warn('KEY UP')
       let note = qwertyNote[e.key.toLowerCase()].note;
+<<<<<<< HEAD
       if(props.pulseNum === 0) {
         setController((controller) => ({...controller, [note + octave]: {...controller[note + octave], ...{key: e.key.toLowerCase(), pressed: false, end: props.pulseNum}}}));
       } else {
         setController((controller) => ({...controller, [note + octave]: {...controller[note + octave], ...{key: e.key.toLowerCase(), pressed: false, end: props.pulseNum}}}));
       }
+=======
+      setController((controller) => ({...controller, [note + octave]: {...controller[note + octave], ...{key: e.key.toLowerCase(), pressed: false, end: props.pulseNum}}}));
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
     }
 
     const element = ref.current!;
@@ -91,7 +104,11 @@ function KeyNoteInput(props: KeyNoteInputProps) {
 
   useEffect(() => {
     props.onNotePlayed(controller);
+<<<<<<< HEAD
     // console.warn(controllers)
+=======
+    // console.warn(controller)
+>>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
     // eslint-disable-next-line
   }, [controller]);
 
