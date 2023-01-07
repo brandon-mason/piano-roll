@@ -1,18 +1,30 @@
 import { useState, useReducer, useEffect, useRef, useMemo } from 'react'
 import axios from 'axios';
+<<<<<<< HEAD
 import Howler from 'howler';
 import { Reducer, SoundState, SoundAction, MidiState, MidiAction, KeysPressed, ControlsState, ControlsAction, MidiRecorded } from './Tools/Interfaces';
+=======
+import { Reducer, SoundState, SoundAction, MidiState, MidiAction, KeysPressed, ControlsState, ControlsAction } from './Tools/Interfaces';
+>>>>>>> 71ede2b (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
 import SoundSettings from './SettingsComponents/SoundSettings'
 import MidiSettings from './SettingsComponents/MidiSettings'
 import TimerButtons from './SettingsComponents/TimerButtons'
 import KbFunctions from './Tools/KbFunctions'
 import KeyNoteInput from './Tools/KeyNoteInput';
 import Timer from './Tools/Timer';
+<<<<<<< HEAD
 import MidiRecorder from './MidiComponents/MidiRecorderCp';
+=======
+import MidiRecorder from './MidiComponents/MidiRecorder';
+>>>>>>> 71ede2b (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
 import Piano from './PianoComponents/Piano';
 import PianoRoll from './PianoComponents/PianoRoll';
 import Grid from './MidiComponents/Grid';
 import { ErrorBoundary } from './Tools/ErrorBoundary';
+<<<<<<< HEAD
+=======
+
+>>>>>>> 71ede2b (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
 import './App.css';
 var JZZ = require('jzz');
 require('jzz-midi-smf')(JZZ);
@@ -51,8 +63,11 @@ function midiReducer(state: MidiState, action: any) {
 
 function controlsReducer(state: ControlsState, action: any) {
   switch(action.type) {
+<<<<<<< HEAD
     case 'export':
       return {...state, export: action.export};
+=======
+>>>>>>> 71ede2b (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
     case 'undo':
       return {...state, undo: action.undo};
     default:
@@ -63,8 +78,13 @@ function controlsReducer(state: ControlsState, action: any) {
 function App() {
   const [soundDetails, setSoundDetails] = useState({});
   const [soundState, soundDispatch] = useReducer<Reducer<SoundState, SoundAction>>(soundReducer, {octave: 3, sound: 'GrandPiano', volume: '2mf'});
+<<<<<<< HEAD
   const [midiState, midiDispatch] = useReducer<Reducer<MidiState, MidiAction>>(midiReducer, {bpm: 120, metronome: 'off', mode: 'keyboard', numMeasures: 4, ppq: 96,  subdiv: 4});
   const [controlsState, controlsDispatch] = useReducer<Reducer<ControlsState, ControlsAction>>(controlsReducer, {export: false, undo: false});
+=======
+  const [midiState, midiDispatch] = useReducer<Reducer<MidiState, MidiAction>>(midiReducer, {bpm: 120, metronome: 'off', mode: 'keyboard', numMeasures: 4, ppq: 32,  subdiv: 4});
+  const [controlsState, controlsDispatch] = useReducer<Reducer<ControlsState, ControlsAction>>(controlsReducer, {undo: false});
+>>>>>>> 71ede2b (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
   const [octaveMinMax, setOctaveMinMax] = useState([0, 0]);
   const [controlsPressed, setControlsPressed] = useState(['', false])
   const selectorsRef = useRef(null);
@@ -72,7 +92,10 @@ function App() {
   const midiLength = useMemo<number>(() => midiState.numMeasures * 4 / (midiState.bpm / 60 / 1000), [midiState.bpm, midiState.numMeasures]); // number of beats / bpm in ms
   const pulseRate = useMemo<number>(() => midiState.ppq * midiState.bpm / 60 / 1000, [midiState.bpm, midiState.ppq]); // ppq / bpm in ms
   const timerRef = useRef(null);
+<<<<<<< HEAD
   const noteUnpressedRef = useRef<string[]>([]);
+=======
+>>>>>>> 71ede2b (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
   const [time, setTime] = useState(0); // 24 * 120 /60/1000 * 16 /(120/60/1000)
   const [pulseNum, setPulseNum] = useState(0);
   const [keysPressed, setKeysPressed] = useState<KeysPressed>({});
@@ -87,8 +110,13 @@ function App() {
 
   // const [soundDetails, setSoundDetails] = useState({});
   useEffect(() => {
+<<<<<<< HEAD
     // console.log(playback)
   }, [playback])
+=======
+    // console.log(midiState.mode)
+  }, [midiState.mode])
+>>>>>>> 71ede2b (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
 
   useEffect(() => {
     async function getSoundDetails() {
@@ -263,9 +291,15 @@ function App() {
       <KeyNoteInput octave={soundState.octave} pianoRollKey={pianoRollKeyRef.current} pulseNum={pulseNum} onControlsPressed={setControlsPressed} onNotePlayed={setKeysPressed} />
       <Timer bpm={midiState.bpm} metronome={midiState.metronome} midiLength={midiLength} time={time} timerRef={timerRef} mode={midiState.mode} ppq={midiState.ppq} pulseNum={pulseNum} pulseRate={pulseRate} handleMetPlay={metPlayed} handleSetTime={setTime} handleSetPulseNum={setPulseNum} />
       <ErrorBoundary>
+<<<<<<< HEAD
         <MidiRecorder soundDetails={soundDetails} controlsState={controlsState} keysPressed={keysPressed} midiLength={midiLength} midiState={midiState} pulseNum={pulseNum} noteTracks={noteTracks} noteTracksRef={noteTracksRef} pulseRate={pulseRate} controlsDispatch={controlsDispatch} midiDispatch={midiDispatch} setPlayback={setPlayback} />
       </ErrorBoundary>
       <Piano pulseNum={pulseNum} soundDetails={soundDetails} sound={soundState.sound} octave={soundState.octave} octaveMinMax={octaveMinMax} volume={soundState.volume} mode={midiState.mode} keysPressed={keysPressed} playback={playback} labelsRef={labelsRef} />
+=======
+        <MidiRecorder soundDetails={soundDetails} controlsState={controlsState} keysPressed={keysPressed} midiLength={midiLength} midiState={midiState} pulseNum={pulseNum} noteTracks={noteTracks} noteTracksRef={noteTracksRef} pulseRate={pulseRate} controlsDispatch={controlsDispatch} midiDispatch={midiDispatch} setPlayback={setPlayback} soundDispatch={soundDispatch} />
+      </ErrorBoundary>
+      <Piano soundDetails={soundDetails} sound={soundState.sound} octave={soundState.octave} octaveMinMax={octaveMinMax} volume={soundState.volume} mode={midiState.mode} keysPressed={keysPressed} playback={playback} labelsRef={labelsRef} />
+>>>>>>> 71ede2b (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
     </div>
   );
 }

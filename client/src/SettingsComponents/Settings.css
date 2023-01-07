@@ -1,5 +1,9 @@
 #selectors {
+<<<<<<< HEAD
   background-color: var(--main-color);
+=======
+  background-color: aquamarine;
+>>>>>>> 71ede2b (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
   position: fixed;
   top: 0;
   width: 100vw;

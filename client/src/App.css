@@ -1,7 +1,11 @@
 .App {
   text-align: center;
+<<<<<<< HEAD
   --main-color: aquamarine;
   background-color: var(--main-color);
+=======
+  background-color: aquamarine;
+>>>>>>> 71ede2b (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
 }
 
 @media (prefers-reduced-motion: no-preference) {

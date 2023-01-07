@@ -49,7 +49,10 @@ function MidiSettings(props: MidiSettingsProps) {
         <option value='32'>1/32</option>
       </select>
       <button onClick={() => props.controlsDispatch({type: 'undo', undo: true})}>Undo</button>
+<<<<<<< HEAD
       <button onClick={() => props.controlsDispatch({type: 'export', export: true})}>Export</button>
+=======
+>>>>>>> 71ede2b (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
     </>
     )
 }
