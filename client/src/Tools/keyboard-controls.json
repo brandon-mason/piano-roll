@@ -1,0 +1,8 @@
+{
+  " ": {"plain": "play"},
+  "b": {"plain": "stop"},
+  "n": {"plain": "record"},
+  "m": {"plain": "metronome"},
+  "x": {"plain": "octaveUp"},
+  "z": {"plain": "octaveDown", "ctrl": "undo"}
+}

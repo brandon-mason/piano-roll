@@ -1,0 +1,17 @@
+[
+{"key": "a", "note": "C", "octave": 0},
+{"key": "w", "note": "C#", "altNote": "Db", "octave": 0},
+{"key": "s", "note": "D", "octave": 0},
+{"key": "e", "note": "Eb", "altNote": "D#", "octave": 0},
+{"key": "d", "note": "E", "octave": 0},
+{"key": "f", "note": "F", "octave": 0},
+{"key": "t", "note": "F#", "octave": 0},
+{"key": "g", "note": "G", "octave": 0},
+{"key": "y", "note": "G#", "altNote": "Ab", "octave": 0},
+{"key": "h", "note": "A", "octave": 0},
+{"key": "u", "note": "Bb", "altNote": "A#", "octave": 0},
+{"key": "j", "note": "B", "octave": 0},
+{"key": "k", "note": "C", "octave": 1},
+{"key": "o", "note": "C#", "altNote": "Db", "octave": 1},
+{"key": "l", "note": "D", "octave": 1}
+]

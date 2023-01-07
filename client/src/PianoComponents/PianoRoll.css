@@ -1,0 +1,16 @@
+  /* #track-position {
+    display: inline;
+    grid-area: 1 / 2;
+    position: sticky;
+    top: 0;
+    width: 3px;
+    border-right: solid 3px black;
+    z-index: 2;
+  } */
+
+#bpm-slider {
+  position: relative;
+  height: 20px;
+  z-index: 0;
+}
+
