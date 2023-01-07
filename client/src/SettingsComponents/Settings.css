@@ -1,9 +1,14 @@
 #selectors {
   background-color: aquamarine;
-  position: sticky;
+  position: fixed;
   top: 0;
+  width: 100vw;
   transform-style: preserve-3d;
   z-index: 3;
+}
+
+#timer-buttons {
+  display: inline-block;
 }
 
 .stop-button {

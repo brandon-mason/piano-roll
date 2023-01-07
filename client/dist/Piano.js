@@ -259,14 +259,16 @@ function Piano(props) {
             let noteName;
             const prevNotesTemp = prevNotes;
             Object.keys(output).forEach((noteOct) => {
-                // console.log(noteOct)
+                // console.error(output)
                 let key = output[noteOct].key;
                 let note = noteOct.replace(/[0-9]/g, '');
                 let octave = parseInt(noteOct.replace(/\D/g, ''));
                 qwertyNote.forEach((qwerty) => {
                     qwertyOctave = qwerty.octave;
+                    // console.log(octave)
                     if (octave + qwertyOctave < props.octaveMinMax[1]) {
                         if (key === qwerty.key && fetchedSounds[octave + qwertyOctave][props.volume]) {
+                            // console.log(key, noteOct, octave, qwertyOctave);
                             (note.includes('#')) ? noteName = note.replace('#', 'sharp') + (octave + qwertyOctave) : noteName = note.replace('b', 'flat') + (octave + qwertyOctave);
                             let labelElem = document.getElementById(noteName.toLowerCase() + '-label');
                             if (output[noteOct].pressed && (!prevNotes[noteName] || prevNotes[noteName] === 0)) {

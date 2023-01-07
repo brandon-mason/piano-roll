@@ -1,16 +1,18 @@
 import { useState, useReducer, useEffect, useRef, useMemo } from 'react'
 import axios from 'axios';
-import { Reducer, SoundState, SoundAction, MidiState, MidiAction, KeysPressed } from './Interfaces';
+import { Reducer, SoundState, SoundAction, MidiState, MidiAction, KeysPressed, ControlsState, ControlsAction } from './Tools/Interfaces';
 import SoundSettings from './SettingsComponents/SoundSettings'
 import MidiSettings from './SettingsComponents/MidiSettings'
 import TimerButtons from './SettingsComponents/TimerButtons'
-import KbFunctions from './ToolComponents/KbFunctions'
-import KeyNoteInput from './ToolComponents/KeyNoteInput';
-import Timer from './ToolComponents/Timer';
-import MidiRecorder from './MidiRecorder';
-import Piano from './Piano';
-import PianoRoll from './PianoRoll';
-import Grid from './Grid';
+import KbFunctions from './Tools/KbFunctions'
+import KeyNoteInput from './Tools/KeyNoteInput';
+import Timer from './Tools/Timer';
+import MidiRecorder from './MidiComponents/MidiRecorder';
+import Piano from './PianoComponents/Piano';
+import PianoRoll from './PianoComponents/PianoRoll';
+import Grid from './MidiComponents/Grid';
+import { ErrorBoundary } from './Tools/ErrorBoundary';
+
 import './App.css';
 
 function soundReducer(state: SoundState, action: any) {
@@ -43,17 +45,27 @@ function midiReducer(state: MidiState, action: any) {
   }
 }
 
+function controlsReducer(state: ControlsState, action: any) {
+  switch(action.type) {
+    case 'undo':
+      return {...state, undo: action.undo};
+    default:
+      return state;
+  }
+}
+
 function App() {
   const [soundDetails, setSoundDetails] = useState({});
   const [soundState, soundDispatch] = useReducer<Reducer<SoundState, SoundAction>>(soundReducer, {octave: 3, sound: 'GrandPiano', volume: '2mf'});
   const [midiState, midiDispatch] = useReducer<Reducer<MidiState, MidiAction>>(midiReducer, {bpm: 120, metronome: 'off', mode: 'keyboard', numMeasures: 4, ppq: 32,  subdiv: 4});
+  const [controlsState, controlsDispatch] = useReducer<Reducer<ControlsState, ControlsAction>>(controlsReducer, {undo: false});
   const [octaveMinMax, setOctaveMinMax] = useState([0, 0]);
-  const [controlsPressed, setControlsPressed] = useState('')
-  const selectorsRef = useRef(null);;
-  const ppq = 24;
+  const [controlsPressed, setControlsPressed] = useState(['', false])
+  const selectorsRef = useRef(null);
 
   const midiLength = useMemo<number>(() => midiState.numMeasures * 4 / (midiState.bpm / 60 / 1000), [midiState.bpm, midiState.numMeasures]); // number of beats / bpm in ms
   const pulseRate = useMemo<number>(() => midiState.ppq * midiState.bpm / 60 / 1000, [midiState.bpm, midiState.ppq]); // ppq / bpm in ms
+  const timerRef = useRef(null);
   const [time, setTime] = useState(0); // 24 * 120 /60/1000 * 16 /(120/60/1000)
   const [pulseNum, setPulseNum] = useState(0);
   const [keysPressed, setKeysPressed] = useState<KeysPressed>({});
@@ -68,12 +80,12 @@ function App() {
 
   // const [soundDetails, setSoundDetails] = useState({});
   useEffect(() => {
-    // console.error(midiState)
-  }, [midiState])
+    // console.log(midiState.mode)
+  }, [midiState.mode])
 
   useEffect(() => {
     async function getSoundDetails() {
-      const url = 'http://localhost:3001/api/sounds/';
+      const url = 'http://localhost:3001/api/sounds/Instruments';
       const options = {
         method: 'GET',
         mode: 'cors',
@@ -139,7 +151,7 @@ function App() {
   }
 
   function clearControls() {
-    setControlsPressed('');
+    setControlsPressed(['', false]);
   }
 
   const bgSizeTrack = 100 / midiState.numMeasures;
@@ -148,20 +160,24 @@ function App() {
     <div className="App">
       <div ref={selectorsRef} id='selectors'>
         <SoundSettings soundDetails={soundDetails} sound={soundState.sound} octave={soundState.octave} volume={soundState.volume} pianoDispatch={soundDispatch} />
-        <MidiSettings soundDetails={soundDetails} numMeasures={midiState.numMeasures} subdiv={midiState.subdiv} bpm={midiState.bpm} mode={midiState.mode} midiDispatch={midiDispatch} />
-        <TimerButtons metPlay={metPlay} metronome={midiState.metronome} mode={midiState.mode} pulseNum={pulseNum} midiDispatch={midiDispatch} />
-        <KbFunctions controlsPressed={controlsPressed} metronome={midiState.metronome} mode={midiState.mode} octaveMinMax={octaveMinMax} selectorsRef={selectorsRef} clearControls={clearControls}midiDispatch={midiDispatch} soundDispatch={soundDispatch} />
+        <MidiSettings soundDetails={soundDetails} numMeasures={midiState.numMeasures} subdiv={midiState.subdiv} bpm={midiState.bpm} mode={midiState.mode} controlsDispatch={controlsDispatch} midiDispatch={midiDispatch} />
+        <div ref={timerRef} id='timer-buttons'>
+          <TimerButtons metPlay={metPlay} metronome={midiState.metronome} mode={midiState.mode} pulseNum={pulseNum} midiDispatch={midiDispatch} />
+          <KbFunctions controlsPressed={controlsPressed} metronome={midiState.metronome} mode={midiState.mode} octaveMinMax={octaveMinMax} selectorsRef={selectorsRef} clearControls={clearControls} controlsDispatch={controlsDispatch} midiDispatch={midiDispatch} soundDispatch={soundDispatch} />
+        </div>
       </div>
       <div id='midi' >
-        <PianoRoll labelsRef={labelsRef} midiLength={midiLength} noteTracksRef={noteTracksRef} numMeasures={midiState.numMeasures} octave={soundState.octave} playback={playback} pulseNum={pulseNum} pulseRate={pulseRate} sound={soundState.sound} soundDetails={soundDetails} subdiv={midiState.subdiv} time={pulseNum} handleNotePlayed={pianoRollKeysPressed} />
+        <PianoRoll labelsRef={labelsRef} midiLength={midiLength} noteTracksRef={noteTracksRef} numMeasures={midiState.numMeasures} octave={soundState.octave} pulseNum={pulseNum} pulseRate={pulseRate} sound={soundState.sound} soundDetails={soundDetails} subdiv={midiState.subdiv} time={pulseNum} handleNotePlayed={pianoRollKeysPressed} />
         <div id='midi-track' style={{backgroundSize: bgSizeTrack + '%'}}>
-          <Grid octaveArray={getOctaveArray()} noteTracksRef={noteTracksRef} numMeasures={midiState.numMeasures} subdiv={midiState.subdiv} setNoteTracks={setNoteTracks} />
+          <Grid octaveArray={getOctaveArray()} noteTracksRef={noteTracksRef} midiLength={midiLength} numMeasures={midiState.numMeasures} pulseNum={pulseNum} pulseRate={pulseRate}  subdiv={midiState.subdiv} setNoteTracks={setNoteTracks} />
         </div>
       </div>
       <KeyNoteInput octave={soundState.octave} pianoRollKey={pianoRollKeyRef.current} pulseNum={pulseNum} onControlsPressed={setControlsPressed} onNotePlayed={setKeysPressed} />
-      <Timer bpm={midiState.bpm} metronome={midiState.metronome} midiLength={midiLength} time={time} mode={midiState.mode} ppq={ppq} pulseNum={pulseNum} pulseRate={pulseRate} handleMetPlay={metPlayed} handleSetTime={setTime} handleSetPulseNum={setPulseNum} midiDispatch={midiDispatch} />
-      <MidiRecorder soundDetails={soundDetails} midiState={midiState} keysPressed={keysPressed} midiLength={midiLength} pulseNum={pulseNum} pulseRate={pulseRate} noteTracks={noteTracks} noteTracksRef={noteTracksRef} setPlayback={setPlayback} soundDispatch={soundDispatch} midiDispatch={midiDispatch}/>
-      <Piano soundDetails={soundDetails} sound={soundState.sound} octave={soundState.octave} octaveMinMax={octaveMinMax} volume={soundState.volume} mode={midiState.mode} keysPressed={keysPressed} pianoRollKey={pianoRollKey} playback={playback} labelsRef={labelsRef} />
+      <Timer bpm={midiState.bpm} metronome={midiState.metronome} midiLength={midiLength} time={time} timerRef={timerRef} mode={midiState.mode} ppq={midiState.ppq} pulseNum={pulseNum} pulseRate={pulseRate} handleMetPlay={metPlayed} handleSetTime={setTime} handleSetPulseNum={setPulseNum} />
+      <ErrorBoundary>
+        <MidiRecorder soundDetails={soundDetails} controlsState={controlsState} keysPressed={keysPressed} midiLength={midiLength} midiState={midiState} pulseNum={pulseNum} noteTracks={noteTracks} noteTracksRef={noteTracksRef} pulseRate={pulseRate} controlsDispatch={controlsDispatch} midiDispatch={midiDispatch} setPlayback={setPlayback} soundDispatch={soundDispatch} />
+      </ErrorBoundary>
+      <Piano soundDetails={soundDetails} sound={soundState.sound} octave={soundState.octave} octaveMinMax={octaveMinMax} volume={soundState.volume} mode={midiState.mode} keysPressed={keysPressed} playback={playback} labelsRef={labelsRef} />
     </div>
   );
 }

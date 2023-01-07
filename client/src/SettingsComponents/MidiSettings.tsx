@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MidiSettingsProps } from '../Interfaces';
+import { MidiSettingsProps } from '../Tools/Interfaces';
 // import  {DraggableNumber} from './libs/draggable-number'
 import './Settings.css';
 
@@ -48,6 +48,7 @@ function MidiSettings(props: MidiSettingsProps) {
         <option value='16'>1/16</option>
         <option value='32'>1/32</option>
       </select>
+      <button onClick={() => props.controlsDispatch({type: 'undo', undo: true})}>Undo</button>
     </>
     )
 }

@@ -17,10 +17,11 @@ function KeyNoteInput(props) {
                 return;
             }
             ;
+            const control = e.metaKey || e.ctrlKey;
             // console.log(e.key)
             if (Object.keys(kbControls).includes(e.key)) {
                 e.preventDefault();
-                props.onControlsPressed(e.key);
+                props.onControlsPressed([e.key, control]);
             }
             if (!Object.keys(qwertyNote).includes(e.key)) {
                 return;

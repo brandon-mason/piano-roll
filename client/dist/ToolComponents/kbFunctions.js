@@ -4,18 +4,20 @@ const react_1 = require("react");
 const kbControls = require('../keyboard-controls');
 function KbFunctions(props) {
     (0, react_1.useLayoutEffect)(() => {
-        if (props.controlsPressed === ' ')
-            play();
-        if (props.controlsPressed === 'b')
-            stop();
-        if (props.controlsPressed === 'n')
-            record();
-        if (props.controlsPressed === 'm')
-            metronome();
-        if (props.controlsPressed === 'x')
-            octaveUp();
-        if (props.controlsPressed === 'z')
-            octaveDown();
+        if (props.controlsPressed[1]) {
+            if (props.controlsPressed[0] === ' ')
+                play();
+            if (props.controlsPressed[0] === 'b')
+                stop();
+            if (props.controlsPressed[0] === 'n')
+                record();
+            if (props.controlsPressed[0] === 'm')
+                metronome();
+            if (props.controlsPressed[0] === 'x')
+                octaveUp();
+            if (props.controlsPressed[0] === 'z')
+                octaveDown();
+        }
     }, [props.controlsPressed]);
     function play() {
         for (let i = 0; i < props.selectorsRef.current.children.length; i++) {
@@ -72,6 +74,8 @@ function KbFunctions(props) {
             }
         }
         props.clearControls();
+    }
+    function undo() {
     }
     return null;
 }

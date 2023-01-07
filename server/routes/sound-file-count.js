@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 const path = require('path');
-const soundsDir = path.join(path.resolve(__dirname, '..'), '/sounds');
+const soundsDir = path.join(path.resolve(__dirname, '..'), '/sounds/Instruments');
 
 function countFiles(soundPath) {
   var count = 0;
@@ -73,7 +73,7 @@ function traverseFiles(soundPath) {
 //   res.status(200);
 //   res.send(JSON.stringify(count));
 // })
-router.get('/sounds', (req, res) => {
+router.get('/sounds/Instruments', (req, res) => {
   function traverseFolder(folderPath) {
     const fileStruct = {};
     const nonFolders = [];

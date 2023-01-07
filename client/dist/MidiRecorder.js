@@ -3,8 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const jsx_runtime_1 = require("react/jsx-runtime");
 const react_1 = require("react");
 // import MidiNotes from './MidiNotes';
-const MidiNotes_1 = require("./MidiNotes");
+const MidiNotesCopy_1 = require("./MidiNotesCopy");
 require("./MidiRecorder.css");
+const ErrorBoundary_1 = require("./ErrorBoundary");
 const qwertyNote = require('./note-to-qwerty-key-obj');
 // replace midistate prop with mode prop
 function MidiRecorder(props) {
@@ -14,7 +15,7 @@ function MidiRecorder(props) {
     const labelsRef = react_1.default.useRef(null);
     const pianoRollKeyRef = react_1.default.useRef(null);
     (0, react_1.useEffect)(() => {
-        // console.log(midiRecord)
+        console.warn(midiRecord);
     }, [midiRecord]);
     (0, react_1.useLayoutEffect)(() => {
     }, [props.midiState.mode]);
@@ -70,7 +71,29 @@ function MidiRecorder(props) {
             playing();
         }
     }, [props.pulseNum, props.midiState.mode]);
-    return (0, jsx_runtime_1.jsx)(MidiNotes_1.default, { keysPressed: props.keysPressed, midiLength: props.midiLength, midiRecord: midiRecord, midiState: props.midiState, pulseNum: props.pulseNum, pulseRate: props.pulseRate, noteTracksRef: props.noteTracksRef });
+    function setNoteClicked(noteOct, noteStartProps, noteEndProps) {
+        // console.log(noteOct, midiRecord[noteEndProps.end!]);
+        setMidiRecord((midiRecord) => ({
+            ...midiRecord, [noteStartProps.start]: {
+                ...midiRecord[noteStartProps.start],
+                ...{ [noteOct]: noteStartProps }
+            },
+            [noteEndProps.end]: {
+                ...midiRecord[noteEndProps.end],
+                ...{ [noteOct]: noteEndProps }
+            }
+        }));
+    }
+    function setNoteRemoved(noteOct, start, end) {
+        // console.log(noteOct, midiRecord[noteEndProps.end!]);
+        setMidiRecord((midiRecord) => {
+            const state = { ...midiRecord };
+            delete state[start];
+            delete state[end];
+            return state;
+        });
+    }
+    return ((0, jsx_runtime_1.jsx)(ErrorBoundary_1.ErrorBoundary, { children: (0, jsx_runtime_1.jsx)(MidiNotesCopy_1.default, { keysPressed: props.keysPressed, midiLength: props.midiLength, midiRecord: midiRecord, midiState: props.midiState, pulseNum: props.pulseNum, pulseRate: props.pulseRate, noteTracksRef: props.noteTracksRef, subdiv: props.midiState.subdiv, onNoteClicked: setNoteClicked, onNoteRemoved: setNoteRemoved }) }));
 }
 // 1000 / (120 / 60) * 4 * 4
 exports.default = MidiRecorder;

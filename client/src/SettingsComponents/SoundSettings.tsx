@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {SoundSettingsProps, IOctavesObj} from '../Interfaces';
+import {SoundSettingsProps, IOctavesObj} from '../Tools/Interfaces';
 // import  {DraggableNumber} from './libs/draggable-number'
 import './Settings.css';
 
