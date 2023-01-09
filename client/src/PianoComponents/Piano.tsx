@@ -83,12 +83,13 @@ function Piano(props: PianoProps) {
   const [output, setOutput] = useState<KeysPressed>({...props.playback, ...props.keysPressed})
 
   useEffect(() => {
-    setOutput(() => ({...props.keysPressed, ...props.playback}))
+    // setOutput(() => ({...props.keysPressed, ...props.playback}))
   }, [props.keysPressed, props.playback])
   
-  useEffect(() => {
-    // setOutput((output) => ({...output, ...props.playback}))
-  }, [props.playback])
+  // useEffect(() => {
+  //   setOutput((output) => ({...output, ...props.playback}))
+  //   console.log(output)
+  // }, [output])
 
   // useEffect(() => console.log(prevNotes), [prevNotes])
 
@@ -275,9 +276,8 @@ function Piano(props: PianoProps) {
 
   useEffect(() => {
     // console.log(props.keysPressed, prevNotes)
-    function playNote() {
-      let key: string;
-      let octave: number;
+    function playNote(output: KeysPressed) {
+      // console.log(output)
       // let key: string;
       let qwertyOctave: number;
       let noteName: string;
@@ -296,11 +296,13 @@ function Piano(props: PianoProps) {
               (note.includes('#')) ? noteName = note.replace('#', 'sharp') + (octave) : noteName = note.replace('b', 'flat') + (octave);
               let labelElem = document.getElementById(noteName.toLowerCase() + '-label')!;
               if(output[noteOct].pressed && (!prevNotes[noteName as keyof typeof prevNotes] || prevNotes[noteName as keyof typeof prevNotes] === 0)) {
+                // console.log(noteOct, output[noteOct].pressed, output)
                 let sound = fetchedSounds[octave][props.volume];
                 let soundId = sound.play(note);
                 prevNotesTemp[noteName] = soundId;
                 labelElem.classList.toggle('active');
               } else if(!output[noteOct].pressed && prevNotes[noteName as keyof typeof prevNotes] > 0) {
+                // console.log(noteOct, output[noteOct].pressed, output)
                 labelElem.classList.toggle('active');
                 Object.keys(prevNotes).some((playedNote) => {
                   if(playedNote === noteName) {
@@ -315,12 +317,16 @@ function Piano(props: PianoProps) {
       })
       setPrevNotes(prevNotesTemp);
     }
-    if(Object.keys(output).length !== 0) {
-      playNote();
+    console.log(props.playback)
+    if(Object.keys(props.playback).length > 0) {
+      console.warn('Playback', props.playback)
+      playNote(props.playback);
     }
-  }, [output])
-
-  
+    if(Object.keys(props.keysPressed).length > 0) {
+      console.error('KeysPressed', props.keysPressed)
+      playNote(props.keysPressed);
+    }
+  }, [props.keysPressed, props.playback])
 
   useEffect(() => {
 

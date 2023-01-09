@@ -29,7 +29,7 @@ function MidiRecorder(props: MidiRecorderProps) {
       var elem: HTMLElement;
       if(e.target){
         elem = e.target as HTMLElement;
-        console.log(props.midiState.mode)
+        // console.log(props.midiState.mode)
         if(elem.tagName == "DIV") {
           setClickCoords([e.clientX, e.clientY]);
           // setOrderOfEvents((orderOfEvents) => [0, ...orderOfEvents]);
@@ -333,6 +333,9 @@ function MidiRecorder(props: MidiRecorderProps) {
       setMidiRecording({});
     }
   }, [midiRecording, props.midiState.mode])
+  useEffect(() => {
+    // console.log(midiRecording)
+  }, [midiRecording])
 
   // Recording and playback handler
   useEffect(() => {
@@ -348,20 +351,61 @@ function MidiRecorder(props: MidiRecorderProps) {
     } 
   }, [props.keysPressed, props.midiState.mode]);
 
+  // useEffect(() => {
+  //   const playing = () => {
+  //     // console.log('midiRecorded', midiRecorded)
+  //     Object.keys(midiRecorded).forEach((timeKey) => {
+  //       console.log(timeKey)
+  //       // console.log(props.pulseNum === parseInt(timeKey), props.midiState.mode)
+  //       if(props.pulseNum === parseInt(timeKey)) {
+  //         console.log(midiRecorded[parseInt(timeKey)])
+  //         props.setPlayback(midiRecorded[parseInt(timeKey)])
+  //       }
+  //     })
+  //   }
+  //   if(props.midiState.mode === 'playing' || (props.midiState.mode === 'recording' && Object.keys(midiRecorded).length > 0) && props.keysPressed) {
+  //     playing();
+  //   }
+  // }, [props.pulseNum, props.midiState.mode]);
   useEffect(() => {
     const playing = () => {
       // console.log('midiRecorded', midiRecorded)
       Object.keys(midiRecorded).forEach((timeKey) => {
+        console.log(timeKey)
         // console.log(props.pulseNum === parseInt(timeKey), props.midiState.mode)
         if(props.pulseNum === parseInt(timeKey)) {
+          console.log(midiRecorded[parseInt(timeKey)])
           props.setPlayback(midiRecorded[parseInt(timeKey)])
         }
       })
     }
-    if(props.midiState.mode === 'playing' || (props.midiState.mode === 'recording' && Object.keys(midiRecorded).length > 0) && props.keysPressed) {
-      playing();
+    /*if((props.midiState.mode === 'recording' && Object.keys(midiRecorded).length > 0) && props.keysPressed) {
+        console.log(Object.keys(midiRecorded), midiRecorded[props.pulseNum])
+
+        props.setPlayback(midiRecorded[props.pulseNum])
+      
+      // playing();
+    }
+    else*/ if(props.midiState.mode === 'playing' || (props.midiState.mode === 'recording' && Object.keys(midiRecorded).length > 0) && props.keysPressed) {
+      if(Object.keys(midiRecorded).includes(props.pulseNum + ''))
+      {
+        console.log(Object.keys(midiRecorded), midiRecorded[props.pulseNum])
+        props.setPlayback(midiRecorded[props.pulseNum])
+      }
+      // playing();
     }
   }, [props.pulseNum, props.midiState.mode]);
+
+  function getPressed(): KeysPressed {
+    let pressed = {}
+    Object.keys(props.keysPressed).forEach((noteOct) => {
+      if(Object.values(props.keysPressed[noteOct]).includes(true)) {
+        pressed = {...pressed, [noteOct]: props.keysPressed[noteOct]};
+      }
+    })
+    console.log(pressed)
+    return pressed;
+  }
 
   function setNoteClicked(noteOct: string, noteStartProps: KeyPressed, noteEndProps: KeyPressed) {
     console.log(noteOct, noteStartProps, noteEndProps);

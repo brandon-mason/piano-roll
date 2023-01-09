@@ -175,6 +175,7 @@ export interface OctavesInViewProps {
 }
 
 export interface PianoProps {
+  pulseNum: number;
   keysPressed: KeysPressed;
   labelsRef: React.RefObject<HTMLDivElement>;
   mode: string;

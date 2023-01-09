@@ -66,6 +66,7 @@ function App() {
   const midiLength = useMemo<number>(() => midiState.numMeasures * 4 / (midiState.bpm / 60 / 1000), [midiState.bpm, midiState.numMeasures]); // number of beats / bpm in ms
   const pulseRate = useMemo<number>(() => midiState.ppq * midiState.bpm / 60 / 1000, [midiState.bpm, midiState.ppq]); // ppq / bpm in ms
   const timerRef = useRef(null);
+  const noteUnpressedRef = useRef<string[]>([]);
   const [time, setTime] = useState(0); // 24 * 120 /60/1000 * 16 /(120/60/1000)
   const [pulseNum, setPulseNum] = useState(0);
   const [keysPressed, setKeysPressed] = useState<KeysPressed>({});
@@ -80,8 +81,8 @@ function App() {
 
   // const [soundDetails, setSoundDetails] = useState({});
   useEffect(() => {
-    // console.log(midiState.mode)
-  }, [midiState.mode])
+    console.log(keysPressed)
+  }, [keysPressed])
 
   useEffect(() => {
     async function getSoundDetails() {
@@ -126,9 +127,35 @@ function App() {
   useEffect(() => {
     if(midiState.mode === 'stop' || midiState.mode === 'keyboard') {
       let tempPlayback = JSON.stringify(playback).replaceAll('true', 'false');
-      setPlayback(JSON.parse(tempPlayback))
+      // console.log(tempPlayback)
+      // setPlayback(JSON.parse(tempPlayback))
+      setPlayback({});
+      setKeysPressed({});
     }
   }, [midiState.mode])
+
+  // useEffect(() => {
+  //   if(Object.keys(keysPressed).length > 0) {
+  //     setKeysPressed((keysPressed) => {
+  //       let state = {...keysPressed};
+  //       // let unpressed = ;
+  //       getUnpressed().forEach((noteOct) => setTimeout(() => delete state[noteOct], 100));
+  //       console.log(state)
+  //       return state;
+  //     })
+  //   }
+  // }, [keysPressed])
+
+  function getUnpressed(): string[] {
+    let pressed: string[] = []
+    Object.keys(keysPressed).forEach((noteOct) => {
+      if(Object.values(keysPressed[noteOct]).includes(false)) {
+        pressed.push(noteOct);
+      }
+    })
+    console.log(pressed)
+    return pressed;
+  }
 
   function getOctaveArray() {
     let octaveArray: number[] = []
@@ -177,7 +204,7 @@ function App() {
       <ErrorBoundary>
         <MidiRecorder soundDetails={soundDetails} controlsState={controlsState} keysPressed={keysPressed} midiLength={midiLength} midiState={midiState} pulseNum={pulseNum} noteTracks={noteTracks} noteTracksRef={noteTracksRef} pulseRate={pulseRate} controlsDispatch={controlsDispatch} midiDispatch={midiDispatch} setPlayback={setPlayback} soundDispatch={soundDispatch} />
       </ErrorBoundary>
-      <Piano soundDetails={soundDetails} sound={soundState.sound} octave={soundState.octave} octaveMinMax={octaveMinMax} volume={soundState.volume} mode={midiState.mode} keysPressed={keysPressed} playback={playback} labelsRef={labelsRef} />
+      <Piano pulseNum={pulseNum} soundDetails={soundDetails} sound={soundState.sound} octave={soundState.octave} octaveMinMax={octaveMinMax} volume={soundState.volume} mode={midiState.mode} keysPressed={keysPressed} playback={playback} labelsRef={labelsRef} />
     </div>
   );
 }
