@@ -201,9 +201,13 @@ export interface OctavesInViewProps {
 
 export interface PianoProps {
 <<<<<<< HEAD
+<<<<<<< HEAD
   pulseNum: number;
 =======
 >>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
+=======
+  pulseNum: number;
+>>>>>>> 1f2d55c (backup before refactoring)
   keysPressed: KeysPressed;
   labelsRef: React.RefObject<HTMLDivElement>;
   mode: string;

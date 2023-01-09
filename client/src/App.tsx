@@ -93,9 +93,13 @@ function App() {
   const pulseRate = useMemo<number>(() => midiState.ppq * midiState.bpm / 60 / 1000, [midiState.bpm, midiState.ppq]); // ppq / bpm in ms
   const timerRef = useRef(null);
 <<<<<<< HEAD
+<<<<<<< HEAD
   const noteUnpressedRef = useRef<string[]>([]);
 =======
 >>>>>>> 71ede2b (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
+=======
+  const noteUnpressedRef = useRef<string[]>([]);
+>>>>>>> 1f2d55c (backup before refactoring)
   const [time, setTime] = useState(0); // 24 * 120 /60/1000 * 16 /(120/60/1000)
   const [pulseNum, setPulseNum] = useState(0);
   const [keysPressed, setKeysPressed] = useState<KeysPressed>({});
@@ -111,12 +115,17 @@ function App() {
   // const [soundDetails, setSoundDetails] = useState({});
   useEffect(() => {
 <<<<<<< HEAD
+<<<<<<< HEAD
     // console.log(playback)
   }, [playback])
 =======
     // console.log(midiState.mode)
   }, [midiState.mode])
 >>>>>>> 71ede2b (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
+=======
+    console.log(keysPressed)
+  }, [keysPressed])
+>>>>>>> 1f2d55c (backup before refactoring)
 
   useEffect(() => {
     async function getSoundDetails() {
@@ -163,6 +172,7 @@ function App() {
   }, [time])
 
   useEffect(() => {
+<<<<<<< HEAD
     if(midiState.mode === 'stop') {
       let tempPlayback = JSON.parse(JSON.stringify(playback).replaceAll('true', 'false'));
       // tempPlayback = JSON.stringify(playback).replaceAll('-1', `${pulseNum}`);
@@ -225,6 +235,28 @@ function App() {
       controlsDispatch({type: 'export', export: false});
     }
   }, [controlsState.export]);
+=======
+    if(midiState.mode === 'stop' || midiState.mode === 'keyboard') {
+      let tempPlayback = JSON.stringify(playback).replaceAll('true', 'false');
+      // console.log(tempPlayback)
+      // setPlayback(JSON.parse(tempPlayback))
+      setPlayback({});
+      setKeysPressed({});
+    }
+  }, [midiState.mode])
+
+  // useEffect(() => {
+  //   if(Object.keys(keysPressed).length > 0) {
+  //     setKeysPressed((keysPressed) => {
+  //       let state = {...keysPressed};
+  //       // let unpressed = ;
+  //       getUnpressed().forEach((noteOct) => setTimeout(() => delete state[noteOct], 100));
+  //       console.log(state)
+  //       return state;
+  //     })
+  //   }
+  // }, [keysPressed])
+>>>>>>> 1f2d55c (backup before refactoring)
 
   function getUnpressed(): string[] {
     let pressed: string[] = []
@@ -298,8 +330,12 @@ function App() {
 =======
         <MidiRecorder soundDetails={soundDetails} controlsState={controlsState} keysPressed={keysPressed} midiLength={midiLength} midiState={midiState} pulseNum={pulseNum} noteTracks={noteTracks} noteTracksRef={noteTracksRef} pulseRate={pulseRate} controlsDispatch={controlsDispatch} midiDispatch={midiDispatch} setPlayback={setPlayback} soundDispatch={soundDispatch} />
       </ErrorBoundary>
+<<<<<<< HEAD
       <Piano soundDetails={soundDetails} sound={soundState.sound} octave={soundState.octave} octaveMinMax={octaveMinMax} volume={soundState.volume} mode={midiState.mode} keysPressed={keysPressed} playback={playback} labelsRef={labelsRef} />
 >>>>>>> 71ede2b (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
+=======
+      <Piano pulseNum={pulseNum} soundDetails={soundDetails} sound={soundState.sound} octave={soundState.octave} octaveMinMax={octaveMinMax} volume={soundState.volume} mode={midiState.mode} keysPressed={keysPressed} playback={playback} labelsRef={labelsRef} />
+>>>>>>> 1f2d55c (backup before refactoring)
     </div>
   );
 }
