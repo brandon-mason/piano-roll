@@ -160,10 +160,14 @@ export interface TimerProps {
 //MidiRecorder.tsx interfaces (3)
 export interface MidiRecorded {
 <<<<<<< HEAD
+<<<<<<< HEAD
   [pulse: string]: KeysPressed;
 =======
   [pulse: number]: KeysPressed;
 >>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
+=======
+  [pulse: string]: KeysPressed;
+>>>>>>> 7a3005d (fix(client): Recordings that overlap now play together both while recording and while playing back.)
 }
 
 export interface MidiRecorderProps {
@@ -231,10 +235,14 @@ export interface Keys {
 
 export interface FetchedSounds {
 <<<<<<< HEAD
+<<<<<<< HEAD
   [octaves: string]: {
 =======
   [octaves: number]: {
 >>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
+=======
+  [octaves: string]: {
+>>>>>>> 7a3005d (fix(client): Recordings that overlap now play together both while recording and while playing back.)
     [volume: string]: any;
   };
 }

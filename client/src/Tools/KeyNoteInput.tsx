@@ -105,10 +105,14 @@ function KeyNoteInput(props: KeyNoteInputProps) {
   useEffect(() => {
     props.onNotePlayed(controller);
 <<<<<<< HEAD
+<<<<<<< HEAD
     // console.warn(controllers)
 =======
     // console.warn(controller)
 >>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
+=======
+    // console.warn(controllers)
+>>>>>>> 7a3005d (fix(client): Recordings that overlap now play together both while recording and while playing back.)
     // eslint-disable-next-line
   }, [controller]);
 

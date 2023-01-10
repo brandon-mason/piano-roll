@@ -76,11 +76,7 @@ function MidiNotes(props: MidiNotesProps) {
         // console.warn(noteStart[key].keyPressed)
 
         if(noteStart[key].keyPressed!.start) {
-          if(end === -1) {
             state[key] = {start: start, end: end};
-          } else {
-            state[key] = {start: start, end: end};
-          }
         }
       })
       return state;

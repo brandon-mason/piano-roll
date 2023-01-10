@@ -20,6 +20,7 @@ function MidiRecorder(props: MidiRecorderProps) {
   const [midiRecording, setMidiRecording] = useState<MidiRecorded>({});
   const [midiNoteInfo, setMidiNoteInfo] = useState<MidiNoteInfo[]>([]);
 <<<<<<< HEAD
+<<<<<<< HEAD
   const [notesRemoved, setNotesRemoved] = useState<NotesRemoved[]>([]);
   const [orderOfEvents, setOrderOfEvents] = useState<number[]>([]);
   const [notesRecorded, setNotesRecorded] = useState<Set<string>>(new Set());
@@ -30,8 +31,11 @@ function MidiRecorder(props: MidiRecorderProps) {
   }, [midiNoteInfo])
 =======
   // const [midiNotes, setMidiNotes] = useState<ReactPortal[]>([]);
+=======
+>>>>>>> 7a3005d (fix(client): Recordings that overlap now play together both while recording and while playing back.)
   const [notesRemoved, setNotesRemoved] = useState<NotesRemoved[]>([]);
   const [orderOfEvents, setOrderOfEvents] = useState<number[]>([]);
+  const [notesRecorded, setNotesRecorded] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     // console.log(props.midiState.mode)
@@ -100,9 +104,12 @@ function MidiRecorder(props: MidiRecorderProps) {
   // Add notes from clicking
   useEffect(() => {
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     // console.log(clickCoords)
 >>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
+=======
+>>>>>>> 7a3005d (fix(client): Recordings that overlap now play together both while recording and while playing back.)
     if(props.noteTracksRef.current) {
       let noteTrackElem: Element ;
       let noteTrackId = '';
@@ -113,24 +120,30 @@ function MidiRecorder(props: MidiRecorderProps) {
         document.elementsFromPoint(clickCoords[0], clickCoords[1]).forEach((elem) => {
           if(elem.getAttribute('class') === 'note-track') {
 <<<<<<< HEAD
+<<<<<<< HEAD
             noteTrackElem = elem;
             noteTrackId = elem.id;
           }
           if(elem.getAttribute('class') === 'subdivision') {
 =======
             // console.log('note')
+=======
+>>>>>>> 7a3005d (fix(client): Recordings that overlap now play together both while recording and while playing back.)
             noteTrackElem = elem;
             noteTrackId = elem.id;
-            // console.log(elem)
           }
           if(elem.getAttribute('class') === 'subdivision') {
+<<<<<<< HEAD
             // console.log(midiNoteInfo)
 >>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
+=======
+>>>>>>> 7a3005d (fix(client): Recordings that overlap now play together both while recording and while playing back.)
             subdivElem = elem;
             subdivId = elem.id;
           }
         })
       }
+<<<<<<< HEAD
 <<<<<<< HEAD
       if(noteTrackId.length > 0 && subdivId.length > 0) {
         let noteOct = noteTrackId.replace('-track', '');
@@ -138,30 +151,40 @@ function MidiRecorder(props: MidiRecorderProps) {
         let rect = subdivElem!.getBoundingClientRect();
 =======
       // console.log(noteTrackId, subdivId)
+=======
+>>>>>>> 7a3005d (fix(client): Recordings that overlap now play together both while recording and while playing back.)
       if(noteTrackId.length > 0 && subdivId.length > 0) {
         let noteOct = noteTrackId.replace('-track', '');
         let subdiv = parseInt(subdivId.replace(/\D/g, ''));
-        // console.log('rect')
         let rect = subdivElem!.getBoundingClientRect();
+<<<<<<< HEAD
         // console.log(rect)
         // console.log(props.noteTracksRef.current!.children)
 >>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
+=======
+>>>>>>> 7a3005d (fix(client): Recordings that overlap now play together both while recording and while playing back.)
         let left = rect.left;
         let width = rect.right - rect.left;
         let height = props.noteTracksRef.current!.offsetHeight / props.noteTracksRef.current!.children.length - 2;
         if((subdiv - 1) % props.midiState.subdiv === 0) {
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
           // left += 2;
 >>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
+=======
+>>>>>>> 7a3005d (fix(client): Recordings that overlap now play together both while recording and while playing back.)
           width -= 2;
         }
         let start = Math.trunc((subdiv - 1) / (props.midiState.numMeasures * props.midiState.subdiv) * props.midiLength * props.pulseRate);
         let end = Math.trunc(start + 1 / (props.midiState.subdiv * props.midiState.numMeasures) * props.midiLength * props.pulseRate) - 1;
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
         // console.log(1/16*1000, subdiv - 1 , props.midiState.numMeasures , props.midiState.subdiv , props.noteTracksRef.current!.offsetWidth, start, end)
 >>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
+=======
+>>>>>>> 7a3005d (fix(client): Recordings that overlap now play together both while recording and while playing back.)
         setMidiNoteInfo((midiNoteInfo) => [...midiNoteInfo, ...[{[start + noteOct]: {
           key: noteTrackId + countTemp,
           keyPressed: {
@@ -181,6 +204,7 @@ function MidiRecorder(props: MidiRecorderProps) {
         Object.keys(qwertyNote).forEach((qwerty) => {
           if(qwertyNote[qwerty].note === noteOct.replace(/[0-9]/g, '') && qwertyNote[qwerty].octave === 0) {
 <<<<<<< HEAD
+<<<<<<< HEAD
             let startNote = {
               key: qwerty,
               octave: parseInt(noteOct.replace(/\D/g,'')),
@@ -199,6 +223,8 @@ function MidiRecorder(props: MidiRecorderProps) {
 =======
             // console.warn(qwertyNote[qwerty]);
 >>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
+=======
+>>>>>>> 7a3005d (fix(client): Recordings that overlap now play together both while recording and while playing back.)
             setMidiRecorded((midiRecorded) => (
               {
                 ...midiRecorded, [start]: {
@@ -248,25 +274,33 @@ function MidiRecorder(props: MidiRecorderProps) {
   // Add notes from recording
   useEffect(() => {
     if(props.noteTracksRef && props.midiState.mode === 'recording') {
+<<<<<<< HEAD
     // const updateMidiNoteInfo = () => {
       let key: string;
 >>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
+=======
+>>>>>>> 7a3005d (fix(client): Recordings that overlap now play together both while recording and while playing back.)
       let octave: number;
       let countTemp = count;
       if(props.noteTracksRef.current) {
         Object.keys(props.keysPressed).forEach((noteOct) => {
+<<<<<<< HEAD
 <<<<<<< HEAD
           octave = parseInt(noteOct.replace(/\D/g,''));
           let noteStart = props.keysPressed[noteOct].start + noteOct;
           if(props.keysPressed[noteOct].pressed && !midiNoteInfo.find((exists) => Object.keys(exists)[0] == noteStart)) {
 =======
           // console.warn(noteOct)
+=======
+>>>>>>> 7a3005d (fix(client): Recordings that overlap now play together both while recording and while playing back.)
           octave = parseInt(noteOct.replace(/\D/g,''));
-          // console.log(props.keysPressed[noteOct].pressed)
           let noteStart = props.keysPressed[noteOct].start + noteOct;
           if(props.keysPressed[noteOct].pressed && !midiNoteInfo.find((exists) => Object.keys(exists)[0] == noteStart)) {
+<<<<<<< HEAD
             // console.log('bee')
 >>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
+=======
+>>>>>>> 7a3005d (fix(client): Recordings that overlap now play together both while recording and while playing back.)
             let noteTrackId = `${noteOct}-track`;
             setMidiNoteInfo((midiNoteInfo) => [...midiNoteInfo, {[noteStart]: {
               key: `${noteTrackId}-${countTemp}`,
@@ -283,6 +317,7 @@ function MidiRecorder(props: MidiRecorderProps) {
             setCount(countTemp);
           } else if(!props.keysPressed[noteOct].pressed) {
 <<<<<<< HEAD
+<<<<<<< HEAD
             for(let i = midiNoteInfo.length - 1; i > -1; i--) {
               if(Object.keys(midiNoteInfo[i])[0] === noteStart) {
                 setMidiNoteInfo((midiNoteInfo) => {
@@ -291,20 +326,19 @@ function MidiRecorder(props: MidiRecorderProps) {
                   state.splice(i, 1, newNoteInfo);
 =======
             // console.log(midiNoteInfo.length)
+=======
+>>>>>>> 7a3005d (fix(client): Recordings that overlap now play together both while recording and while playing back.)
             for(let i = midiNoteInfo.length - 1; i > -1; i--) {
               if(Object.keys(midiNoteInfo[i])[0] === noteStart) {
-
-                // console.log('what', noteStart)
-                // console.log(midiNoteInfo[i][noteStart].keyPressed, {...midiNoteInfo[i][noteStart].keyPressed, ...{end: props.keysPressed[noteOct].end}})
                 setMidiNoteInfo((midiNoteInfo) => {
-                  // console.log(props.keysPressed[noteOct].end)
                   let state = [...midiNoteInfo];
-                  // console.log(state[i][noteStart])
                   let newNoteInfo = {[noteStart]: {...state[i][noteStart], keyPressed: props.keysPressed[noteOct]}}
-                  // console.error(i, midiNoteInfo[i], newNoteInfo)
                   state.splice(i, 1, newNoteInfo);
+<<<<<<< HEAD
                   // console.log(state)
 >>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
+=======
+>>>>>>> 7a3005d (fix(client): Recordings that overlap now play together both while recording and while playing back.)
                   return state;
                 })
                 break;
@@ -461,6 +495,9 @@ function MidiRecorder(props: MidiRecorderProps) {
   }, [notesRemoved])
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 7a3005d (fix(client): Recordings that overlap now play together both while recording and while playing back.)
   useEffect(() => {
     // console.groupCollapsed('midirecording')
     // console.log(props.pulseNum)
@@ -470,12 +507,16 @@ function MidiRecorder(props: MidiRecorderProps) {
     // console.log('props.keysPressed', props.keysPressed)
     // console.groupEnd()
   }, [midiRecording])
+<<<<<<< HEAD
 =======
 >>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
+=======
+>>>>>>> 7a3005d (fix(client): Recordings that overlap now play together both while recording and while playing back.)
 
   // Add notes from current recording 
   useEffect(() => {
     if(props.midiState.mode === 'keyboard' && Object.keys(midiRecording).length > 0) {
+<<<<<<< HEAD
 <<<<<<< HEAD
       setMidiRecorded((midiRecorded) => {
         let state: MidiRecorded = {...midiRecorded};
@@ -501,12 +542,61 @@ function MidiRecorder(props: MidiRecorderProps) {
 =======
       setMidiRecorded((midiRecorded) => ({...midiRecorded, ...midiRecording}));
 >>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
+=======
+      setMidiRecorded((midiRecorded) => {
+        let state: MidiRecorded = {...midiRecorded};
+        let keys = Object.keys(midiRecording);
+        // console.log(midiRecording)
+        for(var i = 0; i < Object.keys(midiRecording).length; i++) {
+          // console.error(Object.entries(midiRecording[keys[i]]))
+          let entries = Object.entries(midiRecording[keys[i]])
+          // console.log(entries, keys)
+          entries.forEach((entry) => {
+            // console.log(entry);
+            state = {
+              ...state, [keys[i]]: {...state[keys[i]],
+                [entry[0]]: {
+                  key: entry[1].key,
+                  pressed: entry[1].pressed,
+                  start: entry[1].start,
+                  end: entry[1].end,
+                }
+              },
+            }
+            // console.groupCollapsed('setmidirecorded')
+            // console.log(entry[0], parseInt(keys[i]) , entry)
+            // console.log({
+            //   [entry[0]]: {
+            //     key: entry[1].key,
+            //     pressed: entry[1].pressed,
+            //     start: entry[1].start,
+            //     end: entry[1].end,
+            //   }
+            // })
+            // console.groupEnd()
+          })
+        }
+        // console.log('state', state)
+        return state;
+      })
+>>>>>>> 7a3005d (fix(client): Recordings that overlap now play together both while recording and while playing back.)
       setMidiRecording({});
     }
   }, [midiRecording, props.midiState.mode])
+
+  const [addedToRecording, setAddedToRecording] = useState<string[]>([])
+
   useEffect(() => {
-    // console.log(midiRecording)
-  }, [midiRecording])
+    let notesRem: string[] = [];
+    if(Object.keys(midiRecorded).length > 0) {
+      Object.keys(midiRecorded).forEach((pulseNum) => {
+        // console.log(Object.keys(midiRecorded[pulseNum]))
+        notesRem = notesRem.concat(Object.keys(midiRecorded[pulseNum]))
+      })
+    // console.log(notesRem, new Set(notesRem), midiRecorded)
+    setNotesRecorded(new Set(notesRem))
+    }
+  }, [midiRecorded])
 
 <<<<<<< HEAD
   useEffect(() => {
@@ -575,16 +665,81 @@ function MidiRecorder(props: MidiRecorderProps) {
   // Recording and playback handler
   useEffect(() => {
     const recording = () => {
-      setMidiRecording((midiRecording) => ({...midiRecording, [props.pulseNum]: props.keysPressed}));
-      // console.log({[props.pulseNum]: props.keysPressed})
+      if(props.pulseNum === 0) {
+        setMidiRecording((midiRecording) => ({...midiRecording, [props.pulseNum]: {}}))
+      } else {
+        console.error(midiRecorded)
+        setMidiRecording((midiRecording) => {
+          let state = {...midiRecording};
+          Object.keys(props.keysPressed).forEach((key) => {
+            // state[props.pulseNum] = {...state[props.pulseNum], [key]: props.keysPressed[key]}
+            if(!notesRecorded.has(key)) {
+              console.warn(props.pulseNum, key, {
+                ...state, [props.pulseNum]: {...state[props.pulseNum],
+                  [key]: {
+                    key: props.keysPressed[key].key,
+                    pressed: props.keysPressed[key].pressed,
+                    start: props.keysPressed[key].start,
+                    end: (props.pulseNum !== props.keysPressed[key].end!) ? -1 : props.keysPressed[key].end!
+                  }
+                },
+              })
+              state = {
+                ...state, [props.pulseNum]: {...state[props.pulseNum],
+                  [key]: {
+                    key: props.keysPressed[key].key,
+                    pressed: props.keysPressed[key].pressed,
+                    start: props.keysPressed[key].start,
+                    end: (props.pulseNum !== props.keysPressed[key].end!) ? -1 : props.keysPressed[key].end!
+                  }
+                },
+              }
+            }
+          })
+          console.log('recording()', state, props.pulseNum, props.keysPressed, midiNoteInfo)
+          return state;
+        })
+      }
     }
+  // useEffect(() => {
+  //   const recording = () => {
+  //     let notes: string[] = [];
+  //     if(props.pulseNum === 0) {
+  //       setMidiRecording((midiRecording) => ({...midiRecording, [props.pulseNum]: {}}))
+  //     } else {
+  //       // setMidiRecording((midiRecording) => ({...midiRecording, [props.pulseNum]: props.keysPressed}));
+  //       setMidiRecording((midiRecording) => {
+  //         let state = {...midiRecording};
+  //         Object.keys(props.keysPressed).forEach((key) => {
+  //           // console.log(addedToRecording.includes(props.keysPressed[key].start + key) && props.keysPressed[key].end !== -1, addedToRecording, key)
+  //           console.log(notes)
+  //           if(!notes.includes(props.keysPressed[key].start + key)) {
+  //             state[props.pulseNum] = {...state[props.pulseNum], [key]: props.keysPressed[key]}
+  //             notes.splice(notes.indexOf(props.keysPressed[key].start + key), 1)
+  //           } else if(notes.includes(props.keysPressed[key].start + key) && props.keysPressed[key].end !== -1) {
+  //             state[props.pulseNum] = {...state[props.pulseNum], [key]: props.keysPressed[key]}
+  //           }
+  //         })
+  //         console.log('recording()', state, props.pulseNum, props.keysPressed, midiNoteInfo)
+  //         return state;
+  //       })
+  //     }
+  //     console.log(notes)
+  //     // return notes;
+  //     // console.log({...midiRecording, [props.pulseNum]: props.keysPressed})
+  //   }
 
     // if(props.pulseNum >= props.midiLength * props.pulseRate) props.midiDispatch({type: 'mode', mode: 'keyboard'})
 
-    if(props.midiState.mode === 'recording' && props.keysPressed) {
+    if(props.midiState.mode === 'recording' && Object.keys(props.keysPressed).length > 1) {
       recording();
+      // setAddedToRecording(notes)
     } 
+    // console.log(props.keysPressed)
   }, [props.keysPressed, props.midiState.mode]);
+
+
+  useEffect(() => console.log('addedtorecording',addedToRecording), [addedToRecording])
 
   // useEffect(() => {
   //   const playing = () => {
@@ -603,33 +758,16 @@ function MidiRecorder(props: MidiRecorderProps) {
   //   }
   // }, [props.pulseNum, props.midiState.mode]);
   useEffect(() => {
-    const playing = () => {
-      // console.log('midiRecorded', midiRecorded)
-      Object.keys(midiRecorded).forEach((timeKey) => {
-        console.log(timeKey)
-        // console.log(props.pulseNum === parseInt(timeKey), props.midiState.mode)
-        if(props.pulseNum === parseInt(timeKey)) {
-          console.log(midiRecorded[parseInt(timeKey)])
-          props.setPlayback(midiRecorded[parseInt(timeKey)])
-        }
-      })
-    }
-    /*if((props.midiState.mode === 'recording' && Object.keys(midiRecorded).length > 0) && props.keysPressed) {
-        console.log(Object.keys(midiRecorded), midiRecorded[props.pulseNum])
-
-        props.setPlayback(midiRecorded[props.pulseNum])
-      
-      // playing();
-    }
-    else*/ if(props.midiState.mode === 'playing' || (props.midiState.mode === 'recording' && Object.keys(midiRecorded).length > 0) && props.keysPressed) {
+    if(props.midiState.mode === 'playing' || props.midiState.mode === 'recording') { // || (props.midiState.mode === 'recording' && Object.keys(midiRecorded).length > 0) && props.keysPressed) {
       if(Object.keys(midiRecorded).includes(props.pulseNum + ''))
       {
-        console.log(Object.keys(midiRecorded), midiRecorded[props.pulseNum])
+        console.log('setPlayback', props.pulseNum, midiRecorded)
         props.setPlayback(midiRecorded[props.pulseNum])
       }
       // playing();
     }
   }, [props.pulseNum, props.midiState.mode]);
+<<<<<<< HEAD
 
   function getPressed(): KeysPressed {
     let pressed = {}
@@ -675,6 +813,8 @@ function MidiRecorder(props: MidiRecorderProps) {
     });
   }
 >>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
+=======
+>>>>>>> 7a3005d (fix(client): Recordings that overlap now play together both while recording and while playing back.)
   
   return (
     <MidiNotes midiRecorded={midiRecorded} midiNoteInfo={midiNoteInfo} notesRemoved={notesRemoved} orderOfEvents={orderOfEvents} controlsState={props.controlsState} midiLength={props.midiLength} midiState={props.midiState} pulseNum={props.pulseNum} pulseRate={props.pulseRate} noteTracksRef={props.noteTracksRef} subdiv={props.midiState.subdiv} controlsDispatch={props.controlsDispatch}/>

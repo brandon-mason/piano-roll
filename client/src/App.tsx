@@ -1,9 +1,13 @@
 import { useState, useReducer, useEffect, useRef, useMemo } from 'react'
 import axios from 'axios';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import Howler from 'howler';
 import { Reducer, SoundState, SoundAction, MidiState, MidiAction, KeysPressed, ControlsState, ControlsAction, MidiRecorded } from './Tools/Interfaces';
 =======
+=======
+import Howler from 'howler';
+>>>>>>> 7a3005d (fix(client): Recordings that overlap now play together both while recording and while playing back.)
 import { Reducer, SoundState, SoundAction, MidiState, MidiAction, KeysPressed, ControlsState, ControlsAction } from './Tools/Interfaces';
 >>>>>>> 71ede2b (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
 import SoundSettings from './SettingsComponents/SoundSettings'
@@ -116,6 +120,7 @@ function App() {
   useEffect(() => {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     // console.log(playback)
   }, [playback])
 =======
@@ -126,6 +131,10 @@ function App() {
     console.log(keysPressed)
   }, [keysPressed])
 >>>>>>> 1f2d55c (backup before refactoring)
+=======
+    console.log('kP pb pN', keysPressed, playback, pulseNum)
+  }, [playback])
+>>>>>>> 7a3005d (fix(client): Recordings that overlap now play together both while recording and while playing back.)
 
   useEffect(() => {
     async function getSoundDetails() {
@@ -164,11 +173,15 @@ function App() {
 
   useEffect(() => {
     // console.log(pulseNum , 1000 / (midiState.bpm / 60) * midiState.numMeasures * 4)
+<<<<<<< HEAD
     if(time > 1000 / (midiState.bpm / 60) * midiState.numMeasures * 4) {
       midiDispatch({type: 'mode', mode: 'stop'});
       setTimeout(() => midiDispatch({type: 'mode', mode: 'keyboard'}));
       
     }
+=======
+    // if(time > 1000 / (midiState.bpm / 60) * midiState.numMeasures * 4) midiDispatch({type: 'mode', mode: 'keyboard'})
+>>>>>>> 7a3005d (fix(client): Recordings that overlap now play together both while recording and while playing back.)
   }, [time])
 
   useEffect(() => {
@@ -238,13 +251,13 @@ function App() {
 =======
     if(midiState.mode === 'stop' || midiState.mode === 'keyboard') {
       let tempPlayback = JSON.stringify(playback).replaceAll('true', 'false');
+      // tempPlayback = JSON.stringify(playback).replaceAll('-1', `${pulseNum}`);
       // console.log(tempPlayback)
-      // setPlayback(JSON.parse(tempPlayback))
-      setPlayback({});
-      setKeysPressed({});
+      setPlayback(JSON.parse(tempPlayback))
     }
   }, [midiState.mode])
 
+<<<<<<< HEAD
   // useEffect(() => {
   //   if(Object.keys(keysPressed).length > 0) {
   //     setKeysPressed((keysPressed) => {
@@ -257,6 +270,24 @@ function App() {
   //   }
   // }, [keysPressed])
 >>>>>>> 1f2d55c (backup before refactoring)
+=======
+  useEffect(() => {
+    if(midiState.mode === 'keyboard') {
+      let tempKeysPressed = {...keysPressed};
+      let tempPlayback = {...playback};
+      // Object.entries(playback).forEach((playback) => {
+      //   console.log('hee')
+      //   tempPlayback[playback[0]] = {...playback[1], end: -1}
+      // })
+      Object.entries(keysPressed).forEach((keyPressed) => {
+        tempKeysPressed[keyPressed[0]] = {...keyPressed[1], end: -1}
+      })
+      // setPlayback(tempPlayback)
+      // console.log('BITCHBITCHBITCHBITCHBITCHBITCHBITCHBITCHBITCHBITCH')
+      setKeysPressed({});
+    }
+  }, [midiState.mode])
+>>>>>>> 7a3005d (fix(client): Recordings that overlap now play together both while recording and while playing back.)
 
   function getUnpressed(): string[] {
     let pressed: string[] = []
