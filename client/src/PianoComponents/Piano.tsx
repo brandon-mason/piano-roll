@@ -77,10 +77,8 @@ function OctavesInView(props: OctavesInViewProps) {
 
 function Piano(props: PianoProps) {
   const [fetchedSounds, setFetchedSounds] = useState<FetchedSounds>({});
-  // const [keysPressed, setKeysPressed] = useState<KeysPressed>({});
-  const [octavesInView, setOctavesInView] = useState([]);
   const [prevNotes, setPrevNotes] = useState({});
-  const [output, setOutput] = useState<KeysPressed>({...props.playback, ...props.keysPressed})
+  const [keysRecorded, setKeysRecorded] = useState<string[]>([])
 
   useEffect(() => {
     // setOutput(() => ({...props.keysPressed, ...props.playback}))
@@ -93,138 +91,149 @@ function Piano(props: PianoProps) {
 
   // useEffect(() => console.log(prevNotes), [prevNotes])
 
+  // useEffect(() => {
+  //   if(props.mode === 'stop' || props.mode === 'keyboard') {
+  //     Object.keys(fetchedSounds).forEach((oct) => {
+  //       Object.keys(fetchedSounds[oct]).forEach((vol) => {
+  //         fetchedSounds[oct][vol].pause();
+  //         // setTimeout(() => fetchedSounds[oct][vol].pause());
+  //       })
+  //     })
+  //   }
+  // }, [props.mode])
+
   //old way to get octaves using sound prop changes
-  useEffect(() => {
-    function fetchSounds() {
-      let octaveExists0 = true;
-      let octaveExists1 = true;
-      let url0 = 'http://localhost:3001/sounds/Instruments/' + props.sound + '/' + props.octave + '/' + props.volume;
-      let url1 = 'http://localhost:3001/sounds/Instruments/' + props.sound + '/' + (props.octave + 1) + '/' + props.volume;
+  // useEffect(() => {
+  //   function fetchSounds() {
+  //     let octaveExists0 = true;
+  //     let octaveExists1 = true;
+  //     let url0 = 'http://localhost:3001/sounds/Instruments/' + props.sound + '/' + props.octave + '/' + props.volume;
+  //     let url1 = 'http://localhost:3001/sounds/Instruments/' + props.sound + '/' + (props.octave + 1) + '/' + props.volume;
 
 
-      if(props.octave < props.octaveMinMax[0] - 1) {
-        octaveExists0 = false;
-      }
-      if(props.octave + 1 > props.octaveMinMax[1] - 1) {
-        octaveExists1 = false;
-      }
+  //     if(props.octave < props.octaveMinMax[0] - 1) {
+  //       octaveExists0 = false;
+  //     }
+  //     if(props.octave + 1 > props.octaveMinMax[1] - 1) {
+  //       octaveExists1 = false;
+  //     }
 
-      if(octaveExists0 || octaveExists1) {
-        if(fetchedSounds[props.octave as keyof typeof fetchedSounds]) {
-          Object.keys(fetchedSounds[props.octave as keyof typeof fetchedSounds]).some((key) => {
-            var octave: any = fetchedSounds[props.octave as keyof typeof fetchedSounds][key];
-            if(!octave) {
-              return false;
-            } else if(octave._src === url0 + '.webm' || octave._src === url0 + '.mp3') {
-              var octave0 = octave;
-            } else if(octave._src === url1 || octave._src === url1 + '.webm') {
-              var octave1 = octave;
-            } 
-            return octave0 !== undefined && octave1 !== undefined;
-          });
-        }
-        if(octaveExists0) {
-          var octave0 = new Howl({
-            src: [url0 + '.webm', url0 + '.mp3'],
-            sprite: {
-              C: [0, 4999],
-              'C#': [5000, 4999],
-              D: [10000, 4999],
-              Eb: [15000, 4999],
-              E: [20000, 4999],
-              F: [25000, 4999],
-              'F#': [30000, 4999],
-              G: [35000, 4999],
-              'G#': [40000, 4999],
-              A: [45000, 4999],
-              Bb: [50000, 4999],
-              B: [55000, 5000],
-            },
-            onplayerror: function() {
-              octave0.once('unlock', function() {
-                octave0.play();
-              });
-            }
-          });
-          setFetchedSounds((fetchedSounds) => ({...fetchedSounds, [props.octave]: {[props.volume]: octave0}}));
-        }
-        if(octaveExists1) {
-          var octave1 = new Howl({
-            src: [url1 + '.webm', url1 + '.mp3'],
-            sprite: {
-              C: [0, 4999],
-              'C#': [5000, 4999],
-              D: [10000, 4999],
-              Eb: [15000, 4999],
-              E: [20000, 4999],
-              F: [25000, 4999],
-              'F#': [30000, 4999],
-              G: [35000, 4999],
-              'G#': [40000, 4999],
-              A: [45000, 4999],
-              Bb: [50000, 4999],
-              B: [55000, 5000],
-            },
-          });
-          setFetchedSounds((fetchedSounds) => ({...fetchedSounds, [props.octave + 1]: {[props.volume]: octave1}}));
-        }
-      }
-    }
-    if(props.octaveMinMax.length === 2) {
-      // fetchSounds();
-    }
-  }, [props.sound, props.octave, props.volume]);
+  //     if(octaveExists0 || octaveExists1) {
+  //       if(fetchedSounds[props.octave as keyof typeof fetchedSounds]) {
+  //         Object.keys(fetchedSounds[props.octave as keyof typeof fetchedSounds]).some((key) => {
+  //           var octave: any = fetchedSounds[props.octave][key];
+  //           if(!octave) {
+  //             return false;
+  //           } else if(octave._src === url0 + '.webm' || octave._src === url0 + '.mp3') {
+  //             var octave0 = octave;
+  //           } else if(octave._src === url1 || octave._src === url1 + '.webm') {
+  //             var octave1 = octave;
+  //           } 
+  //           return octave0 !== undefined && octave1 !== undefined;
+  //         });
+  //       }
+  //       if(octaveExists0) {
+  //         var octave0 = new Howl({
+  //           src: [url0 + '.webm', url0 + '.mp3'],
+  //           sprite: {
+  //             C: [0, 4999],
+  //             'C#': [5000, 4999],
+  //             D: [10000, 4999],
+  //             Eb: [15000, 4999],
+  //             E: [20000, 4999],
+  //             F: [25000, 4999],
+  //             'F#': [30000, 4999],
+  //             G: [35000, 4999],
+  //             'G#': [40000, 4999],
+  //             A: [45000, 4999],
+  //             Bb: [50000, 4999],
+  //             B: [55000, 5000],
+  //           },
+  //           onplayerror: function() {
+  //             octave0.once('unlock', function() {
+  //               octave0.play();
+  //             });
+  //           }
+  //         });
+  //         setFetchedSounds((fetchedSounds) => ({...fetchedSounds, [props.octave]: {[props.volume]: octave0}}));
+  //       }
+  //       if(octaveExists1) {
+  //         var octave1 = new Howl({
+  //           src: [url1 + '.webm', url1 + '.mp3'],
+  //           sprite: {
+  //             C: [0, 4999],
+  //             'C#': [5000, 4999],
+  //             D: [10000, 4999],
+  //             Eb: [15000, 4999],
+  //             E: [20000, 4999],
+  //             F: [25000, 4999],
+  //             'F#': [30000, 4999],
+  //             G: [35000, 4999],
+  //             'G#': [40000, 4999],
+  //             A: [45000, 4999],
+  //             Bb: [50000, 4999],
+  //             B: [55000, 5000],
+  //           },
+  //         });
+  //         setFetchedSounds((fetchedSounds) => ({...fetchedSounds, [props.octave + 1]: {[props.volume]: octave1}}));
+  //       }
+  //     }
+  //   }
+  //   if(props.octaveMinMax.length === 2) {
+  //     // fetchSounds();
+  //   }
+  // }, [props.sound, props.octave, props.volume]);
 
-  const [domLoaded, setDomLoaded] = useState(false);
-  const listenerCreated = React.useRef(false);
+  // const [domLoaded, setDomLoaded] = useState(false);
+  // const listenerCreated = React.useRef(false);
 
   //attempt to make sounds load on scroll
-  useEffect(() => {
-    // const fetchedSoundsCopy = JSON.parse(JSON.stringify(fetchedSounds));
-    const fetchedSoundsCopy = fetchedSounds;
-    let element = document.getElementById('midi-note-labels');
-    let octaveNotFetched = false;
-    const inView = (rect: DOMRect) => {
-      return (
-        rect.top + rect.height >= 0 &&
-        rect.bottom - rect.height <= (window.innerHeight || document.documentElement.clientHeight)
-      );
-    }
-    const fetchOnScroll = (e: Event) => {
-      console.log(e)
-      if(element?.childElementCount === props.octaveMinMax[1]) {
-        let children = element.children;
-        for(let i = 0; i < children.length; i++) {
-          let child = children[i];
-          let rect = child.getBoundingClientRect();
-          if(inView(rect)) {
-            let octave = parseInt(children[i].getAttribute('id')!.substring(0, 1));
-            let url = 'http://localhost:3001/sounds/Instruments/' + props.sound + '/' + octave + '/' + props.volume;
-            let fsKeys = Object.keys(fetchedSounds);
-            if(fsKeys.length > 0) {
-              fsKeys.some((key: any) => {
-                if(key[props.volume as keyof typeof key]._src !== url + '.webm' || key[props.volume as keyof typeof key]._src !== url + '.mp3') {
-                  octaveNotFetched = true;
-                }
-                if(octaveNotFetched) {
-                  fetchedSoundsCopy[octave] = {[props.volume]: loadSound(url)};
-                  console.log("loaded sound: ", fetchedSoundsCopy[octave]);
-                }
-              });
-            } else {
-              fetchedSoundsCopy[octave] = {[props.volume]: loadSound(url)}
-              console.log("loaded sound: ", fetchedSoundsCopy[octave]);
-            };
-          }
-        }
-        setFetchedSounds(fetchedSoundsCopy);
-      }
-    }
-    // if(element) window.addEventListener('scroll', fetchOnScroll);
-    return (() => {
-      // if(element) window.removeEventListener('scroll', fetchOnScroll);
-    })
-  }, [props.octaveMinMax[1]])
+  // useEffect(() => {
+  //   // const fetchedSoundsCopy = JSON.parse(JSON.stringify(fetchedSounds));
+  //   const fetchedSoundsCopy = fetchedSounds;
+  //   let element = document.getElementById('midi-note-labels');
+  //   let octaveNotFetched = false;
+  //   const inView = (rect: DOMRect) => {
+  //     return (
+  //       rect.top + rect.height >= 0 &&
+  //       rect.bottom - rect.height <= (window.innerHeight || document.documentElement.clientHeight)
+  //     );
+  //   }
+  //   const fetchOnScroll = (e: Event) => {
+  //     console.log(e)
+  //     if(element?.childElementCount === props.octaveMinMax[1]) {
+  //       let children = element.children;
+  //       for(let i = 0; i < children.length; i++) {
+  //         let child = children[i];
+  //         let rect = child.getBoundingClientRect();
+  //         if(inView(rect)) {
+  //           let octave = parseInt(children[i].getAttribute('id')!.substring(0, 1));
+  //           let url = 'http://localhost:3001/sounds/Instruments/' + props.sound + '/' + octave + '/' + props.volume;
+  //           let fsKeys = Object.keys(fetchedSounds);
+  //           if(fsKeys.length > 0) {
+  //             fsKeys.some((key: any) => {
+  //               if(key[props.volume as keyof typeof key]._src !== url + '.webm' || key[props.volume as keyof typeof key]._src !== url + '.mp3') {
+  //                 octaveNotFetched = true;
+  //               }
+  //               if(octaveNotFetched) {
+  //                 fetchedSoundsCopy[octave] = {[props.volume]: loadSound(url)};
+  //                 console.log("loaded sound: ", fetchedSoundsCopy[octave]);
+  //               }
+  //             });
+  //           } else {
+  //             fetchedSoundsCopy[octave] = {[props.volume]: loadSound(url)}
+  //             console.log("loaded sound: ", fetchedSoundsCopy[octave]);
+  //           };
+  //         }
+  //       }
+  //       setFetchedSounds(fetchedSoundsCopy);
+  //     }
+  //   }
+  //   // if(element) window.addEventListener('scroll', fetchOnScroll);
+  //   return (() => {
+  //     // if(element) window.removeEventListener('scroll', fetchOnScroll);
+  //   })
+  // }, [props.octaveMinMax[1]])
 
   //old load sounds on click
   // useEffect(() => {
@@ -317,16 +326,42 @@ function Piano(props: PianoProps) {
       })
       setPrevNotes(prevNotesTemp);
     }
-    console.log(props.playback)
-    if(Object.keys(props.playback).length > 0) {
-      console.warn('Playback', props.playback)
-      playNote(props.playback);
-    }
-    if(Object.keys(props.keysPressed).length > 0) {
-      console.error('KeysPressed', props.keysPressed)
+    // console.log(props.playback)
+
+    if(props.mode === 'recording' || props.mode === 'playing'){
+      let pbKp: KeysPressed = {...props.playback}
+
+      // console.log(props.playback, keysRecorded)
+
+      let state: string[] = [];
+      Object.keys(props.keysPressed).forEach((noteOct) => {
+        if(props.keysPressed[noteOct].pressed) {
+          // console.log("if")
+          pbKp = {...pbKp, [noteOct]: props.keysPressed[noteOct]}
+          state.push(noteOct)
+        } else if(keysRecorded.find((key) => key === noteOct)) {
+          // console.log('else if', [noteOct], props.keysPressed[noteOct])
+          pbKp = {...pbKp, [noteOct]: props.keysPressed[noteOct]}
+          // console.log({...pbKp, [noteOct]: props.keysPressed[noteOct]})
+        }
+      })
+      // console.log('pbKp', pbKp)
+      playNote(pbKp);
+      setKeysRecorded(state)
+    } else if(props.mode === 'keyboard') {
+      // console.error('KeysPressed', props.keysPressed)
       playNote(props.keysPressed);
     }
-  }, [props.keysPressed, props.playback])
+
+    // if(Object.keys(props.playback).length > 0) {
+    //   // console.warn('Playback', props.playback)
+    //   playNote(props.playback);
+    // }
+    // if(Object.keys(props.keysPressed).length > 0) {
+    //   console.error('KeysPressed', props.keysPressed)
+    //   playNote(props.keysPressed);
+    // }
+  }, [props.pulseNum, props.keysPressed, props.playback])
 
   useEffect(() => {
 
@@ -352,6 +387,49 @@ function Piano(props: PianoProps) {
         },
       });
       return octaveSound;
+  }
+
+
+  function playNote(output: KeysPressed) {
+    // console.log(output)
+    // let key: string;
+    let qwertyOctave: number;
+    let noteName: string;
+    const prevNotesTemp: PrevNotes = prevNotes;
+    Object.keys(output).forEach((noteOct) => {
+      // console.error(output)
+      let key = output[noteOct].key;
+      let note = noteOct.replace(/[0-9]/g, '');
+      let octave = parseInt(noteOct.replace(/\D/g,''));
+      Object.keys(qwertyNote).forEach((qwertyKey) => {
+        qwertyOctave = qwertyNote[qwertyKey].octave;
+        // console.log(octave)
+        if(octave < props.octaveMinMax[1]) {
+          if(qwertyKey === key && fetchedSounds[octave][props.volume]) {
+            // console.log(key, noteOct, octave, qwertyOctave);
+            (note.includes('#')) ? noteName = note.replace('#', 'sharp') + (octave) : noteName = note.replace('b', 'flat') + (octave);
+            let labelElem = document.getElementById(noteName.toLowerCase() + '-label')!;
+            if(output[noteOct].pressed && (!prevNotes[noteName as keyof typeof prevNotes] || prevNotes[noteName as keyof typeof prevNotes] === 0)) {
+              // console.log(noteOct, output[noteOct].pressed, output)
+              let sound = fetchedSounds[octave][props.volume];
+              let soundId = sound.play(note);
+              prevNotesTemp[noteName] = soundId;
+              labelElem.classList.toggle('active');
+            } else if(!output[noteOct].pressed && prevNotes[noteName as keyof typeof prevNotes] > 0) {
+              // console.log(noteOct, output[noteOct].pressed, output)
+              labelElem.classList.toggle('active');
+              Object.keys(prevNotes).some((playedNote) => {
+                if(playedNote === noteName) {
+                  fetchedSounds[octave][props.volume].fade(1, 0, 300, prevNotes[noteName as keyof typeof prevNotes]);
+                }
+              });
+              prevNotesTemp[noteName as keyof typeof prevNotesTemp] = 0;
+            }
+          }
+        }
+      });
+    })
+    setPrevNotes(prevNotesTemp);
   }
 
   function setView(toFetch: number[]) {

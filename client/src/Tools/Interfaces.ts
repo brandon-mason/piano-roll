@@ -141,7 +141,7 @@ export interface TimerProps {
 
 //MidiRecorder.tsx interfaces (3)
 export interface MidiRecorded {
-  [pulse: number]: KeysPressed;
+  [pulse: string]: KeysPressed;
 }
 
 export interface MidiRecorderProps {
@@ -194,7 +194,7 @@ export interface Keys {
 }
 
 export interface FetchedSounds {
-  [octaves: number]: {
+  [octaves: string]: {
     [volume: string]: any;
   };
 }

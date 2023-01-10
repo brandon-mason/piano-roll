@@ -1,5 +1,6 @@
 import { useState, useReducer, useEffect, useRef, useMemo } from 'react'
 import axios from 'axios';
+import Howler from 'howler';
 import { Reducer, SoundState, SoundAction, MidiState, MidiAction, KeysPressed, ControlsState, ControlsAction } from './Tools/Interfaces';
 import SoundSettings from './SettingsComponents/SoundSettings'
 import MidiSettings from './SettingsComponents/MidiSettings'
@@ -81,8 +82,8 @@ function App() {
 
   // const [soundDetails, setSoundDetails] = useState({});
   useEffect(() => {
-    console.log(keysPressed)
-  }, [keysPressed])
+    console.log('kP pb pN', keysPressed, playback, pulseNum)
+  }, [playback])
 
   useEffect(() => {
     async function getSoundDetails() {
@@ -121,30 +122,34 @@ function App() {
 
   useEffect(() => {
     // console.log(pulseNum , 1000 / (midiState.bpm / 60) * midiState.numMeasures * 4)
-    if(time > 1000 / (midiState.bpm / 60) * midiState.numMeasures * 4) midiDispatch({type: 'mode', mode: 'keyboard'})
+    // if(time > 1000 / (midiState.bpm / 60) * midiState.numMeasures * 4) midiDispatch({type: 'mode', mode: 'keyboard'})
   }, [time])
 
   useEffect(() => {
     if(midiState.mode === 'stop' || midiState.mode === 'keyboard') {
       let tempPlayback = JSON.stringify(playback).replaceAll('true', 'false');
+      // tempPlayback = JSON.stringify(playback).replaceAll('-1', `${pulseNum}`);
       // console.log(tempPlayback)
-      // setPlayback(JSON.parse(tempPlayback))
-      setPlayback({});
-      setKeysPressed({});
+      setPlayback(JSON.parse(tempPlayback))
     }
   }, [midiState.mode])
 
-  // useEffect(() => {
-  //   if(Object.keys(keysPressed).length > 0) {
-  //     setKeysPressed((keysPressed) => {
-  //       let state = {...keysPressed};
-  //       // let unpressed = ;
-  //       getUnpressed().forEach((noteOct) => setTimeout(() => delete state[noteOct], 100));
-  //       console.log(state)
-  //       return state;
-  //     })
-  //   }
-  // }, [keysPressed])
+  useEffect(() => {
+    if(midiState.mode === 'keyboard') {
+      let tempKeysPressed = {...keysPressed};
+      let tempPlayback = {...playback};
+      // Object.entries(playback).forEach((playback) => {
+      //   console.log('hee')
+      //   tempPlayback[playback[0]] = {...playback[1], end: -1}
+      // })
+      Object.entries(keysPressed).forEach((keyPressed) => {
+        tempKeysPressed[keyPressed[0]] = {...keyPressed[1], end: -1}
+      })
+      // setPlayback(tempPlayback)
+      // console.log('BITCHBITCHBITCHBITCHBITCHBITCHBITCHBITCHBITCHBITCH')
+      setKeysPressed({});
+    }
+  }, [midiState.mode])
 
   function getUnpressed(): string[] {
     let pressed: string[] = []
