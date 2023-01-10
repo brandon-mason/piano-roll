@@ -1,5 +1,6 @@
 import { useState, useReducer, useEffect, useRef, useMemo } from 'react'
 import axios from 'axios';
+import Howler from 'howler';
 import { Reducer, SoundState, SoundAction, MidiState, MidiAction, KeysPressed, ControlsState, ControlsAction } from './Tools/Interfaces';
 import SoundSettings from './SettingsComponents/SoundSettings'
 import MidiSettings from './SettingsComponents/MidiSettings'
@@ -66,6 +67,7 @@ function App() {
   const midiLength = useMemo<number>(() => midiState.numMeasures * 4 / (midiState.bpm / 60 / 1000), [midiState.bpm, midiState.numMeasures]); // number of beats / bpm in ms
   const pulseRate = useMemo<number>(() => midiState.ppq * midiState.bpm / 60 / 1000, [midiState.bpm, midiState.ppq]); // ppq / bpm in ms
   const timerRef = useRef(null);
+  const noteUnpressedRef = useRef<string[]>([]);
   const [time, setTime] = useState(0); // 24 * 120 /60/1000 * 16 /(120/60/1000)
   const [pulseNum, setPulseNum] = useState(0);
   const [keysPressed, setKeysPressed] = useState<KeysPressed>({});
@@ -80,8 +82,8 @@ function App() {
 
   // const [soundDetails, setSoundDetails] = useState({});
   useEffect(() => {
-    // console.log(midiState.mode)
-  }, [midiState.mode])
+    console.log('kP pb pN', keysPressed, playback, pulseNum)
+  }, [playback])
 
   useEffect(() => {
     async function getSoundDetails() {
@@ -120,15 +122,45 @@ function App() {
 
   useEffect(() => {
     // console.log(pulseNum , 1000 / (midiState.bpm / 60) * midiState.numMeasures * 4)
-    if(time > 1000 / (midiState.bpm / 60) * midiState.numMeasures * 4) midiDispatch({type: 'mode', mode: 'keyboard'})
+    // if(time > 1000 / (midiState.bpm / 60) * midiState.numMeasures * 4) midiDispatch({type: 'mode', mode: 'keyboard'})
   }, [time])
 
   useEffect(() => {
     if(midiState.mode === 'stop' || midiState.mode === 'keyboard') {
       let tempPlayback = JSON.stringify(playback).replaceAll('true', 'false');
+      // tempPlayback = JSON.stringify(playback).replaceAll('-1', `${pulseNum}`);
+      // console.log(tempPlayback)
       setPlayback(JSON.parse(tempPlayback))
     }
   }, [midiState.mode])
+
+  useEffect(() => {
+    if(midiState.mode === 'keyboard') {
+      let tempKeysPressed = {...keysPressed};
+      let tempPlayback = {...playback};
+      // Object.entries(playback).forEach((playback) => {
+      //   console.log('hee')
+      //   tempPlayback[playback[0]] = {...playback[1], end: -1}
+      // })
+      Object.entries(keysPressed).forEach((keyPressed) => {
+        tempKeysPressed[keyPressed[0]] = {...keyPressed[1], end: -1}
+      })
+      // setPlayback(tempPlayback)
+      // console.log('BITCHBITCHBITCHBITCHBITCHBITCHBITCHBITCHBITCHBITCH')
+      setKeysPressed({});
+    }
+  }, [midiState.mode])
+
+  function getUnpressed(): string[] {
+    let pressed: string[] = []
+    Object.keys(keysPressed).forEach((noteOct) => {
+      if(Object.values(keysPressed[noteOct]).includes(false)) {
+        pressed.push(noteOct);
+      }
+    })
+    console.log(pressed)
+    return pressed;
+  }
 
   function getOctaveArray() {
     let octaveArray: number[] = []
@@ -177,7 +209,7 @@ function App() {
       <ErrorBoundary>
         <MidiRecorder soundDetails={soundDetails} controlsState={controlsState} keysPressed={keysPressed} midiLength={midiLength} midiState={midiState} pulseNum={pulseNum} noteTracks={noteTracks} noteTracksRef={noteTracksRef} pulseRate={pulseRate} controlsDispatch={controlsDispatch} midiDispatch={midiDispatch} setPlayback={setPlayback} soundDispatch={soundDispatch} />
       </ErrorBoundary>
-      <Piano soundDetails={soundDetails} sound={soundState.sound} octave={soundState.octave} octaveMinMax={octaveMinMax} volume={soundState.volume} mode={midiState.mode} keysPressed={keysPressed} playback={playback} labelsRef={labelsRef} />
+      <Piano pulseNum={pulseNum} soundDetails={soundDetails} sound={soundState.sound} octave={soundState.octave} octaveMinMax={octaveMinMax} volume={soundState.volume} mode={midiState.mode} keysPressed={keysPressed} playback={playback} labelsRef={labelsRef} />
     </div>
   );
 }

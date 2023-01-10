@@ -85,7 +85,7 @@ function KeyNoteInput(props: KeyNoteInputProps) {
 
   useEffect(() => {
     props.onNotePlayed(controller);
-    // console.warn(controller)
+    // console.warn(controllers)
     // eslint-disable-next-line
   }, [controller]);
 
