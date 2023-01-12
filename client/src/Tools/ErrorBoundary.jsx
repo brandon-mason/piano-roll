@@ -3,7 +3,11 @@ import React, { logErrorToMyService } from 'react';
 export class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { 
+      error: null,
+      errorInfo: null,
+      hasError: false,
+    };
   }
 
   static getDerivedStateFromError(error) {
@@ -13,7 +17,12 @@ export class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, errorInfo) {
     // You can also log the error to an error reporting service
-    console.error(error, errorInfo);
+    this.setState({
+      error: error,
+      errorInfo: errorInfo,
+      hasError: true,
+    })
+    console.error(this.state.error, this.state.errorInfo);
   }
 
   render() {

@@ -4,7 +4,7 @@
   /* float: left; */
   position: absolute;
   left: 0;
-  background: aquamarine;
+  background: var(--main-color);
   top: 2px;
   /* transform-style: preserve-3d; */
   outline: black solid 1px;

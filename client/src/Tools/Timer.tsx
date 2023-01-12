@@ -78,8 +78,6 @@ function Timer(props: TimerProps) {
       clearInterval(date);
       if(props.pulseNum >= props.midiLength * props.pulseRate || props.mode === 'stop') {
         console.log('reset timer')
-        props.handleSetPulseNum(0);
-        props.handleSetTime(0);
         return;
       }
     }

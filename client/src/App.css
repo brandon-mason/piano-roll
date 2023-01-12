@@ -1,6 +1,7 @@
 .App {
   text-align: center;
-  background-color: aquamarine;
+  --main-color: aquamarine;
+  background-color: var(--main-color);
 }
 
 @media (prefers-reduced-motion: no-preference) {

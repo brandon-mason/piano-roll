@@ -49,6 +49,7 @@ function MidiSettings(props: MidiSettingsProps) {
         <option value='32'>1/32</option>
       </select>
       <button onClick={() => props.controlsDispatch({type: 'undo', undo: true})}>Undo</button>
+      <button onClick={() => props.controlsDispatch({type: 'export', export: true})}>Export</button>
     </>
     )
 }

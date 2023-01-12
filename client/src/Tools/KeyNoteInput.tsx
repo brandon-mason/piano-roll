@@ -28,8 +28,10 @@ function KeyNoteInput(props: KeyNoteInputProps) {
       }
       let octave = props.octave + qwertyNote[e.key.toLowerCase()].octave;
       let pressed = true;
-      if(parseInt(e.code)) {
+      console.log(e.code)
+      if(parseInt(e.code) - parseInt(e.code) === 0) {
         octave = parseInt(e.code);
+        console.log(octave)
       }
       let note = qwertyNote[e.key.toLowerCase()].note; // toLowerCase() is for caps lock
       
@@ -43,12 +45,16 @@ function KeyNoteInput(props: KeyNoteInputProps) {
       if(!Object.keys(qwertyNote).includes(e.key)) return;
       let octave = props.octave + qwertyNote[e.key.toLowerCase()].octave;
       let pressed = false
-      if(parseInt(e.code)) {
+      if(parseInt(e.code) - parseInt(e.code) === 0) {
         octave = parseInt(e.code);
       }
       // console.warn('KEY UP')
       let note = qwertyNote[e.key.toLowerCase()].note;
-      setController((controller) => ({...controller, [note + octave]: {...controller[note + octave], ...{key: e.key.toLowerCase(), pressed: false, end: props.pulseNum}}}));
+      if(props.pulseNum === 0) {
+        setController((controller) => ({...controller, [note + octave]: {...controller[note + octave], ...{key: e.key.toLowerCase(), pressed: false, end: props.pulseNum}}}));
+      } else {
+        setController((controller) => ({...controller, [note + octave]: {...controller[note + octave], ...{key: e.key.toLowerCase(), pressed: false, end: props.pulseNum}}}));
+      }
     }
 
     const element = ref.current!;

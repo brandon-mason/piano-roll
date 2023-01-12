@@ -10,4 +10,4 @@ const workercode = () => {
   }
 };
 
-module.exports = 
+module.exports = workercode

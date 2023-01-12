@@ -5,25 +5,26 @@ const qwertyNote = require('../Tools/note-to-qwerty-key');
 
 function Key(props: KeyProps) {
   const ref = useRef<HTMLButtonElement>(null);
-
   useEffect(() => {
     const onPointerDown = () => {
       let input = document.getElementById('key-note-input');
-      let keydownE = new KeyboardEvent('keydown', {
+      let keydown = new KeyboardEvent('keydown', {
         key: props.qwertyKey,
-        code: props.octave + ' ' + true,
+        code: props.octave.toString(),
       });
-      if(input) input.dispatchEvent(keydownE);
+      console.log(props.octave)
+      if(input) input.dispatchEvent(keydown);
       // props.handleNotePlayed([props.qwertyKey, parseInt(props.octave), true]);
     }
 
     const onPointerUp = () => {
       let input = document.getElementById('key-note-input');
-      let keydownE = new KeyboardEvent('keyup', {
+      let keyup = new KeyboardEvent('keyup', {
         key: props.qwertyKey,
-        code: props.octave + ' ' + false,
+        code: props.octave.toString(),
       });
-      if(input) input.dispatchEvent(keydownE);
+      console.log(props.octave)
+      if(input) input.dispatchEvent(keyup);
       // props.handleNotePlayed([props.qwertyKey, parseInt(props.octave), false]);
     }
 
@@ -49,22 +50,21 @@ function Key(props: KeyProps) {
 
 function NoteLabels(props: NoteLabelsProps) {
   const memoNoteLabels = useMemo<JSX.Element[]>(() => {
-    let gridLabelOctaves = [];
+    let gridLabelOctaves: JSX.Element[] = [];
     let gridLabels: JSX.Element[] = [];
 
     for(var x = props.octaveArray.length - 1; x >= 0; x--) {
       for(var y = 11; y >= 0; y--) {
-        gridLabelOctaves.push(<Key key={qwertyNote[y].note + props.octaveArray[x]} qwertyKey={qwertyNote[y].key} note={qwertyNote[y].note} altNote={qwertyNote[y].altNote} octave={props.octaveArray[x]} />);
+        gridLabels.push(<Key key={qwertyNote[y].note + props.octaveArray[x]} qwertyKey={qwertyNote[y].key} note={qwertyNote[y].note} altNote={qwertyNote[y].altNote} octave={props.octaveArray[x]} />);
       }
 
-      gridLabels.push(<div key={x} id={`${x}-octave`} className='note-label-octaves'>{gridLabelOctaves}</div>);
-      gridLabelOctaves = [];
-    }
-    
-    if(gridLabels.length === props.octaveArray.length) {
-      return gridLabels;
+      gridLabelOctaves.push(<div key={x} id={`${x}-octave`} className='note-label-octaves'>{gridLabels}</div>);
+      gridLabels = [];
     }
 
+    if(gridLabelOctaves.length === props.octaveArray.length) {
+      return gridLabelOctaves;
+    }
     return [];
   }, [props.octaveArray]);
 
@@ -75,10 +75,6 @@ function NoteLabels(props: NoteLabelsProps) {
       element.scrollIntoView({block: 'center'});
     }
   }, [memoNoteLabels]);
-
-  function sendNoteProps(keyPressed: any[]) {
-    // props.handleNotePlayed(keyPressed);
-  }
   return <div ref={props.labelsRef} id='midi-note-labels'>{memoNoteLabels}</div>
 }
 

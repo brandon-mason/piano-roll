@@ -19,8 +19,8 @@ export interface QwertyNoteObj {
 export interface KeyPressed {
   key?: string
   pressed: boolean;
-  start?: number;
-  end?: number;
+  start: number;
+  end: number;
 }
 
 export interface KeysPressed {
@@ -57,19 +57,21 @@ export interface MidiState {
 export interface MidiAction {
   type: string;
   bpm?: number;
-  mode?: string;
+  mode: string;
   numMeasures?: number;
   ppq?: number;
   subdiv?: number;
 }
 
 export interface ControlsState {
+  export: boolean;
   undo: boolean;
 }
 
 export interface ControlsAction {
   type: string;
-  undo: boolean;
+  export: boolean;
+  undo?: boolean;
 }
 
 export interface Midi {
@@ -162,7 +164,6 @@ export interface MidiRecorderProps {
   controlsDispatch: React.Dispatch<any>;
   midiDispatch: React.Dispatch<any>;
   setPlayback: Function;
-  soundDispatch: React.Dispatch<any>;
 }
 
 // Piano.tsx interfaces (5)
@@ -181,7 +182,7 @@ export interface PianoProps {
   mode: string;
   octave: number;
   octaveMinMax: number[];
-  playback: KeysPressed;
+  playback: MidiRecorded;
   sound: string;
   soundDetails: Object;
   volume: string;
@@ -256,7 +257,7 @@ export interface GridProps {
 export interface MidiNoteInfo {
   [noteStart: string]: {
     key: string;
-    keyPressed?: KeyPressed;
+    keyPressed: KeyPressed;
     noteTrackId: string;
     noteTracksRef: React.RefObject<HTMLDivElement>;
     props: {
@@ -293,7 +294,7 @@ export interface MidiNotes {
 export interface Widths {
   [noteStart: string]: {
     start: number;
-    end?: number;
+    end: number;
   };
 }
 
