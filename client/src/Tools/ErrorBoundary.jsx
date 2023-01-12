@@ -3,15 +3,11 @@ import React, { logErrorToMyService } from 'react';
 export class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-<<<<<<< HEAD
     this.state = { 
       error: null,
       errorInfo: null,
       hasError: false,
     };
-=======
-    this.state = { hasError: false };
->>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
   }
 
   static getDerivedStateFromError(error) {
@@ -21,16 +17,12 @@ export class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, errorInfo) {
     // You can also log the error to an error reporting service
-<<<<<<< HEAD
     this.setState({
       error: error,
       errorInfo: errorInfo,
       hasError: true,
     })
     console.error(this.state.error, this.state.errorInfo);
-=======
-    console.error(error, errorInfo);
->>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
   }
 
   render() {

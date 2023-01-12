@@ -4,11 +4,7 @@
   /* float: left; */
   position: absolute;
   left: 0;
-<<<<<<< HEAD
   background: var(--main-color);
-=======
-  background: aquamarine;
->>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
   top: 2px;
   /* transform-style: preserve-3d; */
   outline: black solid 1px;

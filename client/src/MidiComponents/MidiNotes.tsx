@@ -8,6 +8,7 @@ const qwertyNote = require('../Tools/note-to-qwerty-key-obj');
 
 interface MidiNotesProps {
     controlsState: ControlsState;
+    gridSize: number[];
     midiLength: number;
     midiRecorded: MidiRecorded;
     midiNoteInfo: MidiNoteInfo[];
@@ -38,14 +39,8 @@ function MidiNotes(props: MidiNotesProps) {
     // console.error(props.midiNoteInfo)
   }, [props.midiNoteInfo])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // console.log(props.midiNoteInfo)
-<<<<<<< HEAD
-=======
-    let key: string;
-    let start: number;
-    let end: number;
->>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
     // setWidths({});
     setWidths((widths) => {
       let state = {...widths}
@@ -55,7 +50,6 @@ function MidiNotes(props: MidiNotesProps) {
         }
       });
       props.midiNoteInfo.forEach((noteStart) => {
-<<<<<<< HEAD
         let key = Object.keys(noteStart)[0];
         let start = noteStart[key].keyPressed!.start!;
         let end = noteStart[key].keyPressed!.end!;
@@ -68,30 +62,15 @@ function MidiNotes(props: MidiNotesProps) {
       // console.log('state', state);
       return state;
     })
-  }, [props.pulseNum, props.midiNoteInfo])
-=======
-        key = Object.keys(noteStart)[0];
-        start = noteStart[key].keyPressed!.start!;
-        end = noteStart[key].keyPressed!.end!;
-        // console.warn(noteStart[key].keyPressed)
+  }, [props.pulseNum, props.midiNoteInfo, props.gridSize])
 
-        if(noteStart[key].keyPressed!.start) {
-            state[key] = {start: start, end: end};
-        }
-      })
-      return state;
-    })
-  }, [props.midiNoteInfo])
->>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
-
-  useEffect(() => {
+  useLayoutEffect(() => {
     setMidiNotes([])
     function renderPortals() {
       // console.log(props.midiNoteInfo)
       const noteTrackChilds: NoteTrackChilds = {};
       const midiNotesArr: ReactPortal[] = []
       props.midiNoteInfo.forEach((noteStart) => {
-<<<<<<< HEAD
         let key = Object.keys(noteStart)[0];
 
         // console.log('midiNoteInfo', props.midiNoteInfo);
@@ -114,25 +93,6 @@ function MidiNotes(props: MidiNotesProps) {
           noteTrackChilds[noteStart[key].noteTrackId].push(elem)
         }
         
-=======
-        // console.log(widths)
-        let key = Object.keys(noteStart)[0];
-        let left = widths[key].start! / (props.midiLength * props.pulseRate) * props.noteTracksRef.current!.offsetWidth + 1;
-        // let width = (noteStart[key].keyPressed!.end! - noteStart[key].keyPressed!.start!) / (props.midiLength * props.pulseRate) * props.noteTracksRef.current!.offsetWidth;
-        let width = (widths[key].end! - widths[key].start) / (props.midiLength * props.pulseRate) * props.noteTracksRef.current!.offsetWidth;
-        if(widths[key].end === -1) {
-          width = (props.pulseNum - widths[key].start) / (props.midiLength * props.pulseRate) * props.noteTracksRef.current!.offsetWidth;
-        }
-        var elem = createElement('span', {...noteStart[key].props, key: noteStart[key].key, style: {
-          height: '23.5px',
-          left: `${left}px` ,
-          width: `${width}px`,
-        }});
-        if(!noteTrackChilds[noteStart[key].noteTrackId]) {
-          noteTrackChilds[noteStart[key].noteTrackId] = [];
-        }
-        noteTrackChilds[noteStart[key].noteTrackId].push(elem)
->>>>>>> bbc93c9 (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
       });
       Object.keys(noteTrackChilds).forEach((noteTrackId) => {
         midiNotesArr.push(createPortal(noteTrackChilds[noteTrackId], props.noteTracksRef.current!.children.namedItem(noteTrackId)!))
@@ -146,7 +106,7 @@ function MidiNotes(props: MidiNotesProps) {
       setMidiNotes(renderPortals())
     }
 
-  }, [widths, props.pulseNum])
+  }, [widths, props.pulseNum, props.gridSize])
 
   // Notes recorded from keyboard
 

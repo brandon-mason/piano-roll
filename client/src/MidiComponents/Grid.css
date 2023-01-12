@@ -43,7 +43,9 @@
       text-align: end;
       width: 100%;
     }
-
+      .note-label:hover {
+        background-color: gray;
+      }
       .note-label.natural {
         background-color: white;
         color: black;
@@ -86,17 +88,3 @@
         outline: rgb(114, 114, 114) solid .08em;
         position: relative;
       }
-
-@media only screen and (min-width: 768px) {
-  #midi {
-    grid-template:
-    'labels' 'midi' / 100px 800px;
-  }
-
-    #midi-note-labels {
-      width: 100px;
-    }
-    #midi-track {  
-      width: 1000px;
-    }
-}
