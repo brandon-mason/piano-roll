@@ -14,6 +14,7 @@ import Grid from './MidiComponents/Grid';
 import { ErrorBoundary } from './Tools/ErrorBoundary';
 import './App.css';
 import UISettings from './SettingsComponents/UISettings';
+import ShowLoginModal from './LoginModal';
 var JZZ = require('jzz');
 require('jzz-midi-smf')(JZZ);
 
@@ -83,11 +84,13 @@ function App() {
   const [noteTracks, setNoteTracks] = useState<HTMLCollection | null>(null)
   const noteTracksRef = useRef(null);
   const [gridSize, setGridSize] = useState<number[]>([]);
+  const loginRef = useRef(null)
+  const [focusOnLogin, setFocusOnLogin] = useState(false)
 
   // const [soundDetails, setSoundDetails] = useState({});
   useEffect(() => {
-    // console.log(playback)
-  }, [playback])
+    console.log(focusOnLogin)
+  }, [focusOnLogin])
 
   useEffect(() => {
     async function getSoundDetails() {
@@ -102,10 +105,10 @@ function App() {
       }
       var soundDetails: Object = {};
       const soundDeets = await axios.get(url, options)
-        .then(res => {
-          soundDetails = res.data;
-          return res.data;
-        }).catch(err => console.error(err));
+      .then(res => {
+        soundDetails = res.data;
+        return res.data;
+      }).catch(err => console.error(err));
       setSoundDetails(soundDetails);
       return soundDeets;
     }
@@ -249,10 +252,14 @@ function App() {
     })
   }
 
+  function setFocusLogin(focus: boolean) {
+    setFocusOnLogin(focus);
+  }
+
   const bgSizeTrack = 100 / midiState.numMeasures;
 
   return (
-    <div className="App">
+    <div className="App" id='App'>
       <style>
         {`
         @media only screen and (min-width: 768px) {
@@ -271,21 +278,23 @@ function App() {
         `}
       </style>
       <div ref={selectorsRef} id='selectors'>
+        <ShowLoginModal setFocusOnLogin={setFocusOnLogin} />
         <SoundSettings soundDetails={soundDetails} sound={soundState.sound} octave={soundState.octave} volume={soundState.volume} pianoDispatch={soundDispatch} />
         <MidiSettings soundDetails={soundDetails} numMeasures={midiState.numMeasures} subdiv={midiState.subdiv} bpm={midiState.bpm} mode={midiState.mode} controlsDispatch={controlsDispatch} midiDispatch={midiDispatch} />
         <UISettings setXGridSize={setXGridSize} />
+
         <div ref={timerRef} id='timer-buttons'>
           <TimerButtons metPlay={metPlay} metronome={midiState.metronome} mode={midiState.mode} pulseNum={pulseNum} midiDispatch={midiDispatch} />
           <KbFunctions controlsPressed={controlsPressed} metronome={midiState.metronome} mode={midiState.mode} octaveMinMax={octaveMinMax} selectorsRef={selectorsRef} clearControls={clearControls} controlsDispatch={controlsDispatch} midiDispatch={midiDispatch} soundDispatch={soundDispatch} />
         </div>
       </div>
-      <div id='midi' >
+      <div id='midi'>
         <PianoRoll labelsRef={labelsRef} midiLength={midiLength} noteTracksRef={noteTracksRef} numMeasures={midiState.numMeasures} octave={soundState.octave} pulseNum={pulseNum} pulseRate={pulseRate} sound={soundState.sound} soundDetails={soundDetails} subdiv={midiState.subdiv} time={pulseNum} handleNotePlayed={pianoRollKeysPressed} />
         <div id='midi-track' style={{backgroundSize: `${bgSizeTrack}%`, width: `calc(100% - ${gridSize[0]})`}}>
           <Grid gridSize={gridSize} midiLength={midiLength} noteTracksRef={noteTracksRef} numMeasures={midiState.numMeasures} pulseNum={pulseNum} pulseRate={pulseRate} subdiv={midiState.subdiv} octaveArray={getOctaveArray()} setNoteTracks={setNoteTracks} />
         </div>
       </div>
-      <KeyNoteInput octave={soundState.octave} pianoRollKey={pianoRollKeyRef.current} pulseNum={pulseNum} onControlsPressed={setControlsPressed} onNotePlayed={setKeysPressed} />
+      <KeyNoteInput focusOnLogin={focusOnLogin} loginRef={loginRef} octave={soundState.octave} pianoRollKey={pianoRollKeyRef.current} pulseNum={pulseNum} onControlsPressed={setControlsPressed} onNotePlayed={setKeysPressed} />
       <Timer bpm={midiState.bpm} metronome={midiState.metronome} midiLength={midiLength} time={time} timerRef={timerRef} mode={midiState.mode} ppq={midiState.ppq} pulseNum={pulseNum} pulseRate={pulseRate} handleMetPlay={metPlayed} handleSetTime={setTime} handleSetPulseNum={setPulseNum} />
       <ErrorBoundary>
         <MidiRecorder controlsState={controlsState} gridSize={gridSize} keysPressed={keysPressed} midiLength={midiLength} midiState={midiState} pulseNum={pulseNum} noteTracks={noteTracks} noteTracksRef={noteTracksRef} pulseRate={pulseRate} controlsDispatch={controlsDispatch} midiDispatch={midiDispatch} setPlayback={setPlayback} />

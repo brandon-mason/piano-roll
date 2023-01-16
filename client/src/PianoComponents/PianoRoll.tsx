@@ -16,7 +16,8 @@ function Key(props: KeyProps) {
   });
   
   const onPointerDown = () => {
-    let input = document.getElementById('key-note-input');
+    // let input = document.getElementById('key-note-input');
+    let input = document;
     let keydown = new KeyboardEvent('keydown', {
       key: props.qwertyKey,
       code: props.octave.toString(),
@@ -27,12 +28,13 @@ function Key(props: KeyProps) {
   }
 
   const onPointerUp = () => {
-    let input = document.getElementById('key-note-input');
+    // let input = document.getElementById('key-note-input');
+    let input = document;
     let keyup = new KeyboardEvent('keyup', {
       key: props.qwertyKey,
       code: props.octave.toString(),
     });
-    console.log(props.octave)
+    // console.log(props.octave)
     if(input) input.dispatchEvent(keyup);
     // props.handleNotePlayed([props.qwertyKey, parseInt(props.octave), false]);
   }

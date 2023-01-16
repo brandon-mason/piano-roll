@@ -1,0 +1,12 @@
+{
+  "account info": {
+    "userid": "some string",
+    "username": "some string",
+    "password": "a good password"
+  },
+  "recordings": {
+    "userid": "some string",
+    "name of recording1": "MidiNoteInfo",
+    "recording": "ahgsjhuerteruiou43y537to8y8743580tyfuoihidudgreh"
+  }
+}

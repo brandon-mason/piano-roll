@@ -1,0 +1,95 @@
+@keyframes lift-in {
+  0% {top: -100%; position: absolute;}
+  /* 100% {top: 0%; position: fixed;} */
+}
+
+#login-bg {
+  display: flex;
+  top: 0;
+  position:fixed;
+  z-index: 100;
+  background-color: rgba(7, 52, 77, 0.857);
+  width: 100%;
+  height: 100%;
+  animation-name: lift-in;
+  animation-duration: 500ms;
+  /* animation-delay: 100ms; */
+  animation-fill-mode: forwards;
+}
+
+#reg-bg {
+  display: flex;
+  top: 0;
+  position:fixed;
+  z-index: 100;
+  background-color: rgba(7, 52, 77, 0.857);
+  width: 100%;
+  height: 100%;
+  /* animation-name: lift-in; */
+  /* animation-duration: 500ms; */
+  /* animation-fill-mode: forwards; */
+}
+
+@keyframes drop-in{
+  0% {top: -100%; position: absolute;}
+  100% {top: 0%; position: fixed;}
+}
+
+#loginreg-modal {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  z-index: 100;
+  align-items: center;
+  background-color: var(--main-color);
+  width: 200px;
+  top: 0;
+  overflow: hidden;
+  border-radius: 2%;
+  animation-name: drop-in;
+  animation-duration: 500ms;
+  animation-fill-mode: forwards;
+}
+  #loginreg-modal > .close-button {
+    margin-right: auto;
+    background: none;
+    outline: none;
+    border: none;
+    cursor: pointer;
+  }
+  .loginreg-element.button {
+    background-color: rgb(168, 86, 198);
+    border-radius: 5px;
+    cursor: pointer;
+    /* border: none; */
+  }
+  button#register-label {
+    margin-top: 30px;
+  }
+  #login-form {
+    display: grid;
+    grid-template: 
+      "a"
+      "a"
+      "a"
+      "a"
+      "a"
+      "a"
+      "a";
+      margin: 10% 15% 15% 15%;
+  }
+  input#register {
+    margin-top: 1em;
+  }
+  #register-form {
+    display: grid;
+    grid-template: 
+      "a"
+      "a"
+      "a"
+      "a"
+      "a"
+      "a"
+      "a";
+      margin: 5% 15% 15% 5%;
+  }

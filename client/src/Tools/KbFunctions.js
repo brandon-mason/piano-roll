@@ -78,6 +78,7 @@ function KbFunctions(props) {
   }
 
   function undo() {
+    console.log('UNDO')
     props.controlsDispatch({type: 'undo', undo :true});
   }
 

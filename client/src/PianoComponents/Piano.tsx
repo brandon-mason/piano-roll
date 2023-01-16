@@ -143,7 +143,7 @@ function Piano(props: PianoProps) {
         let key = output[noteOct].key;
         let note = noteOct.replace(/[0-9]/g, '');
         let octave = parseInt(noteOct.replace(/\D/g,''));
-        console.log(octave);
+        // console.log(octave);
         Object.keys(qwertyNote).forEach((qwertyKey) => {
           qwertyOctave = qwertyNote[qwertyKey].octave;
           if(octave < props.octaveMinMax[1]) {
@@ -209,7 +209,7 @@ function Piano(props: PianoProps) {
       }
       setKeysRecorded(state);
     } else if(props.mode === 'keyboard') {
-      console.log('keyb');
+      // console.log('keyb's);
       setStartPulse(props.pulseNum)
       playNote(props.keysPressed);
     } else if(props.mode === 'stop') {

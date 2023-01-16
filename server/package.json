@@ -2,20 +2,29 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "server.ts",
   "proxy": "http://localhost:3002",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon -L server.js"
+    "start": "ts-node-dev server.ts",
+    "dev": "nodemon -L server.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "archiver": "^5.3.1",
+    "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
     "express": "^4.18.1",
+    "jsonwebtoken": "^9.0.0",
     "mongodb": "^4.10.0",
+    "mongoose": "^6.8.3",
     "nodemon": "^2.0.20"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.15",
+    "@types/mongoose": "^5.11.97",
+    "ts-node-dev": "^2.0.0"
   }
 }

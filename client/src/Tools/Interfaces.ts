@@ -108,6 +108,8 @@ export interface MidiSettingsProps {
 
 //Key-Note-Input.tsx interfaces (1)
 export interface KeyNoteInputProps {
+  focusOnLogin: boolean
+  loginRef: React.RefObject<any>;
   octave: number;
   pianoRollKey: any[] | null;
   pulseNum: number;

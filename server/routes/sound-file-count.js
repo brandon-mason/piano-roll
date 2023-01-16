@@ -89,7 +89,7 @@ router.get('/sounds/Instruments', (req, res) => {
   }
 
   const fileStruct = traverseFolder(path.resolve(soundsDir));
-  console.log(fileStruct)
+  // console.log(fileStruct)
   res.status(200);
   res.send(fileStruct);
 });
