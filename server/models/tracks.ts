@@ -5,7 +5,7 @@ const SavedTrackSchema = new SchemaT({
     type: String,
     required: true,
   },
-  name: {
+  trackname: {
     type: String,
     required: true,
   },
@@ -14,3 +14,5 @@ const SavedTrackSchema = new SchemaT({
     required: true,
   }
 })
+
+module.exports = require('mongoose').model('SavedTracks', SavedTrackSchema);

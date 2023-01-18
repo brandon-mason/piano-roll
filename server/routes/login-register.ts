@@ -14,7 +14,7 @@ logregRouter
     const {email, username, password} = req.body
 
     if(!email || !password || !username) {
-      return res.status(500).json({error: "Field(s) missing."});
+      return res.status(500).json({error: 'Field(s) missing.'});
     }
 
     bcrypt.hash(password, 12)
@@ -28,7 +28,7 @@ logregRouter
           email,
           username,
           password: hashedpw,
-        })
+        });
         user.save()
         .then((user: any) => {
         res.status(200).json(`${username} Registered!`);
@@ -74,7 +74,6 @@ logregRouter
 
     })
     .catch((err: any) => {
-      console.log('hehe')
       res.status(500).json(`Error: User ${username} not found.`); 
       console.error(err);
     });
