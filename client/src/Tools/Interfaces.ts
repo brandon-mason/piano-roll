@@ -108,13 +108,13 @@ export interface MidiSettingsProps {
 
 //Key-Note-Input.tsx interfaces (1)
 export interface KeyNoteInputProps {
-  focusOnLogin: boolean
-  loginRef: React.RefObject<any>;
+  focus: boolean
   octave: number;
   pianoRollKey: any[] | null;
   pulseNum: number;
   onControlsPressed: Function;
   onNotePlayed: Function;
+  setKeysPressed: Function;
 }
 
 //Timer.tsx interfaces (1)
@@ -158,9 +158,13 @@ export interface MidiRecorderProps {
   noteTracksRef: React.RefObject<HTMLDivElement>;
   pulseNum: number;
   pulseRate: number;
+  selectorsRef: React.RefObject<HTMLDivElement>;
+  username: string;
   controlsDispatch: React.Dispatch<any>;
   midiDispatch: React.Dispatch<any>;
+  setFocus: Function,
   setPlayback: Function;
+  setTrackName: Function;
 }
 
 // Piano.tsx interfaces (5)
@@ -257,7 +261,6 @@ export interface MidiNoteInfo {
     key: string;
     keyPressed: KeyPressed;
     noteTrackId: string;
-    noteTracksRef: React.RefObject<HTMLDivElement>;
     props: {
       id: string;
       className: string;

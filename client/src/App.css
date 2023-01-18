@@ -1,6 +1,8 @@
 .App {
   text-align: center;
   background-color: var(--main-color);
+  width: max-content;
+  /* display: inline-block; */
 }
 
 @media (prefers-reduced-motion: no-preference) {

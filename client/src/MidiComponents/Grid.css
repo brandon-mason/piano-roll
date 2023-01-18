@@ -2,8 +2,8 @@
   display: flex;
   grid-template:
     'labels' 'midi' / 100px 1000px;
-  overflow: scroll;
-  overflow-y: hidden; /* Hide vertical scrollbar */
+  /* overflow: scroll; */
+  /* overflow-y: hidden; /* Hide vertical scrollbar */ 
   white-space: nowrap;
   width: 100%;
   /* justify-content: center; */

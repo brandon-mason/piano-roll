@@ -7,19 +7,7 @@ import axios from "axios";
 interface RegModalProps {
   onClose: Function;
   onRegister: Function;
-}
-
-interface CredsState {
-  email: string, 
-  username: string, 
-  password: string,
-}
-
-interface CredsAction {
-  type: string;
-  email?: string;
-  username?: string;
-  password?: string;
+  setShowRegister: Function;
 }
 
 function RegModal(props: RegModalProps) {
@@ -33,6 +21,7 @@ function RegModal(props: RegModalProps) {
         <form 
           id='register-form' 
           ref={formRef}
+          method='post'
           onSubmit={async (e: React.SyntheticEvent) => {
             e.preventDefault();
             const target = e.target as typeof e.target & {
@@ -44,7 +33,7 @@ function RegModal(props: RegModalProps) {
             const username = target.username.value;
             const password = target.password.value; // typechecks!
             console.log(email, username, password)
-            const url = 'http://localhost:3001/api/register';
+            const url = `${process.env.REACT_APP_API}/register`;
             const options = {
               method: 'POST',
               mode: 'cors',
@@ -71,8 +60,9 @@ function RegModal(props: RegModalProps) {
 
             const credentials = await axios.post(url, options)
             .then((res) => {
-                alert('Registered: \n' + username);
-            });
+                alert(res.data.message);
+                props.setShowRegister(false)
+            }).catch((err) => console.error(err));
             console.log(credentials)
           }}
         >
@@ -94,11 +84,18 @@ function RegModal(props: RegModalProps) {
 interface LoginModalProps {
   onClose: Function;
   onRegister: Function;
+  setUser: Function;
 }
 
 function LoginModal(props: LoginModalProps) {
   const formRef = useRef(null);
-  const [authenticated, setAuthenticated] = useState(false);
+  const [user, setUser] = useState('');
+
+  useEffect(() => {
+    console.log(user)
+    if(user.length > 0) props.setUser(user);
+  }, [user]);
+ 
 
   return(
     <>
@@ -108,6 +105,7 @@ function LoginModal(props: LoginModalProps) {
         <form 
           id='login-form'
           ref={formRef}
+          method='post'
           onSubmit={async (e: React.SyntheticEvent) => {
             e.preventDefault();
             const target = e.target as typeof e.target & {
@@ -116,8 +114,7 @@ function LoginModal(props: LoginModalProps) {
             };
             const username = target.username.value;
             const password = target.password.value; // typechecks!
-            console.log(username, password)
-            const url = 'http://localhost:3001/api/login';
+            const url = `${process.env.REACT_APP_API}/login`;
             const options = {
               method: 'POST',
               mode: 'cors',
@@ -139,9 +136,10 @@ function LoginModal(props: LoginModalProps) {
 
             const credentials = await axios.post(url, options)
             .then((res) => {
-                alert(`Logged in: \n${username}`);
-                setAuthenticated(true);
-            });
+              console.log(res.data)
+              alert(res.data.message);
+              setUser(username);
+            }).catch((err) => console.error(err));
             console.log(credentials)
           }}
         >
@@ -159,24 +157,33 @@ function LoginModal(props: LoginModalProps) {
 }
 
 interface ShowLoginModalProps {
-  setFocusOnLogin: Function;
+  setFocus: Function;
+  setUser: Function;
 }
 
 function ShowLoginModal(props: ShowLoginModalProps) {
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
+  const [user, setUser] = useState('');
   const logreg = useMemo<JSX.Element>(() => {
     if(showLogin && !showRegister) {
       return createPortal(
-        <LoginModal onClose={setShowLogin} onRegister={setShowRegister} />,
+        <LoginModal onClose={setShowLogin} onRegister={setShowRegister} setUser={loggedIn} />,
         document.body
       )
     } else if(showRegister) {
       return createPortal(
-        <RegModal onClose={setShowLogin} onRegister={setShowRegister} />,
+        <RegModal onClose={setShowLogin} onRegister={setShowRegister} setShowRegister={setShowRegister} />,
         document.body
       )
+      }
+
+    function loggedIn(user: string) {
+      props.setUser(user)
+      setUser(user)
+      setShowLogin(false)
     }
+
     return <></>
   }, [showLogin, showRegister])
   // const [elemToShow, setElemToShow] = useState<()
@@ -195,7 +202,7 @@ function ShowLoginModal(props: ShowLoginModalProps) {
 
   useEffect(() => {
     console.log(showLogin);
-    props.setFocusOnLogin(showLogin);
+    props.setFocus(showLogin);
   }, [showLogin]);
 
   // useEffect(() => {
@@ -208,7 +215,7 @@ function ShowLoginModal(props: ShowLoginModalProps) {
 
   return(
     <>
-      <button onClick={() => setShowLogin(true)} >Login</button>
+      {(user.length === 0) ? <button onClick={() => setShowLogin(true)} >Login</button> : <button>Logout</button>}
       {/* {showLogin && !showRegister && createPortal(
         <LoginModal onClose={setShowLogin} onRegister={setShowRegister} />,
         document.body

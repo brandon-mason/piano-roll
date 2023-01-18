@@ -53,7 +53,8 @@ function OctavesInView(props: OctavesInViewProps) {
   }, [props.labelsRef, props.octaveMax])
 
   useEffect(() => {
-    props.handleViewChange([props.octave])
+    props.handleViewChange([props.octave, props.octave + 1])
+    // console.log(props.octave);
   }, [props.octave])
 
   return null;
@@ -129,8 +130,8 @@ function Piano(props: PianoProps) {
   }, [props.mode])
 
   useEffect(() => {
-    // console.log(props.pulseNum);
-  }, [props.pulseNum]);
+    // console.log(fetchedSounds);
+  }, [fetchedSounds]);
 
   useEffect(() => {
     function playNote(output: KeysPressed) {
@@ -147,6 +148,7 @@ function Piano(props: PianoProps) {
         Object.keys(qwertyNote).forEach((qwertyKey) => {
           qwertyOctave = qwertyNote[qwertyKey].octave;
           if(octave < props.octaveMinMax[1]) {
+            // console.log(fetchedSounds[octave][props.volume])
             if(qwertyKey === key && fetchedSounds[octave][props.volume]) {
               (note.includes('#')) ? noteName = note.replace('#', 'sharp') + (octave) : noteName = note.replace('b', 'flat') + (octave);
               let labelElem = document.getElementById(noteName.toLowerCase() + '-label')!;
@@ -175,7 +177,7 @@ function Piano(props: PianoProps) {
 
     if(props.mode === 'playing' || props.mode === 'recording') { // || (props.midiState.mode === 'recording' && Object.keys(midiRecorded).length > 0) && props.keysPressed) {
       // console.log(props.pulseNum);
-      let pbKp: KeysPressed = {...props.playback[props.pulseNum]}
+      let pbKp: KeysPressed = {...props.playback[props.pulseNum], ...props.keysPressed}
       let state: string[] = [];
       if(startPulse === 0) {
         // console.log('pbkp');
@@ -190,22 +192,22 @@ function Piano(props: PianoProps) {
             pbKp = {...pbKp, [noteOct]: props.keysPressed[noteOct]}
           }
         })
-          console.log(props.pulseNum)
+        console.log(props.pulseNum)
           
-          setPlaybackOn((playbackOn) => {
-            let state = {...playbackOn};
-            Object.keys(pbKp).forEach((noteOct) => {
-              if(pbKp[noteOct].end !== -1 && state[noteOct]) {
-                console.log('playbackOn', noteOct);
-                delete state[noteOct];
-              }
-            })
-            // console.log(state);
-            return state;
+        setPlaybackOn((playbackOn) => {
+          let state = {...playbackOn};
+          Object.keys(pbKp).forEach((noteOct) => {
+            if(pbKp[noteOct].end !== -1 && state[noteOct]) {
+              console.log('playbackOn', noteOct);
+              delete state[noteOct];
+            }
           })
-          // console.log('not pbkp');
-          playNote({...pbKp, ...playbackOn});
-          setPlaybackOn({})
+          // console.log(state);
+          return state;
+        })
+        // console.log('not pbkp');
+        playNote({...pbKp, ...playbackOn});
+        setPlaybackOn({})
       }
       setKeysRecorded(state);
     } else if(props.mode === 'keyboard') {
@@ -286,12 +288,13 @@ function Piano(props: PianoProps) {
     let notFetched: number[] = [];
     // console.log(toFetch)
     for(let i = 0; i < toFetch.length; i++) {
-      let url = 'http://localhost:3001/sounds/Instruments/' + props.sound + '/' + toFetch[i] + '/' + props.volume;
+      let url = `${process.env.REACT_APP_SERVER}/sounds/Instruments/${props.sound}/${toFetch[i]}/${props.volume}`;
       if(!fetchedSounds[toFetch[i]] || fetchedSounds[toFetch[i]][props.volume]._src != url + '.webm' || fetchedSounds[toFetch[i]][props.volume]._src != url + '.mp3') {
         notFetched.push(toFetch[i]);
       }
       
       if(notFetched.length > 0) {
+        console.log('hehe');
         setFetchedSounds((fetchedSounds) => ({...fetchedSounds, [toFetch[i]]: {[props.volume]: loadSound(url)}}))
       }
     }

@@ -25,6 +25,7 @@ function BpmSlider(props: BpmSliderProps) {
 // }
 
 function MidiSettings(props: MidiSettingsProps) {
+  
 
   function renderNumMeasures() {
     var measureOpts = [];
@@ -49,11 +50,11 @@ function MidiSettings(props: MidiSettingsProps) {
         <option value='32'>1/32</option>
       </select>
       <button onClick={() => props.controlsDispatch({type: 'undo', undo: true})}>Undo</button>
-      <form>
-        <input type='trackName' name='trackName'></input>
+      {/* <form>
+        <input type='trackName' name='trackName' onChange={(e) => props.setTrackName(e.target.value)}></input>
         <input type='submit' value='Save'></input>
         <button onClick={() => props.controlsDispatch({type: 'export', export: true})}>Export</button>
-      </form>
+      </form> */}
     </>
     )
 }

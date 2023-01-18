@@ -8,7 +8,6 @@ function UISettings(props: UISettingsProps) {
   const xGridSliderRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    console.log(xGridSliderRef.current)
     if(xGridSliderRef.current) props.setXGridSize(parseInt(xGridSliderRef.current.value));
   }, [xGridSliderRef.current]);
 

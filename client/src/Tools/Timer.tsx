@@ -17,7 +17,7 @@ function Metronome(props: MetronomeProps) {
 
   useEffect(() => {
     const met = new Howl({
-      src: ['http://localhost:3001/sounds/Metronome/metronome.webm', 'https://localhost:3001/sounds/Metronome/metronome.mp3'],
+      src: [`${process.env.REACT_APP_Server}/sounds/Metronome/metronome.webm`, `${process.env.REACT_APP_SERVER}/sounds/Metronome/metronome.mp3`],
         sprite: {
           firstBeat: [0, 10],
           beat: [10,10]

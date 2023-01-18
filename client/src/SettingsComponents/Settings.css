@@ -1,15 +1,16 @@
 #selectors {
   background-color: var(--main-color);
-  position: fixed;
+  position: sticky;
   top: 0;
+  left: 0;
   width: 100vw;
   transform-style: preserve-3d;
   z-index: 3;
 }
 
-#timer-buttons {
+/* #timer-buttons {
   display: inline-block;
-}
+} */
 
 .stop-button {
   color: white;
@@ -45,3 +46,7 @@
   .metronome-button.active {
     color: aquamarine;
   }
+
+.save-export {
+  display: inline-block;
+}
