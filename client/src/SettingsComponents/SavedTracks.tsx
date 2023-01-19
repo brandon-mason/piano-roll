@@ -32,6 +32,11 @@ function SavedTracks(props: SavedTracksProps) {
       return savedTracks;
     }
     if(props.username.length > 0) getSavedTracks();
+    if(props.username.length === 0) {
+      props.setMidiNoteInfo([]);
+      setTrackNames([]);
+    }
+
   }, [props.username]);
 
   useEffect(() => {

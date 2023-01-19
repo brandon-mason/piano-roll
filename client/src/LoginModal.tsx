@@ -215,7 +215,7 @@ function ShowLoginModal(props: ShowLoginModalProps) {
 
   return(
     <>
-      {(user.length === 0) ? <button onClick={() => setShowLogin(true)} >Login</button> : <button>Logout</button>}
+      {(user.length === 0) ? <button onClick={() => setShowLogin(true)} >Login</button> : <button onClick={() => {setUser(''); props.setUser('');}}>Logout</button>}
       {/* {showLogin && !showRegister && createPortal(
         <LoginModal onClose={setShowLogin} onRegister={setShowRegister} />,
         document.body
