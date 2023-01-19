@@ -4,6 +4,7 @@ import './Settings.css';
 import { MidiNoteInfo } from '../Tools/Interfaces';
 
 interface SavedTracksProps {
+  midiNoteInfoLength: number;
   username: string;
   setMidiNoteInfo: Function;
 }
@@ -62,11 +63,19 @@ function SavedTracks(props: SavedTracksProps) {
     })
   }
 
-  return <select id='track-names' className='save-export' onChange={(e) => changeSelected(e.target.value)}>
-    {trackNames.map((track) => {
-      return <option key={track}>{track}</option>
-    })}
-  </select>
+  return (
+    <>
+      <button onClick={() => {
+        if(props.midiNoteInfoLength > 0) alert()
+        props.setMidiNoteInfo([]);
+        }}>New</button>
+      <select id='track-names' className='save-export' onChange={(e) => changeSelected(e.target.value)}>
+        {trackNames.map((track) => {
+          return <option key={track}>{track}</option>
+        })}
+      </select>
+    </>
+  )
 }
 
 export default SavedTracks;

@@ -411,7 +411,7 @@ function MidiRecorder(props: MidiRecorderProps) {
     <>
       <MidiNotes gridSize={props.gridSize} midiNoteInfo={midiNoteInfo} notesRemoved={notesRemoved} orderOfEvents={orderOfEvents} controlsState={props.controlsState} midiLength={props.midiLength} midiState={props.midiState} pulseNum={props.pulseNum} pulseRate={props.pulseRate} noteTracksRef={props.noteTracksRef} subdiv={props.midiState.subdiv} controlsDispatch={props.controlsDispatch}/>
       {props.selectorsRef.current && createPortal(<>
-      <SavedTracks username={props.username} setMidiNoteInfo={setMidiNoteInfo} />
+      <SavedTracks midiNoteInfoLength={midiNoteInfo.length} username={props.username} setMidiNoteInfo={setMidiNoteInfo} />
       <SaveExport controlsDispatch={props.controlsDispatch} midiNoteInfo={midiNoteInfo} mode={props.midiState.mode} username={props.username} setFocus={props.setFocus} setTrackName={props.setTrackName} />
       </>,
         props.selectorsRef.current)}
