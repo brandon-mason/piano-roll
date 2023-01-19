@@ -24,9 +24,10 @@ connection.once('open', () => {
   console.log('Successfully connected to MongoDB!');
 });
 
-app.use('/api', require('./routes/login-register'))
+app.use('/api', require('./routes/login-register'));
+app.use('/api', require('./routes/tracks'));
 
-app.use('/api', require('./routes/sound-file-count.js'));
+app.use('/api', require('./routes/sound-file-count'));
 app.use('/sounds', express.static(path.join(__dirname, '/sounds')));
 
 //server 

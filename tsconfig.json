@@ -3,13 +3,15 @@
     "module": "CommonJS",
     "allowJs": true,
     "jsx": "react-jsx",
-    "rootDir": "./src",
+    "rootDir": "./",
     "outDir": "./dist",
     "target": "esnext",
     "watch": true,
     "lib": [
       "es5", "es6", "dom", "dom.iterable", "ES2022",
     ],
+    "types": [ "node" ],
+    "typeRoots": [ "./node_modules/*"],
     "strict": true,
     "allowSyntheticDefaultImports": true,
     "paths": {

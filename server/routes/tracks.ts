@@ -76,8 +76,6 @@ tracksRouter
       res.status(500)
       res.send(err.message)
     }
-    
-
-  })
+  });
 
 module.exports = tracksRouter;
