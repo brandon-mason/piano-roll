@@ -5,8 +5,8 @@ import axios from 'axios';
 // import MidiNotes from './MidiNotes';
 import MidiNotes from './MidiNotes';
 import './MidiRecorder.css';
-import SaveExport from '../SettingsComponents/SaveExport';
 import SavedTracks from '../SettingsComponents/SavedTracks';
+import SaveExport from '../SettingsComponents/SaveExport';
 const qwertyNote = require('../Tools/note-to-qwerty-key-obj');
 // replace midistate prop with mode prop
 
@@ -17,8 +17,8 @@ interface PlaybackOff {
 function MidiRecorder(props: MidiRecorderProps) {
   const [count, setCount] = useState<number>(0);
   const [clickCoords, setClickCoords] = useState<number[]>([]);
-  const [midiRecorded, setMidiRecorded] = useState<MidiNoteInfo[]>([]);
-  const [midiRecording, setMidiRecording] = useState<MidiRecorded>({});
+  const [midiRecorded, setMidiRecorded] = useState<MidiRecorded>({});
+  const [midiRecording, setMidiRecording] = useState<MidiNoteInfo[]>([]);
   const [midiNoteInfo, setMidiNoteInfo] = useState<MidiNoteInfo[]>([]);
   const [notesRemoved, setNotesRemoved] = useState<NotesRemoved[]>([]);
   const [orderOfEvents, setOrderOfEvents] = useState<number[]>([]);
@@ -27,8 +27,8 @@ function MidiRecorder(props: MidiRecorderProps) {
   
   useEffect(() => {
     // console.log('midiNoteInfo', midiNoteInfo)
-    console.log('notesRemoved', midiRecording)
-  }, [midiRecording])
+    // console.log('notesRemoved', midiRecorded)
+  }, [midiNoteInfo])
 
   // Add or remove note upon clicking a note track or a note
   useEffect(() => {
@@ -77,13 +77,13 @@ function MidiRecorder(props: MidiRecorderProps) {
   useEffect(() => {
     if(midiNoteInfo.length > 0 && props.midiState.mode === 'keyboard') {
       let mniTemp: MidiNoteInfo[] = [...midiNoteInfo];
-      midiNoteInfo.forEach((midiNote, i, midiNoteInfo) => {
-        let noteStart = Object.keys(midiNote)[0];
-        if(midiNote[noteStart].keyPressed) {
-          if(midiNote[noteStart].keyPressed!.end === -1) {
-            mniTemp[i][noteStart] = {...midiNoteInfo[i][noteStart], 
+      midiNoteInfo.forEach((noteInfo, i, midiNoteInfo) => {
+        let noteStart = Object.keys(noteInfo)[0];
+        if(noteInfo[noteStart].keyPressed) {
+          if(noteInfo[noteStart].keyPressed!.end === -1) {
+            mniTemp[i] = {[noteStart]: {...midiNoteInfo[i][noteStart], 
               keyPressed: {...midiNoteInfo[i][noteStart].keyPressed, end: props.pulseNum}
-            }
+            }}
           }
         }
       });
@@ -138,7 +138,7 @@ function MidiRecorder(props: MidiRecorderProps) {
         }
         
       })
-      // setMidiRecorded(midiRecTemp)
+      setMidiRecorded(midiRecTemp)
     }
   }, [midiNoteInfo])
 
@@ -192,6 +192,7 @@ function MidiRecorder(props: MidiRecorderProps) {
             end: end,
           },
           noteTrackId: noteTrackId,
+          noteTracksRef: props.noteTracksRef,
           props: {
             id: start + noteTrackId + '-' + countTemp,
             className: 'midi-note',
@@ -217,7 +218,7 @@ function MidiRecorder(props: MidiRecorderProps) {
         let noteOct = key.replace(start!.toString(), '')
         props.controlsDispatch({type: 'undo', undo: false});
         setMidiNoteInfo((midiNoteInfo) => {
-          let state = [...midiNoteInfo];// , {...notesRemoved[0]}]));
+          let state = [...midiNoteInfo];
           state.splice(remIndex, 0, notesRemoved[0][remIndex])
           return state;
         })
@@ -298,19 +299,18 @@ function MidiRecorder(props: MidiRecorderProps) {
     }
 
     if(props.noteTracksRef && props.midiState.mode === 'recording') {
+      let octave: number;
+      let countTemp = count;
       if(props.noteTracksRef.current) {
-        let countTemp = count;
-        let noteRecorded: MidiNoteInfo[] = [];
-
         Object.keys(props.keysPressed).forEach((noteOct) => {
+          octave = parseInt(noteOct.replace(/\D/g,''));
           let noteStart = props.keysPressed[noteOct].start + noteOct;
-
           if(props.keysPressed[noteOct].pressed && !midiNoteInfo.find((exists) => Object.keys(exists)[0] == noteStart)) {
             let noteTrackId = `${noteOct}-track`;
             let end = (props.keysPressed[noteOct].start - props.keysPressed[noteOct].end !== props.keysPressed[noteOct].start) ? props.keysPressed[noteOct].end : props.midiLength * props.pulseRate;
-
             findSameNote(noteOct, props.keysPressed[noteOct].start, end);
-            var midiNote = {[noteStart]: {
+
+            setMidiNoteInfo((midiNoteInfo) => [...midiNoteInfo, {[noteStart]: {
               key: `${noteTrackId}-${countTemp}`,
               props: {
                 id: props.keysPressed[noteOct].start + noteTrackId + '-' + countTemp,
@@ -318,28 +318,21 @@ function MidiRecorder(props: MidiRecorderProps) {
               },
               keyPressed: props.keysPressed[noteOct],
               noteTrackId: noteTrackId,
-            }};
-            setMidiNoteInfo((midiNoteInfo) => [...midiNoteInfo, midiNote])
+              noteTracksRef: props.noteTracksRef,
+            }}])
             setOrderOfEvents((orderOfEvents) => [0, ...orderOfEvents]);
             countTemp++;
             setCount(countTemp);
           } else if(!props.keysPressed[noteOct].pressed) {
-            // console.log('brandon')
             for(let i = midiNoteInfo.length - 1; i > -1; i--) {
-              if(midiNoteInfo[i][Object.keys(midiNoteInfo[i])[0]].keyPressed.end !== -1) break;
-              // console.log(midiNoteInfo[i] , noteStart);
-              let newMidiNote: MidiNoteInfo;
-              if(Object.keys(midiNoteInfo[i])[0] === noteStart) {
+              if(Object.keys(midiNoteInfo[i])[0] === noteStart && midiNoteInfo[i][Object.keys(midiNoteInfo[i])[0]].keyPressed.end === -1) {
                 setMidiNoteInfo((midiNoteInfo) => {
                   let state = [...midiNoteInfo];
-                  newMidiNote = {[noteStart]: {...state[i][noteStart], keyPressed: props.keysPressed[noteOct]}}
-                  noteRecorded.push(newMidiNote)
+                  let newMidiNote = {[noteStart]: {...state[i][noteStart], keyPressed: props.keysPressed[noteOct]}}
+                  setMidiRecording((midiRecording) => [...midiRecording, newMidiNote])
                   state.splice(i, 1, newMidiNote);
-                  console.warn(newMidiNote)
                   return state;
                 })
-                console.log(noteRecorded)
-                setMidiRecorded((midiRecorded) => [...midiRecorded, newMidiNote])
                 break;
               }
             }
@@ -347,14 +340,15 @@ function MidiRecorder(props: MidiRecorderProps) {
         })
       }
     }
-  }, [props.pulseNum, props.midiState.mode, props.keysPressed]);
+  }, [props.pulseNum, props.noteTracksRef, props.midiState.mode, props.keysPressed]);
 
   // Correct notes that go beyond midiLength
   useEffect(() => {
     if(midiNoteInfo.length > 0 && props.midiState.mode === 'stop') {
       let state = [...midiNoteInfo]
+
       for(let i = midiNoteInfo.length - 1; i > -1; i--) {
-        let noteOct = Object.keys(state[i])[0];
+        let noteOct = Object.keys(state[i])[0]
 
         if(state[i][noteOct].keyPressed.end <= 0) {
           state[i][noteOct] = {...state[i][noteOct], keyPressed: {...state[i][noteOct].keyPressed, end: props.midiLength * props.pulseRate}}
@@ -368,43 +362,48 @@ function MidiRecorder(props: MidiRecorderProps) {
 
   // Add notes from current recording 
   useEffect(() => {
-    if(props.midiState.mode === 'keyboard' && Object.keys(midiRecorded).length > 0) {
-      console.log(midiRecorded, props.pulseNum);
-      console.log(midiNoteInfo, props.pulseNum);
+    if(props.midiState.mode === 'keyboard' && midiRecording.length > 0) {
       let mniTemp = [...midiNoteInfo]
-      midiRecorded.forEach((midiNote) => {
+      let count = 0;
+      console.log(midiRecording);
+      console.log(mniTemp);
+      midiRecording.forEach((midiNote, i) => {
         var noteStart = Object.keys(midiNote)[0];
         var start = midiNote[noteStart].keyPressed.start;
         var end = midiNote[noteStart].keyPressed.end;
+        var noteOct = noteStart.replace(`${start}`, '')
 
-        for(var i = 0; i < midiNoteInfo.length; i++) {
-          var midiNote2 = midiNoteInfo[i];
+        for(var j = 0; j < midiNoteInfo.length; j++) {
+          var midiNote2 = midiNoteInfo[j];
           var noteStart2 = Object.keys(midiNote2)[0]
           var start2 = midiNote2[noteStart2].keyPressed.start;
           var end2 = midiNote2[noteStart2].keyPressed.end;
-          console.log(noteStart === noteStart2 , start2 , start , start2 , end);
-          console.log(noteStart === noteStart2 && start2 > start && start2 < end);
-          if(noteStart === noteStart2 && start2 < start && start2 < end) {
-            console.log(mniTemp.slice(i, 1));
-            break
+          var noteOct2 = noteStart2.replace(`${start2}`, '')
+
+          if(start > start2) break;
+          console.log((noteOct === noteOct2) ? noteOct + ' ' + noteOct2 + ' ' + start + ' < ' + start2 + ' ' + end +' > '+ start : '');
+          // console.log(noteStart === noteStart2 && start2 > start && start2 < end);
+          if(noteOct === noteOct2 && start < start2 && end > start2) {
+            console.log(midiNoteInfo[j], midiRecording[i])
+            Object.entries(mniTemp).some((entry) => {
+              if(entry[1][noteStart2]) {
+                console.log(entry[1][noteStart2], entry[0])
+                mniTemp.splice(parseInt(entry[0]), 1);
+              }
+            })
+            break;
+            // mniTemp.splice(j, 1);
           }
         }
       })
+      console.log(mniTemp);
       setMidiNoteInfo(mniTemp)
-      setMidiRecorded([]);
+      setMidiRecording([]);
     }
-  }, [midiRecorded, props.midiState.mode])
+  }, [midiRecording, props.midiState.mode])
 
   useEffect(() => {
-      props.setPlayback(midiRecorded);
-      console.log(midiRecorded)
-  }, [midiRecorded]);
-
-  useEffect(() => {
-    // console.log(midiRecorded);
-    // if(midiNoteInfo) {
-      
-    // }
+    props.setPlayback(midiRecorded);
   }, [midiRecorded]);
   
   return (
