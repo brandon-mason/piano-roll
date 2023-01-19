@@ -94,7 +94,7 @@ function App() {
   }, [soundState.octave])
 
   useEffect(() => {
-    console.log(`${process.env.REACT_APP_API}/sounds/Instruments`)
+    console.log(process.env.REACT_APP_SERVER)
     async function getSoundDetails() {
       const url = `${process.env.REACT_APP_API}/sounds/Instruments`;
       const options = {
