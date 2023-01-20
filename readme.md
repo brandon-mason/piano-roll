@@ -1,3 +1,12 @@
+#To run this app, Docker and Docker Compose is required.
+1. Simply download [Docker](https://www.docker.com) and then download my repo as a zip.
+2. Unzip the file you just downloaded.
+3. Using the command line in the root directory of the unzipped file, run:
+```docker compose up --build```
+4. Visit http://localhost:3000
+5. Enjoy!
+
+
 ## TODO
 - Add start animation to give time for audio to load
 - Change all css % values to discrete values
