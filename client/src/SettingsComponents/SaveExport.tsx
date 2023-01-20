@@ -24,7 +24,7 @@ function SaveExport(props: SaveExportProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [midiNoteString, setMidiNoteString] = useState<string[]>()
   const [trackNames, setTrackNames] = useState<string[]>([])
-  const [overwriteMidi, setOverwriteMidi] = useState<boolean | null>();
+  const [overwriteMidi, setOverwriteMidi] = useState<number>(0);
   const [overwriteModal, setOverwriteModal] = useState<ReactPortal | null>()
 
   useEffect(() => {
@@ -111,14 +111,16 @@ function SaveExport(props: SaveExportProps) {
     // };
     // const trackname: string = target.trackname.value;
     // var overwrite = true
+    console.log(trackNames.includes(trackname) && props.selectorsRef.current);
     if(trackNames.includes(trackname) && props.selectorsRef.current) {
       var over = 0;
       pickOverwrite();
       console.group()
       console.log('overwriting?')
-      console.log(over)
+      console.log(overwriteMidi)
       console.groupEnd()
       function pickOverwrite() {
+        console.log(over)
         if(over === 0 && props.selectorsRef.current) {
           setOverwriteModal(createPortal(
             <div id='overwrite-modal' style={{
@@ -128,17 +130,25 @@ function SaveExport(props: SaveExportProps) {
               <button className='overwrite-button' onClick={() => {over = 1; setOverwriteModal(null)}}>Overwrite {trackname}?</button>
               <button className='overwrite-button' onClick={() => {over = 2; setOverwriteModal(null)}}>Don't overwrite {trackname}</button>
             </div>, document.body))
-            setTimeout(pickOverwrite)
+            setOverwriteMidi(over)
+            // console.log('hhhhh');
+            setTimeout(pickOverwrite, 0)
         } else {
           console.log('callback');
-          callback();
+          if(over === 1) {
+            console.log('1');
+            callback();
+          } else if(over === 2) {
+            console.log('2');
+            return;
+          }
+          
         }
       }
     } else {
-      overwrite(trackname);
+      callback();
       setTrackNames((trackNames) => [trackname, ...trackNames])
     }
-    
   }
 
   async function overwrite(trackname: string) {
