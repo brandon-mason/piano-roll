@@ -1,5 +1,5 @@
 # To run this app, Docker and Docker Compose is required.
-1. Simply download [Docker](https://www.docker.com) and then download my repo as a zip.
+1. Simply download [Docker](https://www.docker.com) and then [download my repo as a zip.](https://github.com/brandonjmarquez/piano-roll/archive/refs/heads/master.zip)
 2. Unzip the file you just downloaded.
 3. Using the command line in the root directory of the unzipped file, run:
 ```docker compose up --build```
