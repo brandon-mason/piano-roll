@@ -12,9 +12,18 @@ tracksRouter
     var userId = '';
     Users.findOne({username: username}).lean().exec((err: Error, user: any) => {
       if(err) return err;
-      console.log(user._id.valueOf())
+
       const userI =  user._id;
       userId = userI.valueOf();
+
+      Track.findOneAndDelete({userId: userId, trackname: trackname}, (err: Error) => {
+        if(err) return err;
+        // const trackId = track._id.valueOf()
+        // Track.deleteOne({_id: Object(trackId)})
+        console.log("Removed old version.");
+      })
+
+
       const track = new Track({
         userId,
         trackname,
@@ -22,7 +31,8 @@ tracksRouter
       });
       track.save()
       .then(() => {
-        res.status(200).json(`Saved ${trackname}!`)
+        res.status(200)
+        res.send(`Saved ${trackname}!`)
       }).catch((err: Error) => console.error(err));
     });
   })
@@ -30,7 +40,11 @@ tracksRouter
     try {
       const username = req.params.username;
 
-      if(!username) return res.status(500).json({error: "An error occurred."})
+      if(!username) {
+        res.status(500);
+        res.send({error: "Please login or register."});
+        return;
+      }
 
       Users.findOne({username: username}).lean().exec((err: Error, user: any) => {
         if(err) return err;
@@ -44,7 +58,7 @@ tracksRouter
           tracks.forEach((track: any) => {
             trackNames.push(track.trackname);
           });
-          console.log(trackNames)
+          // console.log(trackNames)
           res.status(200);
           res.send(JSON.stringify(trackNames.reverse()));
         })
