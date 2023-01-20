@@ -39,13 +39,6 @@ function SavedTracks(props: SavedTracksProps) {
 
   }, [props.username]);
 
-  useEffect(() => {
-    if(trackNames.length > 0) {
-      changeSelected(trackNames[0])
-    }
-  }, [trackNames]);
-  
-
   async function changeSelected(selectedTrack: string) {
     const url = `${process.env.REACT_APP_API}/get-track/${props.username}/${selectedTrack}`
     const options = {

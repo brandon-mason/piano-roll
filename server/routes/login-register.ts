@@ -17,24 +17,34 @@ logregRouter
       return res.status(500).json({error: 'Field(s) missing.'});
     }
 
-    bcrypt.hash(password, 12)
-    .then((hashedpw: string) => {
-      User.findOne({email: email})
-      .then((savedUser: any) => {
-        if(savedUser) {
-          return res.status(422).json({error: 'User already exists with that email.'});
-        }
-        const user = new User({
-          email,
-          username,
-          password: hashedpw,
-        });
-        user.save()
-        .then((user: any) => {
-        res.status(200).json(`${username} Registered!`);
-        }).catch((err: Error) => console.error(err));
-      })
-    }).catch((err: Error) => console.error(err));
+    User.findOne({username: username}, (err: Error, user: any) => {
+      if(err) return err;
+      if(user) {
+        res.status(422).json({error: 'Username taken. Please pick another username.'})
+      } else {
+        User.findOne({email: email}, (err: Error, savedUser: any) => {
+          if(err) return err;
+          if(savedUser) {
+            return res.status(422).json({error: 'User already exists with that email.'});
+          } else {
+            bcrypt.hash(password, 12)
+            .then((hashedpw: string) => {
+              const user = new User({
+                email,
+                username,
+                password: hashedpw,
+              });
+              user.save()
+              .then((user: any) => {
+              res.status(200).json(`${username} Registered!`);
+              }).catch((err: Error) => console.error(err));
+            })
+          }
+        })
+      }
+    })
+
+    
 
     // const newUser = new User({email, username, password})
     // newUser.save()
@@ -48,7 +58,7 @@ logregRouter
     //   console.error(err);
     // });
 
-    console.log(req.body)
+    // console.log(req.body)
 
   })
   .post('/login', async (req: any, res: any) => {

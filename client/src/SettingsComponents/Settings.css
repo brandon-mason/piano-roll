@@ -50,3 +50,18 @@
 .save-export {
   display: inline-block;
 }
+
+#overwrite-modal {
+  display: flex;
+  position: fixed;
+  background-color: var(--main-color);
+  outline: black;
+  border-radius: 5px;
+  height: max-content;
+  width: max-content;
+  align-items: center;
+}
+
+.overwrite-button {
+  margin: 10px 10px 10px 10px
+}

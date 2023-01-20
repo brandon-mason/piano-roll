@@ -192,7 +192,6 @@ function MidiRecorder(props: MidiRecorderProps) {
             end: end,
           },
           noteTrackId: noteTrackId,
-          noteTracksRef: props.noteTracksRef,
           props: {
             id: start + noteTrackId + '-' + countTemp,
             className: 'midi-note',
@@ -318,7 +317,6 @@ function MidiRecorder(props: MidiRecorderProps) {
               },
               keyPressed: props.keysPressed[noteOct],
               noteTrackId: noteTrackId,
-              noteTracksRef: props.noteTracksRef,
             }}])
             setOrderOfEvents((orderOfEvents) => [0, ...orderOfEvents]);
             countTemp++;
@@ -340,7 +338,7 @@ function MidiRecorder(props: MidiRecorderProps) {
         })
       }
     }
-  }, [props.pulseNum, props.noteTracksRef, props.midiState.mode, props.keysPressed]);
+  }, [props.pulseNum, props.midiState.mode, props.keysPressed]);
 
   // Correct notes that go beyond midiLength
   useEffect(() => {
@@ -410,8 +408,8 @@ function MidiRecorder(props: MidiRecorderProps) {
     <>
       <MidiNotes gridSize={props.gridSize} midiNoteInfo={midiNoteInfo} notesRemoved={notesRemoved} orderOfEvents={orderOfEvents} controlsState={props.controlsState} midiLength={props.midiLength} midiState={props.midiState} pulseNum={props.pulseNum} pulseRate={props.pulseRate} noteTracksRef={props.noteTracksRef} subdiv={props.midiState.subdiv} controlsDispatch={props.controlsDispatch}/>
       {props.selectorsRef.current && createPortal(<>
-      <SavedTracks midiNoteInfoLength={midiNoteInfo.length} username={props.username} setMidiNoteInfo={setMidiNoteInfo} />
-      <SaveExport controlsDispatch={props.controlsDispatch} midiNoteInfo={midiNoteInfo} mode={props.midiState.mode} username={props.username} setFocus={props.setFocus} setTrackName={props.setTrackName} />
+      {/* <SavedTracks midiNoteInfoLength={midiNoteInfo.length} username={props.username} setMidiNoteInfo={setMidiNoteInfo} /> */}
+      <SaveExport controlsDispatch={props.controlsDispatch} midiNoteInfo={midiNoteInfo} midiNoteInfoLength={midiNoteInfo.length} mode={props.midiState.mode} selectorsRef={props.selectorsRef} username={props.username} setFocus={props.setFocus} setTrackName={props.setTrackName} setMidiNoteInfo={setMidiNoteInfo} />
       </>,
         props.selectorsRef.current)}
     </>
@@ -419,3 +417,4 @@ function MidiRecorder(props: MidiRecorderProps) {
 }
 // 1000 / (120 / 60) * 4 * 4
 export default MidiRecorder;
+//THIS ONE
