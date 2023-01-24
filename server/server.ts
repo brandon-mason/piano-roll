@@ -12,7 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 // const uri = `mongodb://${process.env.ME_CONFIG_MONGODB_ADMINUSERNAME}:${process.env.ME_CONFIG_MONGODB_ADMINPASSWORD}@localhost:27017/?maxPoolSize=20`;
-const uri = `mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:${process.env.MONGO_INITDB_ROOT_PASSWORD}@localhost:27017/${process.env.MONGO_INITDB_DATABASE}?authSource=admin&&retryWrites=true&w=majority`;
+const uri = `mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:${process.env.MONGO_INITDB_ROOT_PASSWORD}@mongo-piano:27017/${process.env.MONGO_INITDB_DATABASE}?authSource=admin&&retryWrites=true&w=majority`;
 console.log(uri)
 console.log()
 

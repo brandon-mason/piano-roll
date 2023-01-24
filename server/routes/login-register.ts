@@ -1,5 +1,5 @@
 const logregRouter = require('express').Router();
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const User = require('../models/users');
 const login = require('../middleware/login')
 
