@@ -78,16 +78,6 @@ function Piano(props: PianoProps) {
   //
   useEffect(() => {
     // console.log('piano playback', props.playback);
-    setPlaybackOff((playbackOff) => {
-      let state = {...playbackOff};
-      if(props.playback[props.pulseNum]) {
-        Object.keys(props.playback[props.pulseNum]).forEach((noteOct) => {
-          state = {...state, [noteOct]: {...props.playback[0][props.pulseNum][noteOct], pressed: false, end: props.pulseNum}}
-        });
-      }
-      // console.log(state)
-      return state;
-    })
     // setPlaybackOn((playbackOn) => {
     //   let state = {};
     //   if(props.playback[props.pulseNum]) {
@@ -142,34 +132,35 @@ function Piano(props: PianoProps) {
   }, [fetchedSounds]);
 
   useEffect(() => {
-    function playNote(output: Map<string, KeyPressed>) {
+    function playNote(output: KeysPressed) {
       let qwertyOctave: number;
       let noteName: string;
       let prevNotesTemp: PrevNotes = prevNotes;
-      Object.keys(output).forEach((noteOct) => {
-        console.log(noteOct, output.get(noteOct))
-        let key = output.get(noteOct)!.key!;
+      output.forEach((keyPressed, noteOct) => {
+        // console.log(keyPressed)
+        let key = keyPressed.key!;
         let note = noteOct.replace(/[0-9]/g, '');
         let octave = parseInt(noteOct.replace(/\D/g,''));
-        // console.log(octave);
+        console.log(qwertyNote[key]);
         if(qwertyNote[key]) {
           qwertyOctave = qwertyNote[key].octave;
+          console.log(octave < props.octaveMinMax[1])
           if(octave < props.octaveMinMax[1]) {
-            // console.log(fetchedSounds[octave][props.volume])
+            console.log(fetchedSounds[octave][props.volume]);
             if(fetchedSounds[octave][props.volume]) {
               (note.includes('#')) ? noteName = note.replace('#', 'sharp') + (octave) : noteName = note.replace('b', 'flat') + (octave);
               let labelElem = document.getElementById(noteName.toLowerCase() + '-label')!;
-              console.log()
-              if(output.get(noteOct)!.pressed && (!prevNotes[noteName as keyof typeof prevNotes] || prevNotes[noteName as keyof typeof prevNotes] === 0)) {
+              console.log(keyPressed.pressed , prevNotes[noteName] > 0);
+              if(keyPressed.pressed && (!prevNotes[noteName] || prevNotes[noteName] === 0)) {
                 let sound = fetchedSounds[octave][props.volume];
                 let soundId = sound.play(note);
                 prevNotesTemp[noteName] = soundId;
                 labelElem.classList.toggle('active');
-              } else if(!output.get(noteOct)!.pressed && prevNotes[noteName as keyof typeof prevNotes] > 0) {
+              } else if(!keyPressed.pressed && prevNotes[noteName] > 0) {
                 labelElem.classList.toggle('active');
                 Object.keys(prevNotes).some((playedNote) => {
                   if(playedNote === noteName) {
-                    fetchedSounds[octave][props.volume].fade(1, 0, 300, prevNotes[noteName as keyof typeof prevNotes]);
+                    fetchedSounds[octave][props.volume].fade(1, 0, 300, prevNotes[noteName]);
                   }
                 });
                 prevNotesTemp[noteName] = 0;
@@ -183,50 +174,26 @@ function Piano(props: PianoProps) {
     // console.log(props.keysUnpressed)
     // (Object.keys(props.playback).includes(props.pulseNum.toString())) ? console.warn(props.pulseNum) : console.log(props.pulseNum)
     if(props.mode === 'playing' || props.mode === 'recording') { // || (props.midiState.mode === 'recording' && Object.keys(midiRecorded).length > 0) && props.keysPressed) {
-      // console.log(props.playback);
-      if(startPulse === 0 && Object.keys(props.keysUnpressed).length > 0) {
-        // setStartPulse(1);
-        // console.log(1);
-        playNote({...props.playback[1][props.pulseNum], ...props.keysUnpressed});
+      console.log(props.playback.get('keysPressed'), props.playback.get('keysUnpressed'))
+      let pbkp = props.playback.get('keysPressed')
+
+      if(props.keysPressed.size > 0) {
+        console.log('keybn');
+        setStartPulse(props.pulseNum)
+        console.log(props.keysPressed);
+        playNote(pbkp);
+      } else if(props.keysUnpressed.size > 0) {
+        console.log('keyb');
+        setStartPulse(props.pulseNum)
+        playNote(props.keysUnpressed);
+        props.setKeysUnpressed({});
       }
-      if(startPulse === 0 && Object.keys(props.keysPressed).length > 0) {
-       
-        // setStartPulse(1);
-        console.log(1);
-        playNote({...props.playback[0][props.pulseNum], ...props.keysPressed});
-      } else {
-        if(Object.keys(props.playback).includes(props.pulseNum.toString()) && Object.keys(props.playback[0]).length > 0) {
-          console.log(props.playback); 
-          let pbKp: KeysPressed = {...props.playback[0][props.pulseNum]}
-          // Object.keys(props.keysPressed).forEach((noteOct) => {
-          //   if(props.keysPressed[noteOct]) {
-          //     pbKp = {...pbKp, [noteOct]: props.keysPressed[noteOct]}
-          //     state.push(noteOct)
-          //   }
-          //   if(props.keysUnpressed[noteOct]) {
-          //     pbKp = {...pbKp, [noteOct]: props.keysUnpressed[noteOct]}
-          //     state.push(noteOct)
-          //   }
-          //   if(keysRecorded.find((key) => key === noteOct)) {
-          //     pbKp = {...pbKp, [noteOct]: props.keysPressed[noteOct]}
-          //   }
-          // })
-          console.log(2)
-          // console.log(pbKp)
-          playNote({...props.playback[0][props.pulseNum], ...props.keysPressed });
-        }
-        if(Object.keys(props.playback[1]).includes(props.pulseNum.toString()) && Object.keys(props.playback[1]).length > 0) {
-          console.log(props.playback); 
-          console.log(3)
-          playNote({...props.playback[1][props.pulseNum], ...props.keysUnpressed})
-        }
-      }
-    } else if(props.mode === 'keyboard' && Object.keys(props.keysPressed).length > 0) {
+    } else if(props.mode === 'keyboard' && props.keysPressed.size > 0) {
       console.log('keybn');
       setStartPulse(props.pulseNum)
       console.log(props.keysPressed);
       playNote(props.keysPressed);
-    } else if(props.mode === 'keyboard' && Object.keys(props.keysUnpressed).length > 0) {
+    } else if(props.mode === 'keyboard' && props.keysUnpressed.size > 0) {
       console.log('keyb');
       setStartPulse(props.pulseNum)
       playNote(props.keysUnpressed);

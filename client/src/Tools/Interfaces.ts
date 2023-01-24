@@ -185,7 +185,8 @@ export interface PianoProps {
   mode: string;
   octave: number;
   octaveMinMax: number[];
-  playback: MidiRecorded[];
+  // playback: MidiRecorded[];
+  playback: Map<string, MidiRecorded>;
   sound: string;
   soundDetails: Object;
   volume: string;

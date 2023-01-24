@@ -77,7 +77,8 @@ function App() {
   const [pulseNum, setPulseNum] = useState(0);
   const [keysPressed, setKeysPressed] = useState<Map<string, KeyPressed>>(new Map());
   const [keysUnpressed, setKeysUnpressed] = useState<Map<string, KeyPressed>>(new Map())
-  const [playback, setPlayback] = useState<MidiRecorded[]>([]);
+  // const [playback, setPlayback] = useState<MidiRecorded[]>([]);
+  const [playback, setPlayback] = useState<Map<string, MidiRecorded>>(new Map([['keysPressed', {}], ['keysUnpressed', {}]]));
   const [metPlay, setMetPlay] = useState(false);
 
   const pianoRollKeyRef = useRef<any[] | null>(null)
@@ -91,21 +92,21 @@ function App() {
 
   // const [soundDetails, setSoundDetails] = useState({});
   useEffect(() => {
-    // console.log('pb', playback)
+    console.log('pb', playback)
   }, [playback])
   useEffect(() => {
-    // console.warn('keyUn', keysUnpressed)
-    // console.warn('keyPr', keysPressed)
-    setKeysUnpressed((keysUnpressed) => {
-      let state = new Map(keysUnpressed)
-      state.forEach((value, key) => {
-        console.log(key)
-        if(value.start === -1) {
-           state.delete(key);
-        }
-      })
-      return state;
-    })
+    console.warn('keyUn', keysUnpressed)
+    console.warn('keyPr', keysPressed)
+    // setKeysUnpressed((keysUnpressed) => {
+    //   let state = new Map(keysUnpressed)
+    //   state.forEach((value, key) => {
+    //     console.log(key)
+    //     if(value.start === -1) {
+    //        state.delete(key);
+    //     }
+    //   })
+    //   return state;
+    // })
   }, [keysUnpressed])
 
   useEffect(() => {
@@ -181,12 +182,12 @@ function App() {
 
   useEffect(() => {
     console.log(controlsState.export);
-    if(controlsState.export) {
+    if(controlsState.export && playback.get('keysUnpressed')) {
       if(/[a-zA-Z]/g.test(trackName)) {
         alert('Please name your track.')
       } else {
         console.log(midiState.mode)
-        let pulses = Object.keys(playback[0]);
+        let pulses = Object.keys(playback.get('keysUnpressed')!)
         var smf = new JZZ.MIDI.SMF(0, midiState.ppq);
         var trk = new JZZ.MIDI.SMF.MTrk();
         smf.push(trk);
@@ -194,11 +195,12 @@ function App() {
         trk.add(0, JZZ.MIDI.smfSeqName('Midi from *Working Site Name*.com'));
         trk.add(0, JZZ.MIDI.smfBPM(midiState.bpm));
         for(var i = 0; i < pulses.length; i++) {
-          Object.keys(playback[1][pulses[i]]).forEach((note) => {
-            if(Object.keys(playback[1][pulses[i]]).length > 0) {
-              console.log(i, note ,playback[1][pulses[i]][note]);
-              trk.add(playback[1][pulses[i]][note].end, JZZ.MIDI.noteOff(0, note, 70));
-              trk.add(playback[1][pulses[i]][note].start, JZZ.MIDI.noteOn(0, note, 70));
+          // Object.keys(playback[1][pulses[i]]).forEach((note) => {
+          Object.keys(playback.get('keysUnpressed')![pulses[i]]).forEach((note) => {
+            if(Object.keys(playback.get('keysUnpressed')![pulses[i]]).length > 0) {
+              console.log(i, note ,playback.get('keysUnpressed')![pulses[i]][note]);
+              trk.add(playback.get('keysUnpressed')![pulses[i]][note].end, JZZ.MIDI.noteOff(0, note, 70));
+              trk.add(playback.get('keysUnpressed')![pulses[i]][note].start, JZZ.MIDI.noteOn(0, note, 70));
             }
           })
         }

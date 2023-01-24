@@ -307,10 +307,9 @@ function MidiRecorder(props: MidiRecorderProps) {
       })
     }
 
-    if(props.noteTracksRef && props.midiState.mode === 'recording') {
+    if(props.midiState.mode === 'recording') {
       let octave: number;
       let countTemp = count;
-      if(props.noteTracksRef.current) {
         Object.keys(props.keysPressed).forEach((noteOct) => {
           octave = parseInt(noteOct.replace(/\D/g,''));
           let noteStart = props.keysPressed.get(noteOct)!.start + noteOct;
@@ -357,7 +356,7 @@ function MidiRecorder(props: MidiRecorderProps) {
             }
           }
         })
-      }
+      
     }
   }, [props.pulseNum, props.midiState.mode, props.keysPressed, props.keysUnpressed]);
 
@@ -418,8 +417,25 @@ function MidiRecorder(props: MidiRecorderProps) {
 
   useEffect(() => {
     // console.log('mR', midiRecorded);
-    if(props.midiState.mode === 'keyboard') props.setPlayback(midiRecorded);
-  }, [midiRecorded, props.midiState.mode]);
+    if(props.midiState.mode === 'keyboard') {
+      let tempPlayback: Map<string, MidiRecorded> = new Map();
+      let tempKeysPressed: MidiRecorded = {};
+      let tempKeysUnpressed: MidiRecorded = {};
+      console.log(midiNoteInfo)
+      midiNoteInfo.forEach((noteInfo) => {
+        let noteStart = Object.keys(noteInfo)[0];
+        let start = noteInfo[noteStart].keyPressed.start;
+        let end = noteInfo[noteStart].keyPressed.end;
+          tempKeysUnpressed[start] = {...tempKeysUnpressed[start], [noteInfo[noteStart].noteTrackId.substring(0, noteInfo[noteStart].noteTrackId.indexOf('-'))]: noteInfo[noteStart].keyPressed};
+          tempKeysPressed[start] = {...tempKeysUnpressed[start], [noteInfo[noteStart].noteTrackId.substring(0, noteInfo[noteStart].noteTrackId.indexOf('-'))]: {...noteInfo[noteStart].keyPressed, end: -1}};
+      })
+      tempPlayback.set('keysPressed', tempKeysPressed);
+      tempPlayback.set('keysUnpressed', tempKeysUnpressed);
+
+      console.log(tempPlayback, tempKeysPressed, tempKeysUnpressed)
+      props.setPlayback(tempPlayback);
+    }
+  }, [props.midiState.mode, midiNoteInfo]);
   
   return (
     <>
