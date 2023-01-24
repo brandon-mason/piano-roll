@@ -12,6 +12,7 @@ interface RegModalProps {
 
 function RegModal(props: RegModalProps) {
   const formRef = useRef(null);
+  const [warnings, setWarnings] = useState('')
 
   return(
     <>
@@ -32,7 +33,7 @@ function RegModal(props: RegModalProps) {
             const email = target.email.value; // typechecks!
             const username = target.username.value;
             const password = target.password.value; // typechecks!
-            console.log(email, username, password)
+            // console.log(email, username, password)
             const url = `${process.env.REACT_APP_API}/register`;
             const options = {
               method: 'POST',
@@ -45,33 +46,37 @@ function RegModal(props: RegModalProps) {
               username: username,
               password: password,
             };
-            if(email.includes('@') && email.includes('.com') && email.length < 7) {
-              alert('Invalid Email')
-              return;
-            }
-            if(username.length < 6) {
-              alert('Invalid Username')
-              return;
-            }
-            if(password.length < 6 ) {
-              alert('Invalid Password')
-              return;
-            }
+            // if(email.includes('@') && email.includes('.com') && email.length < 7) {
+            //   setWarnings('Invalid Email')
+            //   return;
+            // }
+            // if(username.length < 6) {
+            //   setWarnings((warnings) => warnings + '\nInvalid Username')
+            //   return;
+            // }
+            // if(password.length < 6 ) {
+            //   setWarnings((warnings) => warnings + '\nInvalid Password')
+            //   return;
+            // }
 
             const credentials = await axios.post(url, options)
             .then((res) => {
                 alert(res.data.message);
                 props.setShowRegister(false)
-            }).catch((err) => console.error(err));
+            }).catch((err) => {
+              console.log(err.response.data.error);
+              setWarnings(err.response.data.error)
+            })
             console.log(credentials)
           }}
         >
           <label className='credentials-label'>Email:</label>
-          <input type='email' name='email' id='email' className='loginreg-element'></input>
+          <input type='email' name='email' id='email' className='loginreg-element' defaultValue=''></input>
           <label className='credentials-label'>Username:</label>
-          <input type='username' name='username' id='reg-username' className='loginreg-element'></input>
+          <input type='username' name='username' id='reg-username' className='loginreg-element' defaultValue=''></input>
           <label className='credentials-label'> Password:</label>
-          <input type='password' name='password' id='reg-password' className='loginreg-element'></input>
+          <input type='password' name='password' id='reg-password' className='loginreg-element' defaultValue=''></input>
+          <span className='warnings loginreg-text' style={{whiteSpace: 'pre-line'}}>{warnings}</span>
           <input type='submit' id='register' className='loginreg-element button' value='Register'></input>
         </form>
       </div>
@@ -90,10 +95,14 @@ interface LoginModalProps {
 function LoginModal(props: LoginModalProps) {
   const formRef = useRef(null);
   const [user, setUser] = useState('');
+  const [warnings, setWarnings] = useState('')
 
   useEffect(() => {
     console.log(user)
-    if(user.length > 0) props.setUser(user);
+    if(user.length > 0) {
+      props.setUser(user);
+      setWarnings('');
+    }
   }, [user]);
  
 
@@ -125,12 +134,12 @@ function LoginModal(props: LoginModalProps) {
               username: username,
               password: password,
             };
-            if(username.length < 6) {
-              alert('Invalid Username')
+            if(username.length < 5) {
+              setWarnings('Invalid username and/or password.')
               return;
             }
-            if(password.length < 6 ) {
-              alert('Invalid Password')
+            if(password.length < 7) {
+              setWarnings('Invalid username and/or password.')
               return;
             }
 
@@ -139,16 +148,21 @@ function LoginModal(props: LoginModalProps) {
               console.log(res.data)
               alert(res.data.message);
               setUser(username);
-            }).catch((err) => console.error(err));
+            }).catch((err) => {
+              console.log(err)
+              console.log(err);
+              setWarnings(err.response.data.error);
+            });
             console.log(credentials)
           }}
         >
-          <label className='credentials-label'>Username/Email:</label>
+          <label className='credentials-label'>Username:</label>
           <input type='username' name='username' id='login-username' className='loginreg-element'></input>
           <label className='credentials-label'> Password:</label>
           <input type='password' name='password' id='login-passsword' className='loginreg-element'></input>
+          <span className='warnings loginreg-text'>{warnings}</span>
           <input type='submit' id='login' className='loginreg-element button' value='Login'></input>
-          <label className='register-label'> Don't have an account?</label>
+          <label className='register-label loginreg-text'> Don't have an account?</label>
           <button id='register' className='loginreg-element button' onClick={() => props.onRegister(true)}>Register</button>
         </form>
       </div>
@@ -201,7 +215,6 @@ function ShowLoginModal(props: ShowLoginModalProps) {
   }, [showRegister]);
 
   useEffect(() => {
-    console.log(showLogin);
     props.setFocus(showLogin);
   }, [showLogin]);
 

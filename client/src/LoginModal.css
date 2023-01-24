@@ -63,6 +63,12 @@
     cursor: pointer;
     /* border: none; */
   }
+  .loginreg-text {
+    font-size: 12px;
+  }
+  .warnings {
+    color: red;
+  }
   button#register-label {
     margin-top: 30px;
   }
@@ -93,3 +99,4 @@
       "a";
       margin: 5% 15% 15% 5%;
   }
+

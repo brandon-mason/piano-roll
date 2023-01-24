@@ -1,8 +1,9 @@
 import React, { useState, useReducer, useEffect, useLayoutEffect, useRef } from 'react';
-import { QwertyNote, FetchedSounds, PrevNotes, KeysPressed, OctavesInViewProps, PianoProps } from '../Tools/Interfaces'
+import { QwertyNote, FetchedSounds, PrevNotes, KeysPressed, OctavesInViewProps, PianoProps, KeyPressed } from '../Tools/Interfaces'
 import {Howl, Howler} from 'howler';
 import axios from 'axios';
 import './Piano.css';
+import { pbkdf2 } from 'crypto';
 const qwertyNote = require('../Tools/note-to-qwerty-key-obj');
 
 function OctavesInView(props: OctavesInViewProps) {
@@ -64,32 +65,39 @@ function Piano(props: PianoProps) {
   const [fetchedSounds, setFetchedSounds] = useState<FetchedSounds>({});
   const [prevNotes, setPrevNotes] = useState<PrevNotes>({});
   const [keysRecorded, setKeysRecorded] = useState<string[]>([])
-  const [playbackOff, setPlaybackOff] = useState<KeysPressed>({})
+  const [playbackOff, setPlaybackOff] = useState<Map<string, KeyPressed>>(new Map())
   const [playbackOn, setPlaybackOn] = useState<KeysPressed>({})
   const [startPulse, setStartPulse] = useState<number>(0)
 
+  useEffect(() => {
+    // if(Object.keys(playbackOff).length > 0) console.log(playbackOff);
+  }, [playbackOff]);
+  useEffect(() => {
+    // if(Object.keys(playbackOn).length > 0) console.log(playbackOn);
+  }, [playbackOn]);
+  //
   useEffect(() => {
     // console.log('piano playback', props.playback);
     setPlaybackOff((playbackOff) => {
       let state = {...playbackOff};
       if(props.playback[props.pulseNum]) {
         Object.keys(props.playback[props.pulseNum]).forEach((noteOct) => {
-          state = {...state, [noteOct]: {...props.playback[props.pulseNum][noteOct], pressed: false, end: props.pulseNum}}
+          state = {...state, [noteOct]: {...props.playback[0][props.pulseNum][noteOct], pressed: false, end: props.pulseNum}}
         });
       }
       // console.log(state)
       return state;
     })
-    setPlaybackOn((playbackOn) => {
-      let state = {};
-      if(props.playback[props.pulseNum]) {
-        Object.keys(props.playback[props.pulseNum]).forEach((noteOct) => {
-          state = {...state, [noteOct]: {...props.playback[props.pulseNum][noteOct], pressed: true, end: -1}}
-        });
-      }
-      // console.log(state)
-      return state;
-    })
+    // setPlaybackOn((playbackOn) => {
+    //   let state = {};
+    //   if(props.playback[props.pulseNum]) {
+    //     Object.keys(props.playback[props.pulseNum]).forEach((noteOct) => {
+    //       state = {...state, [noteOct]: {...props.playback[props.pulseNum][noteOct], pressed: true, end: -1}}
+    //     });
+    //   }
+    //   // console.log(state)
+    //   return state;
+    // })
   }, [props.pulseNum])
 
   useEffect(() => {
@@ -134,30 +142,30 @@ function Piano(props: PianoProps) {
   }, [fetchedSounds]);
 
   useEffect(() => {
-    function playNote(output: KeysPressed) {
-      // console.log(output)
+    function playNote(output: Map<string, KeyPressed>) {
       let qwertyOctave: number;
       let noteName: string;
       let prevNotesTemp: PrevNotes = prevNotes;
       Object.keys(output).forEach((noteOct) => {
-        // console.log(output)
-        let key = output[noteOct].key;
+        console.log(noteOct, output.get(noteOct))
+        let key = output.get(noteOct)!.key!;
         let note = noteOct.replace(/[0-9]/g, '');
         let octave = parseInt(noteOct.replace(/\D/g,''));
         // console.log(octave);
-        Object.keys(qwertyNote).forEach((qwertyKey) => {
-          qwertyOctave = qwertyNote[qwertyKey].octave;
+        if(qwertyNote[key]) {
+          qwertyOctave = qwertyNote[key].octave;
           if(octave < props.octaveMinMax[1]) {
             // console.log(fetchedSounds[octave][props.volume])
-            if(qwertyKey === key && fetchedSounds[octave][props.volume]) {
+            if(fetchedSounds[octave][props.volume]) {
               (note.includes('#')) ? noteName = note.replace('#', 'sharp') + (octave) : noteName = note.replace('b', 'flat') + (octave);
               let labelElem = document.getElementById(noteName.toLowerCase() + '-label')!;
-              if(output[noteOct].pressed && (!prevNotes[noteName as keyof typeof prevNotes] || prevNotes[noteName as keyof typeof prevNotes] === 0)) {
+              console.log()
+              if(output.get(noteOct)!.pressed && (!prevNotes[noteName as keyof typeof prevNotes] || prevNotes[noteName as keyof typeof prevNotes] === 0)) {
                 let sound = fetchedSounds[octave][props.volume];
                 let soundId = sound.play(note);
                 prevNotesTemp[noteName] = soundId;
                 labelElem.classList.toggle('active');
-              } else if(!output[noteOct].pressed && prevNotes[noteName as keyof typeof prevNotes] > 0) {
+              } else if(!output.get(noteOct)!.pressed && prevNotes[noteName as keyof typeof prevNotes] > 0) {
                 labelElem.classList.toggle('active');
                 Object.keys(prevNotes).some((playedNote) => {
                   if(playedNote === noteName) {
@@ -168,57 +176,66 @@ function Piano(props: PianoProps) {
               }
             }
           }
-        });
+        }
       })
       setPrevNotes(prevNotesTemp);
-
-      // setPlaybackOff({})
     }
-
+    // console.log(props.keysUnpressed)
+    // (Object.keys(props.playback).includes(props.pulseNum.toString())) ? console.warn(props.pulseNum) : console.log(props.pulseNum)
     if(props.mode === 'playing' || props.mode === 'recording') { // || (props.midiState.mode === 'recording' && Object.keys(midiRecorded).length > 0) && props.keysPressed) {
-      // console.log(props.pulseNum);
-      let pbKp: KeysPressed = {...props.playback[props.pulseNum], ...props.keysPressed}
-      let state: string[] = [];
-      if(startPulse === 0) {
-        // console.log('pbkp');
-        playNote(pbKp);
-      } else if(Object.keys(props.playback).includes(props.pulseNum + ''))
-      {
-        Object.keys(props.keysPressed).forEach((noteOct) => {
-          if(props.keysPressed[noteOct].pressed) {
-            pbKp = {...pbKp, [noteOct]: props.keysPressed[noteOct]}
-            state.push(noteOct)
-          } else if(keysRecorded.find((key) => key === noteOct)) {
-            pbKp = {...pbKp, [noteOct]: props.keysPressed[noteOct]}
-          }
-        })
-        console.log(props.pulseNum)
-          
-        setPlaybackOn((playbackOn) => {
-          let state = {...playbackOn};
-          Object.keys(pbKp).forEach((noteOct) => {
-            if(pbKp[noteOct].end !== -1 && state[noteOct]) {
-              console.log('playbackOn', noteOct);
-              delete state[noteOct];
-            }
-          })
-          // console.log(state);
-          return state;
-        })
-        // console.log('not pbkp');
-        playNote({...pbKp, ...playbackOn});
-        setPlaybackOn({})
+      // console.log(props.playback);
+      if(startPulse === 0 && Object.keys(props.keysUnpressed).length > 0) {
+        // setStartPulse(1);
+        // console.log(1);
+        playNote({...props.playback[1][props.pulseNum], ...props.keysUnpressed});
       }
-      setKeysRecorded(state);
-    } else if(props.mode === 'keyboard') {
-      // console.log('keyb's);
+      if(startPulse === 0 && Object.keys(props.keysPressed).length > 0) {
+       
+        // setStartPulse(1);
+        console.log(1);
+        playNote({...props.playback[0][props.pulseNum], ...props.keysPressed});
+      } else {
+        if(Object.keys(props.playback).includes(props.pulseNum.toString()) && Object.keys(props.playback[0]).length > 0) {
+          console.log(props.playback); 
+          let pbKp: KeysPressed = {...props.playback[0][props.pulseNum]}
+          // Object.keys(props.keysPressed).forEach((noteOct) => {
+          //   if(props.keysPressed[noteOct]) {
+          //     pbKp = {...pbKp, [noteOct]: props.keysPressed[noteOct]}
+          //     state.push(noteOct)
+          //   }
+          //   if(props.keysUnpressed[noteOct]) {
+          //     pbKp = {...pbKp, [noteOct]: props.keysUnpressed[noteOct]}
+          //     state.push(noteOct)
+          //   }
+          //   if(keysRecorded.find((key) => key === noteOct)) {
+          //     pbKp = {...pbKp, [noteOct]: props.keysPressed[noteOct]}
+          //   }
+          // })
+          console.log(2)
+          // console.log(pbKp)
+          playNote({...props.playback[0][props.pulseNum], ...props.keysPressed });
+        }
+        if(Object.keys(props.playback[1]).includes(props.pulseNum.toString()) && Object.keys(props.playback[1]).length > 0) {
+          console.log(props.playback); 
+          console.log(3)
+          playNote({...props.playback[1][props.pulseNum], ...props.keysUnpressed})
+        }
+      }
+    } else if(props.mode === 'keyboard' && Object.keys(props.keysPressed).length > 0) {
+      console.log('keybn');
       setStartPulse(props.pulseNum)
+      console.log(props.keysPressed);
       playNote(props.keysPressed);
+    } else if(props.mode === 'keyboard' && Object.keys(props.keysUnpressed).length > 0) {
+      console.log('keyb');
+      setStartPulse(props.pulseNum)
+      playNote(props.keysUnpressed);
+      props.setKeysUnpressed({});
     } else if(props.mode === 'stop') {
       setStartPulse(0);
       // console.log('stop');
       playNote(playbackOff);
-      setPlaybackOff({})
+      setPlaybackOff(new Map())
     }
 
     // if(props.mode === 'recording' || props.mode === 'playing'){
@@ -255,7 +272,7 @@ function Piano(props: PianoProps) {
     // } else if(props.mode === 'stop') {
     //   playNote(playbackOff);
     // }
-  }, [props.mode, props.pulseNum, props.keysPressed, props.playback])
+  }, [props.mode, props.pulseNum, props.keysPressed, props.keysUnpressed, props.playback])
 
   useEffect(() => {
     // if(props.pulseNum === unpausePulse) setPlaybackOn({})

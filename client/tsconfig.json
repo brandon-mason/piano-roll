@@ -1,0 +1,27 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "module": "CommonJS",
+    "allowJs": true,
+    "jsx": "react-jsx",
+    "rootDir": "./src",
+    "outDir": "dist",
+    "target": "esnext",
+    "watch": true,
+    "lib": [
+      "es5", "es6", "dom", "dom.iterable", "ES2022",
+    ],
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "paths": {
+      "@node_modules/*": ["../node_modules/*"],
+    },
+    "moduleResolution": "node",
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "./dist/**/*"
+  ]
+}

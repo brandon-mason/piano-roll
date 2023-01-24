@@ -44,7 +44,7 @@ function Key(props: KeyProps) {
   (props.note.includes('#')) ? noteName = props.note.replace('#', 'sharp') : noteName = props.note.replace('b', 'flat');
 
   return (
-    <button type='button' ref={ref} id={noteName.toLowerCase() + props.octave + '-label'} className={(props.note.length > 1) ? 'note-label accidental' : 'note-label natural'} onMouseLeave={onPointerUp}> {/* onClick={() => handleClick()}> */}
+    <button type='button' ref={ref} id={noteName.toLowerCase() + props.octave + '-label'} className={(props.note.length > 1) ? 'note-label accidental' : 'note-label natural'} /* onMouseLeave={onPointerUp} */> {/* onClick={() => handleClick()}> */}
       {props.note + props.octave}
     </button>
   );

@@ -6,3 +6,4 @@
 - Add undo recording
 - Notes don't play when brought back by 'undo'. Has something to do with how 'props.onNoteClicked' sends note info.
 - Clicked notes disappear when recording starts.
+- Piano.tsx: Make playNote more efficient.

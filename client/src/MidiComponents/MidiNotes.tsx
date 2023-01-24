@@ -3,8 +3,6 @@ import { createPortal, unmountComponentAtNode } from 'react-dom';
 import { ControlsState, KeysPressed, MidiNoteInfo, MidiRecorded, MidiState, NotesRemoved, NoteTrackChilds, QwertyNoteObj, Widths } from '../Tools/Interfaces';
 import './MidiNotes.css';
 import { createRoot } from 'react-dom/client';
-// const myWorker = new Worker('./ToolComponents/midiNoteWorker')
-const qwertyNote = require('../Tools/note-to-qwerty-key-obj');
 
 interface MidiNotesProps {
     controlsState: ControlsState;

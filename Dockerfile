@@ -4,12 +4,7 @@ WORKDIR /build/server
 COPY server/package.json /build/server
 RUN npm i
 COPY ./server /build/server
-
-ARG SERVER_PORT
-ARG ME_CONFIG_MONGODB_SERVER
-ARG ME_CONFIG_MONGODB_ADMINUSERNAME
-ARG ME_CONFIG_MONGODB_ADMINPASSWORD
-ARG ME_CONFIG_MONGODB_URL
+# COPY ./server/dist /build/server
 
 EXPOSE 3001
 

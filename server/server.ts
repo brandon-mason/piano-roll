@@ -12,12 +12,29 @@ app.use(cors());
 app.use(express.json());
 
 // const uri = `mongodb://${process.env.ME_CONFIG_MONGODB_ADMINUSERNAME}:${process.env.ME_CONFIG_MONGODB_ADMINPASSWORD}@localhost:27017/?maxPoolSize=20`;
-const uri = `mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:${process.env.MONGO_INITDB_ROOT_PASSWORD}@localhost:27017/${process.env.MONGO_INITDB_DATABASE}?authSource=admin&&retryWrites=true&w=majority`;
+const uri = `mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:${process.env.MONGO_INITDB_ROOT_PASSWORD}@${process.env.ME_CONFIG_MONGODB_SERVER}:27017/${process.env.MONGO_INITDB_DATABASE}?authSource=admin&&retryWrites=true&w=majority`;
 console.log(uri)
 console.log()
-
+// async function main () {
+//   const connectionOptions = {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true
+//    }
+   
+//    try {
+//     await mongoose.set('strictQuery', true);
+//     await mongoose.connect(uri, {useNewUrlParser: true});
+//     const connection = mongoose.connection;
+//     await connection.once('open', () => {
+//       console.log('Successfully connected to MongoDB!');
+// });
+//    } catch (err) {
+//     console.log(`Couldn't connect: ${err}`)
+//    }
+// }
+// main()
 mongoose.set('strictQuery', true);
-mongoose.connect(uri, {useNewUrlParser: true});
+mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true});
 
 const connection = mongoose.connection;
 connection.once('open', () => {

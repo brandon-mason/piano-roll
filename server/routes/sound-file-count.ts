@@ -17,11 +17,15 @@ routerFile.get('/sounds/Instruments', (req: any, res: any) => {
     });
     return (Object.keys(fileStruct).length === 0) ? nonFolders : fileStruct;
   }
-
-  const fileStruct = traverseFolder(pathFiles.resolve(soundsDir));
-  // console.log(fileStruct)
-  res.status(200);
-  res.send(fileStruct);
+  try {
+    const fileStruct = traverseFolder(pathFiles.resolve(soundsDir));
+    // console.log(fileStruct)
+    res.status(200);
+    res.send(fileStruct);
+  } catch(err) {
+    console.error(err);
+  }
+  
 });
 
 module.exports = routerFile;

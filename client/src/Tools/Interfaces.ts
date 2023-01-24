@@ -113,8 +113,8 @@ export interface KeyNoteInputProps {
   pianoRollKey: any[] | null;
   pulseNum: number;
   onControlsPressed: Function;
-  onNotePlayed: Function;
   setKeysPressed: Function;
+  setKeysUnpressed: Function;
 }
 
 //Timer.tsx interfaces (1)
@@ -151,7 +151,8 @@ export interface MidiRecorded {
 export interface MidiRecorderProps {
   controlsState: ControlsState;
   gridSize: number[];
-  keysPressed: KeysPressed;
+  keysPressed: Map<string, KeyPressed>;
+  keysUnpressed: Map<string, KeyPressed>;
   midiState: MidiState;
   midiLength: number;
   noteTracks: HTMLCollection | null;
@@ -178,15 +179,17 @@ export interface OctavesInViewProps {
 
 export interface PianoProps {
   pulseNum: number;
-  keysPressed: KeysPressed;
+  keysPressed: Map<string, KeyPressed>;
+  keysUnpressed: Map<string, KeyPressed>;
   labelsRef: React.RefObject<HTMLDivElement>;
   mode: string;
   octave: number;
   octaveMinMax: number[];
-  playback: MidiRecorded;
+  playback: MidiRecorded[];
   sound: string;
   soundDetails: Object;
   volume: string;
+  setKeysUnpressed: Function;
 }
 
 export interface Keys {

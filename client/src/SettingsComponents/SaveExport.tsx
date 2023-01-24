@@ -21,11 +21,9 @@ interface SaveExportProps {
 
 function SaveExport(props: SaveExportProps) {
   const nameRef = useRef<HTMLInputElement>(null);
-  const formRef = useRef<HTMLFormElement>(null);
-  const [midiNoteString, setMidiNoteString] = useState<string[]>()
-  const [trackNames, setTrackNames] = useState<string[]>([])
-  const [overwriteMidi, setOverwriteMidi] = useState<number>(0);
-  const [overwriteModal, setOverwriteModal] = useState<ReactPortal | null>()
+  const [selectedTrack, setSelectedTrack] = useState('');
+  const [trackNames, setTrackNames] = useState<string[]>([]);
+  const [overwritePopup, setOverwritePopup] = useState<ReactPortal | null>();
 
   useEffect(() => {
     async function getSavedTracks() {
@@ -81,7 +79,7 @@ function SaveExport(props: SaveExportProps) {
     }
   }, [props.midiNoteInfo])
 
-  async function changeSelected(selectedTrack: string) {
+  async function changeSelected() {
     if(!trackNames.includes(selectedTrack)) return;
     const url = `${process.env.REACT_APP_API}/get-track/${props.username}/${selectedTrack}`
     const options = {
@@ -96,7 +94,6 @@ function SaveExport(props: SaveExportProps) {
     var midiNoteInfo: MidiNoteInfo[] = [];
     const track = axios.get(url, options)
     .then((res) => {
-      console.log(res.data);
       Object.entries(res.data).forEach((midiNote: any) => {
         midiNoteInfo.push(midiNote[1])
       })
@@ -105,41 +102,26 @@ function SaveExport(props: SaveExportProps) {
   }
 
   function submit(trackname: string, callback: Function) {
-    // e.preventDefault();
-    // const target = e.target as typeof e.target & {
-    //   trackname: {value: string};
-    // };
-    // const trackname: string = target.trackname.value;
-    // var overwrite = true
     console.log(trackNames.includes(trackname) && props.selectorsRef.current);
     if(trackNames.includes(trackname) && props.selectorsRef.current) {
       var over = 0;
       pickOverwrite();
-      console.group()
-      console.log('overwriting?')
-      console.log(overwriteMidi)
-      console.groupEnd()
       function pickOverwrite() {
-        console.log(over)
         if(over === 0 && props.selectorsRef.current) {
-          setOverwriteModal(createPortal(
+          setOverwritePopup(createPortal(
             <div id='overwrite-modal' style={{
                 top: `${props.selectorsRef.current.offsetHeight}px`,
                 left: `${props.selectorsRef.current.offsetWidth / 2}px`,
               }}>
-              <button className='overwrite-button' onClick={() => {over = 1; setOverwriteModal(null)}}>Overwrite {trackname}?</button>
-              <button className='overwrite-button' onClick={() => {over = 2; setOverwriteModal(null)}}>Don't overwrite {trackname}</button>
+              <button className='overwrite-button' onClick={() => {over = 1; setOverwritePopup(null)}}>Overwrite {trackname}?</button>
+              <button className='overwrite-button' onClick={() => {over = 2; setOverwritePopup(null)}}>Don't overwrite {trackname}</button>
             </div>, document.body))
-            setOverwriteMidi(over)
-            // console.log('hhhhh');
             setTimeout(pickOverwrite, 0)
         } else {
           console.log('callback');
           if(over === 1) {
-            console.log('1');
             callback();
           } else if(over === 2) {
-            console.log('2');
             return;
           }
           
@@ -174,7 +156,7 @@ function SaveExport(props: SaveExportProps) {
 
   return (
     <>
-    {overwriteModal}
+    {overwritePopup}
     <button onClick={() => {
         if(props.midiNoteInfoLength > 0) alert()
         props.setMidiNoteInfo([]);
@@ -184,8 +166,7 @@ function SaveExport(props: SaveExportProps) {
           return <option key={track}>{track}</option>
         })}
       </select> */}
-      <form 
-      ref={formRef}
+      <form
       id='save-track-form'
       className='save-export'
       method='post'
@@ -199,12 +180,13 @@ function SaveExport(props: SaveExportProps) {
           overwrite(trackname)
         });
       }}>
-        <input ref={nameRef} type='trackname' name='trackname' list='track-names' onChange={(e) => {props.setTrackName(e.target.value); changeSelected(e.target.value)}}></input>
+        <input ref={nameRef} type='trackname' name='trackname' list='track-names' onChange={(e) => {props.setTrackName(e.target.value); setSelectedTrack(e.target.value)}}></input>
           <datalist id="track-names">
             {trackNames.map((track) => {
               return <option key={track}>{track}</option>
             })}
           </datalist>
+        <button type='button' id='load' onClick={() => changeSelected()}>Load</button>
         <input type='submit' value='Save'></input>
         <button onClick={() => props.controlsDispatch({type: 'export', export: true})}>Export</button>
       </form>
