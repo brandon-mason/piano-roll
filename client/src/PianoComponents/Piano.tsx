@@ -136,7 +136,7 @@ function Piano(props: PianoProps) {
       let qwertyOctave: number;
       let noteName: string;
       let prevNotesTemp: PrevNotes = prevNotes;
-      output.forEach((keyPressed, noteOct) => {
+      Object.keys(output).forEach((keyPressed, noteOct) => {
         // console.log(keyPressed)
         let key = keyPressed.key!;
         let note = noteOct.replace(/[0-9]/g, '');
