@@ -3,22 +3,15 @@
     "module": "CommonJS",
     "allowJs": true,
     "jsx": "react-jsx",
-<<<<<<< HEAD
-    "rootDir": "./src",
-=======
     "rootDir": "./",
->>>>>>> 4e8b398 (fix: lots of refactoring, and timer now gets all pulses so notes aren't skipped.)
     "outDir": "./dist",
     "target": "esnext",
     "watch": true,
     "lib": [
       "es5", "es6", "dom", "dom.iterable", "ES2022",
     ],
-<<<<<<< HEAD
-=======
     "types": [ "node" ],
     "typeRoots": [ "./node_modules/*"],
->>>>>>> 4e8b398 (fix: lots of refactoring, and timer now gets all pulses so notes aren't skipped.)
     "strict": true,
     "allowSyntheticDefaultImports": true,
     "paths": {

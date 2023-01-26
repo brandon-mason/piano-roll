@@ -60,9 +60,9 @@ function Grid(props: GridProps) {
   function trackPosition() {
     let position = {};
     if(props.noteTracksRef.current) {
-      position = {left: `${(props.pulseNum / (props.midiLength * props.pulseRate)) * props.noteTracksRef.current.offsetWidth}px`};
+      position = {left: `${(props.time / props.midiLength) * props.noteTracksRef.current.offsetWidth}px`};
     } else {
-      position = {left: `${(6 + props.pulseNum / (props.midiLength * props.pulseRate) * 94)}%`};
+      position = {left: `${(6 + props.time / props.midiLength)}%`};
     }
     return <div id='track-position' className='keyboard' style={position}></div>;
   }

@@ -17,7 +17,7 @@ function Metronome(props: MetronomeProps) {
 
   useEffect(() => {
     const met = new Howl({
-      src: [`${process.env.REACT_APP_Server}/sounds/Metronome/metronome.webm`, `${process.env.REACT_APP_SERVER}/sounds/Metronome/metronome.mp3`],
+      src: [`${process.env.REACT_APP_SERVER}/sounds/Metronome/metronome.webm`, `${process.env.REACT_APP_SERVER}/sounds/Metronome/metronome.mp3`],
         sprite: {
           firstBeat: [0, 10],
           beat: [10,10]
@@ -69,7 +69,10 @@ function Timer(props: TimerProps) {
         tempTime += performance.now() - start;
         tempTime += tempTime - expected;
         tempTime = Math.round(tempTime)
-        pulseNum = Math.round(tempTime * props.pulseRate);
+        if(tempTime % props.pulseRate < 5) pulseNum++
+        // pulseNum = Math.round(tempTime * props.pulseRate);
+        // pulseNum++;
+        console.log(pulseNum)
         start = performance.now();
         props.handleSetTime(tempTime);
         props.handleSetPulseNum(pulseNum);

@@ -18,6 +18,10 @@
 - Notes don't play when brought back by 'undo'. Has something to do with how 'props.onNoteClicked' sends note info.
 - Clicked notes disappear when recording starts.
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 71ede2b (feat(client): Added display to show midi time in seconds. fix(client): Various bug fixes.)
 >>>>>>> bb6cfce (Revert "fix: branch merge complete")
+=======
+- Piano.tsx: some pulseNums get skipped when playing back
+>>>>>>> 4e8b398 (fix: lots of refactoring, and timer now gets all pulses so notes aren't skipped.)
