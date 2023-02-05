@@ -154,20 +154,16 @@ export interface MidiRecorderProps {
   gridSize: number[];
   keysPressed: Map<string, KeyPressed>;
   keysUnpressed: Map<string, KeyPressed>;
-  midiState: MidiState;
   midiLength: number;
-  noteTracks: HTMLCollection | null;
+  midiNoteInfo: MidiNoteInfo[];
+  midiState: MidiState;
   noteTracksRef: React.RefObject<HTMLDivElement>;
   pulseNum: number;
   pulseRate: number;
-  selectorsRef: React.RefObject<HTMLDivElement>;
-  username: string;
   controlsDispatch: React.Dispatch<any>;
-  midiDispatch: React.Dispatch<any>;
-  setFocus: Function,
   setKeysUnpressed: Function;
+  setMidiNoteInfo: Function
   setPlayback: Function;
-  setTrackName: Function;
 }
 
 // Piano.tsx interfaces (5)
@@ -191,6 +187,7 @@ export interface PianoProps {
   sound: string;
   soundDetails: Object;
   volume: string;
+  setKeysUnpressed: Function;
 }
 
 export interface Keys {
@@ -254,10 +251,12 @@ export interface GridProps {
   octaveArray: number[];
   pulseNum: number;
   pulseRate: number;
+  selectorsRef: React.RefObject<any>;
   subdiv: number;
   time: number;
   noteTracksRef: React.RefObject<HTMLDivElement>;
-  setNoteTracks: Function;
+  setPulseNum: Function;
+  setTime: Function;
 }
 
 // MidiNotes.tsx interfaces

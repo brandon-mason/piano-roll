@@ -15,3 +15,5 @@
 - Add undo recording
 - Notes don't play when brought back by 'undo'. Has something to do with how 'props.onNoteClicked' sends note info.
 - Clicked notes disappear when recording starts.
+- Timeline goes past grid.
+- Add backdrop to selectors when overwrite popup appears

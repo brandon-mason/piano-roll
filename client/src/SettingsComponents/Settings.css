@@ -1,51 +1,60 @@
 #selectors {
   background-color: var(--main-color);
-  position: sticky;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   transform-style: preserve-3d;
-  z-index: 3;
+  z-index: 4;
+}
+
+.settings {
+  background-color: bisque;
+  padding: 3px;
+  border: 1px solid black;
 }
 
 /* #timer-buttons {
   display: inline-block;
 } */
 
-.stop-button {
-  color: white;
-  background-color: black;
+.playback-button {
+  display: inline;
+  background-color: #8ee4bd;
+  color: black;
+  border: 1px solid black;
+  border-radius: 4px;
+  margin: 0 2px 1px 0;
+  padding: 5px 3px 7.5px 3px;
+  /* height: 5%; */
+  width: 5%;
+  text-align: center;
+  text-decoration: none;
+  /* display: inline-block; */
+  font-size: 16px;
+  outline: 4px;
+  cursor: pointer;
+  /* background-color: black; */
 }
-  .stop-button:active {
-    color: orange;
-    /* background-color: yellow; */
-  }
 
-.recording-button {
-  color: white;
-  background-color: black;
+.stop-button:active {
+  color: orange;
+  /* background-color: yellow; */
 }
-  .recording-button.active {
-    color: red;
-    /* background-color: red; */
-  }
 
-.playing-button {
-  color: white;
-  background-color: black;
+.recording-button.active {
+  color: red;
+  /* background-color: red; */
 }
-  .playing-button.active {
-    color: green;
-    /* background-color: green; */
-  }
 
-.metronome-button {
-  color: aliceblue;
-  background-color: black;
+.playing-button.active {
+  color: green;
+  /* background-color: green; */
 }
-  .metronome-button.active {
-    color: aquamarine;
-  }
+
+.metronome-button.active {
+  color: #e97e7e;
+}
 
 .save-export {
   display: inline-block;
@@ -64,4 +73,72 @@
 
 .overwrite-button {
   margin: 10px 10px 10px 10px
+}
+
+.bpm-input {
+  width: 5ex;
+  text-align: center;
+  /* padding: 0 4px 0 4px; */
+}
+
+.settings-buttons {
+  display: block;
+}
+
+.settings-button {
+  display: inline;
+  background-color: #e48ec9;
+  border: solid;
+  color: black;
+  padding: .5% .5%;
+  text-align: center;
+  text-decoration: none;
+  /* display: inline-block; */
+  font-size: 16px;
+  outline: 4px;
+  cursor: pointer;
+}
+
+.left-settings-button {
+  border-radius: 30% 0 0 30%;
+}
+
+.right-settings-button {
+  border-radius: 0 30% 30% 0;
+}
+
+.login-elems {
+  display: block;
+  position: absolute;
+  left: 0;
+  border-radius: 4px;
+  /* float: left; */
+}
+
+.click-drag {
+  background-color: bisque;
+  padding: .5px 3px 3.5px 3px;
+  border: 1px solid black;
+}
+
+.settings.button {
+  padding: 4px 4px 3.5px 4px;
+  cursor: pointer;
+}
+
+.settings.input {
+  background-color: white;
+  padding: 4px 0 3.5px 0;
+  text-align: center;
+  /* border-radius: 4px; */
+}
+
+#time.settings.input {
+  width: 2em;
+  padding: 8px 7.25px 7.25px 7.25px;
+  margin-top: 1px;
+  font-size: 14px;
+  vertical-align: middle;
+  cursor: default;
+  border-radius: 4px;
 }

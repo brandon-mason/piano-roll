@@ -12,6 +12,7 @@ interface SaveExportProps {
   midiNoteInfoLength: number;
   mode: string;
   selectorsRef: React.RefObject<HTMLDivElement>
+  trackName: string;
   username: string;
   controlsDispatch: Function;
   setFocus: Function;
@@ -24,7 +25,6 @@ function SaveExport(props: SaveExportProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [midiNoteString, setMidiNoteString] = useState<string[]>()
   const [trackNames, setTrackNames] = useState<string[]>([])
-  const [overwriteMidi, setOverwriteMidi] = useState<number>(0);
   const [overwriteModal, setOverwriteModal] = useState<ReactPortal | null>()
 
   useEffect(() => {
@@ -65,8 +65,10 @@ function SaveExport(props: SaveExportProps) {
         props.setFocus(false)
       })
       return (() => {
-        nameRef.current!.removeEventListener('focusin', props.setFocus(true))
-        nameRef.current!.removeEventListener('focusout', props.setFocus(false))
+        if(nameRef.current) {
+          nameRef.current.removeEventListener('focusin', props.setFocus(true))
+          nameRef.current.removeEventListener('focusout', props.setFocus(false))
+        }
       })
     }
   },[]);
@@ -96,7 +98,7 @@ function SaveExport(props: SaveExportProps) {
     var midiNoteInfo: MidiNoteInfo[] = [];
     const track = axios.get(url, options)
     .then((res) => {
-      console.log(res.data);
+      // console.log(res.data);
       Object.entries(res.data).forEach((midiNote: any) => {
         midiNoteInfo.push(midiNote[1])
       })
@@ -117,20 +119,19 @@ function SaveExport(props: SaveExportProps) {
       pickOverwrite();
       console.group()
       console.log('overwriting?')
-      console.log(overwriteMidi)
       console.groupEnd()
       function pickOverwrite() {
         console.log(over)
         if(over === 0 && props.selectorsRef.current) {
           setOverwriteModal(createPortal(
             <div id='overwrite-modal' style={{
-                top: `${props.selectorsRef.current.offsetHeight}px`,
+                top: `${props.selectorsRef.current.offsetHeight / 3}px`,
                 left: `${props.selectorsRef.current.offsetWidth / 2}px`,
+                zIndex: 6
               }}>
               <button className='overwrite-button' onClick={() => {over = 1; setOverwriteModal(null)}}>Overwrite {trackname}?</button>
               <button className='overwrite-button' onClick={() => {over = 2; setOverwriteModal(null)}}>Don't overwrite {trackname}</button>
             </div>, document.body))
-            setOverwriteMidi(over)
             // console.log('hhhhh');
             setTimeout(pickOverwrite, 0)
         } else {
@@ -175,15 +176,15 @@ function SaveExport(props: SaveExportProps) {
   return (
     <>
     {overwriteModal}
-    <button onClick={() => {
+    <button className='settings button'
+      onClick={() => {
+
+      }}>Delete</button>
+    <button className='settings button' 
+      onClick={() => {
         if(props.midiNoteInfoLength > 0) alert()
         props.setMidiNoteInfo([]);
-        }}>New</button>
-      {/* <select id='track-names' className='save-export' onChange={(e) => changeSelected(e.target.value)}>
-        {trackNames.map((track) => {
-          return <option key={track}>{track}</option>
-        })}
-      </select> */}
+      }}>New</button>
       <form 
       ref={formRef}
       id='save-track-form'
@@ -199,14 +200,15 @@ function SaveExport(props: SaveExportProps) {
           overwrite(trackname)
         });
       }}>
-        <input ref={nameRef} type='trackname' name='trackname' list='track-names' onChange={(e) => {props.setTrackName(e.target.value); changeSelected(e.target.value)}}></input>
+        <input ref={nameRef} type='trackname' name='trackname' className='settings input' list='track-names' onChange={(e) => {props.setTrackName(e.target.value)}}></input>
           <datalist id="track-names">
             {trackNames.map((track) => {
               return <option key={track}>{track}</option>
             })}
           </datalist>
-        <input type='submit' value='Save'></input>
-        <button onClick={() => props.controlsDispatch({type: 'export', export: true})}>Export</button>
+        <button type='button' className='settings button' onClick={() => changeSelected(props.trackName)}>Load</button>
+        <input type='submit' className='settings button' value='Save'></input>
+        <button type='button' className='settings button' onClick={() => props.controlsDispatch({type: 'export', export: true})}>Export</button>
       </form>
     </>
     )

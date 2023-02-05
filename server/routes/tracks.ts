@@ -23,7 +23,7 @@ tracksRouter
         console.log("Removed old version.");
       })
 
-
+      console.log(req.session);
       const track = new Track({
         userId,
         trackname,

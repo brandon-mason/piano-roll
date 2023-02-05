@@ -5,6 +5,8 @@ const qwertyNote = require('../Tools/note-to-qwerty-key');
 
 function Grid(props: GridProps) {
   const [grid, setGrid] = useState<JSX.Element[]>();
+  const [trackPosition, setTrackPosition] = useState<any>();
+  const [position, setPosition] = useState<any>();
   const gridMeasure = useMemo(() => {
     let gridMeasure = []
     for(var x = props.octaveArray.length - 1; x >= 0; x--) {
@@ -50,28 +52,34 @@ function Grid(props: GridProps) {
     
     if(gridMeasure.length === 12 * props.octaveArray.length) {
       var i = 0;
-
-      gridMidi.push(<div key='subdivs' id='subdivs' style={{gridTemplateColumns: `repeat(${props.subdiv * props.numMeasures}, ${1000 / (props.numMeasures * props.subdiv) + props.gridSize[0]}px)`}}>{gridSubdivisions}</div>)
+      gridMidi.push(<div key='subdivs' id='subdivs' style={{gridTemplateColumns: `repeat(${props.subdiv * props.numMeasures}, ${(100) / (props.numMeasures * props.subdiv)}%)`}}>{gridSubdivisions}</div>)
       gridMidi.push(<div key='note-tracks' ref={props.noteTracksRef} id='note-tracks'>{gridMeasure}</div>);
       setGrid(gridMidi);
     }
   }, [props.subdiv, props.octaveArray, props.numMeasures]);
-
-  function trackPosition() {
-    let position = {};
-    if(props.noteTracksRef.current) {
-      position = {left: `${(props.time / props.midiLength) * props.noteTracksRef.current.offsetWidth}px`};
-    } else {
-      position = {left: `${(6 + props.time / props.midiLength)}%`};
+  useEffect(() => {
+    function trackPosition() {
+      let position = {};
+      if(props.noteTracksRef.current) {
+        position = {left: `${(props.pulseNum / (props.midiLength * props.pulseRate)) * 100}%`};
+      } else {
+        position = {left: `${(props.pulseNum / (props.midiLength * props.pulseRate) * 100)}%`};
+      }
+      setPosition(position);
+      return <div id='track-position' className='keyboard' style={position}></div>;
     }
-    return <div id='track-position' className='keyboard' style={position}></div>;
-  }
+
+    setTrackPosition(trackPosition())
+  }, [props.pulseNum]);
+  
 
   const bgSizeTrack = 100 / props.numMeasures;
   
   return (
     <>
-      {trackPosition()}
+      {/* {(props.noteTracksRef.current) ? <input type='range' id='time-slider' min='0' max={`${props.midiLength * props.pulseRate}`} value={props.pulseNum} style={{position: 'sticky', height: 'max-content', top: `${props.selectorsRef.current.offsetHeight}px`}} onChange={(e) => {props.setTime(parseInt(e.target.value) / props.pulseRate); props.setPulseNum(parseInt(e.target.value))}}></input> : null} */}
+      {/* {trackPosition} */}
+      <div id='track-position' className='keyboard' style={position}></div>
       {grid}
     </>
   )

@@ -2,6 +2,7 @@ const logregRouter = require('express').Router();
 const bcrypt = require('bcryptjs');
 const User = require('../models/users');
 const login = require('../middleware/login')
+const jsonwebtoken = require('jsonwebtoken');
 
 // interface User {
 //   email: string,
@@ -12,7 +13,6 @@ const login = require('../middleware/login')
 logregRouter
   .post('/register', async (req: any, res: any) => {
     const {email, username, password} = req.body
-
     if(!email || !password || !username) {
       return res.status(500).json({error: 'Field(s) missing.'});
     }
@@ -62,25 +62,30 @@ logregRouter
 
   })
   .post('/login', async (req: any, res: any) => {
-    console.log(req.body)
+    // console.log(req.session)
     const {username, password} = req.body;
+    
     // const password = req.body.password;
     const user = new User({username, password})
     User.findOne({username: username})
     .then((savedUser: any) => {
       if(!savedUser) {
-        return res.status(422).json({error: 'Invalid username of password.'});
+        return res.status(422).json({error: 'Invalid username or password.'});
       }
       bcrypt.compare(password, savedUser.password)
       .then((match: any) => {
         if(match) {
-          res.json({message: 'Login Successfull'});
+          const token = jsonwebtoken.sign({username}, process.env.SECRET);
+          // res.setHeader('Access-Control-Allow-Credentials', true);
+          // res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+          // res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+          // res.cookie('piano-roll', token, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: false, overwrite: true});
+          res.status(200);
+          res.send({message: 'Login Successfull', data: token});
         } else {
-          return res.status(422).json({error: 'Invalid username of password.'}); 
+          return res.status(422).json({error: 'Invalid username or password.'}); 
         }
       }).catch((err: Error) => console.error(err))
-      // res.status(200).json(savedUser);
-      // console.log(`${username} Logged in!`);
 
     })
     .catch((err: any) => {
@@ -88,8 +93,23 @@ logregRouter
       console.error(err);
     });
   })
-  .get('/protected', login, (req: any, res: any) => {
-    res.send('hello')
+  .post('/logged-in', (req: any, res: any) => {
+    // console.log(jsonwebtoken.verify(req.body.token, process.env.SECRET).username)
+    if(!jsonwebtoken.verify(req.body.token, process.env.SECRET).username) return res.status(422).json({error: 'Invalid username'})
+    User.findOne({username: jsonwebtoken.verify(req.body.token, process.env.SECRET).username})
+    .then((savedUser: any) => {
+      res.status(200)
+      res.send({username: savedUser.username})
+    }).catch((err: Error) => console.error(err))
   })
+  .post('/logout', (req: any, res: any) => {
+    // console.log(req.sessionID);
+    // console.log('ie', req.cookies);
+  })
+ 
+  // .get('/protected', login, (req: any, res: any) => {
+  //   console.log('hello');
+  //   res.send('hello')
+  // })
 
 module.exports = logregRouter;

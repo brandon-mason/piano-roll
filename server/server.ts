@@ -1,15 +1,19 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+// const session = require('express-session');
 const path = require('path');
-const mongoose = require('mongoose'), Admin = mongoose.mongo.Admin;
+const mongoose = require('mongoose')
+// const MongoDBStore = require('connect-mongodb-session')(session);
 require('dotenv').config({path:__dirname+'/../.env'});
 const PORT = process.env.SERVER_PORT || 3001;
 
-// var mongoose = require("./foo_db_connect.js");
+// app.set('trust proxy', 1);
 
-app.use(cors());
+app.use(cors({ credentials: true, origin: true }))
 app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+// app.use(cookie_parser(process.env.SECRET));
 
 // const uri = `mongodb://${process.env.ME_CONFIG_MONGODB_ADMINUSERNAME}:${process.env.ME_CONFIG_MONGODB_ADMINPASSWORD}@localhost:27017/?maxPoolSize=20`;
 const uri = `mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:${process.env.MONGO_INITDB_ROOT_PASSWORD}@mongo-piano:27017/${process.env.MONGO_INITDB_DATABASE}?authSource=admin&&retryWrites=true&w=majority`;
@@ -24,9 +28,36 @@ connection.once('open', () => {
   console.log('Successfully connected to MongoDB!');
 });
 
-app.use('/api', require('./routes/login-register'))
+// var store = new MongoDBStore({uri, collection: 'sessions'});
 
-app.use('/api', require('./routes/sound-file-count.js'));
+// store.on('error', (err: Error) => {
+//   console.error(err)
+// });
+
+// app.use(session({
+//   secret: process.env.SECRET, 
+//   resave: false, 
+//   saveUninitialized: false, 
+//   store: store, 
+//   cookie: {
+//     maxAge: 30 * 24 * 60 * 60 * 1000, 
+//     httpOnly: false,
+//     secure: false
+//   }
+// }));
+
+// app.use(function (req: any, res: any, next: any) {
+//   // req.session.test = "test";
+//   next();
+// });
+
+app.get('/', async (req: any, res: any) => {
+  // console.log(req.session, 'hhhh')
+})
+app.use('/api', require('./routes/login-register'))
+app.use('/api', require('./routes/tracks'))
+
+app.use('/api', require('./routes/sound-file-count'));
 app.use('/sounds', express.static(path.join(__dirname, '/sounds')));
 
 //server 

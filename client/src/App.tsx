@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useState, useReducer, useEffect, useRef, useMemo } from 'react'
+import { useState, useReducer, useEffect, useRef, useMemo, useCallback } from 'react'
 import axios from 'axios';
-import { Reducer, SoundState, SoundAction, MidiState, MidiAction, KeysPressed, ControlsState, ControlsAction, MidiRecorded, KeyPressed } from './Tools/Interfaces';
+import { Reducer, SoundState, SoundAction, MidiState, MidiAction, KeysPressed, ControlsState, ControlsAction, MidiRecorded, KeyPressed, MidiNoteInfo } from './Tools/Interfaces';
 import SoundSettings from './SettingsComponents/SoundSettings'
 import MidiSettings from './SettingsComponents/MidiSettings'
 import TimerButtons from './SettingsComponents/TimerButtons'
@@ -67,35 +67,60 @@ function App() {
   const [midiState, midiDispatch] = useReducer<Reducer<MidiState, MidiAction>>(midiReducer, {bpm: 120, metronome: 'off', mode: 'keyboard', numMeasures: 4, ppq: 96,  subdiv: 4});
   const [controlsState, controlsDispatch] = useReducer<Reducer<ControlsState, ControlsAction>>(controlsReducer, {export: false, undo: false});
   const [octaveMinMax, setOctaveMinMax] = useState([0, 0]);
-  const [controlsPressed, setControlsPressed] = useState(['', false])
-  const selectorsRef = useRef(null);
-
+  const [controlsPressed, setControlsPressed] = useState<(string | boolean)[]>(['', false])
+  const [selectorsHeight, setSelectorsHeight] = useState<number>()
   const midiLength = useMemo<number>(() => midiState.numMeasures * 4 / (midiState.bpm / 60 / 1000), [midiState.bpm, midiState.numMeasures]); // number of beats / bpm in ms
-  const pulseRate = useMemo<number>(() => midiState.ppq * midiState.bpm / 60 / 1000, [midiState.bpm, midiState.ppq]); // ppq / bpm in ms
-  const timerRef = useRef(null);
+  const pulseRate = useMemo<number>(() => midiState.ppq * (midiState.bpm / 60 / 1000), [midiState.bpm, midiState.ppq]); // ppq * bpm in ms
   const [time, setTime] = useState(0); // 24 * 120 /60/1000 * 16 /(120/60/1000)
   const [pulseNum, setPulseNum] = useState(0);
   const [keysPressed, setKeysPressed] = useState<Map<string, KeyPressed>>(new Map());
   const [keysUnpressed, setKeysUnpressed] = useState<Map<string, KeyPressed>>(new Map());
   const [playback, setPlayback] = useState<Map<string, KeyPressed>[]>([]);
   const [metPlay, setMetPlay] = useState(false);
-
-  const pianoRollKeyRef = useRef<any[] | null>(null)
-  const labelsRef = useRef<HTMLDivElement>(null);
   const [noteTracks, setNoteTracks] = useState<HTMLCollection | null>(null)
-  const noteTracksRef = useRef(null);
   const [gridSize, setGridSize] = useState<number[]>([]);
   const [focus, setFocus] = useState(false);
   const [user, setUser] = useState('');
   const [trackName, setTrackName] = useState('');
+  const [midiNoteInfo, setMidiNoteInfo] = useState<MidiNoteInfo[]>([]);
+  const [menuShown, setMenuShown] = useState('')
+  const selectorsRef = useRef<HTMLDivElement>(null);
+  const noteTracksRef = useRef<HTMLDivElement>(null);
+  const timerRef = useRef<HTMLDivElement>(null);
+  const timeSliderRef = useRef<HTMLInputElement>(null);
+  const pianoRollKeyRef = useRef<any[] | null>(null)
+  const labelsRef = useRef<HTMLDivElement>(null);
+
 
   // const [soundDetails, setSoundDetails] = useState({});
   useEffect(() => {
-    console.log(soundState.volume)
-  }, [soundState.octave])
+    // console.log(gridSize)
+  }, [gridSize])
 
   useEffect(() => {
-    console.log(process.env.REACT_APP_SERVER)
+    async function isLoggedIn() {
+      const url = `${process.env.REACT_APP_API}/logged-in`;
+      const options = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': true,
+        },
+        token: window.localStorage.getItem('token'),
+      }
+      await axios.post(url, options)
+      .then(res => {
+        console.log(res.data);
+        setUser(res.data.username)
+      })
+    }
+    if(window.localStorage.getItem('loggedIn') === 'true') isLoggedIn();
+    setXGridSize(0);
+    setYGridSize(0);
+  }, []);
+
+  useEffect(() => {
     async function getSoundDetails() {
       const url = `${process.env.REACT_APP_API}/sounds/Instruments`;
       const options = {
@@ -110,6 +135,7 @@ function App() {
       const soundDeets = await axios.get(url, options)
       .then(res => {
         soundDetails = res.data;
+        console.log(soundDetails)
         return res.data;
       }).catch(err => console.error(err));
       setSoundDetails(soundDetails);
@@ -132,12 +158,13 @@ function App() {
 
   useEffect(() => {
     // console.log(pulseNum , 1000 / (midiState.bpm / 60) * midiState.numMeasures * 4)
-    if(time > 1000 / (midiState.bpm / 60) * midiState.numMeasures * 4) {
-      midiDispatch({type: 'mode', mode: 'stop'});
+    // console.log(time);
+    if(pulseNum === midiLength * pulseRate) {
+      midiDispatch({type: 'mode', mode: 'stop'}); 
       setTimeout(() => midiDispatch({type: 'mode', mode: 'keyboard'}));
       
     }
-  }, [time])
+  }, [pulseNum])
 
   useEffect(() => {
     if(midiState.mode === 'stop') {
@@ -158,46 +185,54 @@ function App() {
       // Object.entries(keysPressed).forEach((keyPressed) => {
       //   tempKeysPressed[keyPressed[0]] = {...keyPressed[1], end: -1}
       // })
-      setKeysUnpressed(new Map);
+      setKeysUnpressed(new Map());
     }
   }, [midiState.mode])
 
-  // useEffect(() => {
-  //   console.log(controlsState.export);
-  //   if(controlsState.export) {
-  //     if(/[a-zA-Z]/g.test(trackName)) {
-  //       alert('Please name your track.')
-  //     } else {
-  //       console.log(midiState.mode)
-  //       let pulses = Object.keys(playback)
-  //       var smf = new JZZ.MIDI.SMF(0, midiState.ppq);
-  //       var trk = new JZZ.MIDI.SMF.MTrk();
-  //       smf.push(trk);
+  useEffect(() => {
+    if(selectorsRef.current) {
+      const selResizeObserver = new ResizeObserver((entries) => {
+        setSelectorsHeight(entries[0].contentRect.height)
+      });
+      selResizeObserver.observe(selectorsRef.current)
+      return () => selResizeObserver.disconnect();
+    }
+  }, []);
 
-  //       trk.add(0, JZZ.MIDI.smfSeqName('Midi from *Working Site Name*.com'));
-  //       trk.add(0, JZZ.MIDI.smfBPM(midiState.bpm));
-  //       for(var i = 0; i < pulses.length; i++) {
-  //         let note = Object.keys(playback[pulses[i]])[0]
-  //         if(playback[pulses[i]][note].end === -1) {
-  //           continue;
-  //         } else {
-  //           trk.add(playback[pulses[i]][note].start, JZZ.MIDI.noteOn(0, note, 70));
-  //           trk.add(playback[pulses[i]][note].end, JZZ.MIDI.noteOff(0, note, 70));
-  //         }
-  //       }
-  //       smf.dump();
-  //       let element = document.createElement("a");
-  //       let midiUrl = "data:audio/midi;base64," + window.btoa(smf.dump());
-  //       element.setAttribute("href", midiUrl);
-  //       element.setAttribute("download", `${trackName}.mid`);
-  //       element.style.display = "none";
-  //       document.body.appendChild(element);
-  //       element.click();
-  //       document.body.removeChild(element);
-  //     }
-  //     controlsDispatch({type: 'export', export: false});
-  //   }
-  // }, [controlsState.export]);
+  useEffect(() => {
+    if(controlsState.export) {
+      if(!/[a-zA-Z]/g.test(trackName)) {
+        alert('Please name your track.')
+      } else {
+        let pulses = Object.keys(playback)
+        var smf = new JZZ.MIDI.SMF(0, midiState.ppq);
+        var trk = new JZZ.MIDI.SMF.MTrk();
+        smf.push(trk);
+        trk.add(0, JZZ.MIDI.smfSeqName('Midi from *Working Site Name*.com'));
+        trk.add(0, JZZ.MIDI.smfBPM(midiState.bpm));
+        for(var i = 0; i < pulses.length; i++) {
+          Array.from(playback[parseInt(pulses[i])].keys()).forEach((note) => {
+            if(playback[parseInt(pulses[i])].get(note)!.end === -1) {
+              return;
+            } else {
+              trk.add(playback[parseInt(pulses[i])].get(note)!.start, JZZ.MIDI.noteOn(0, note, 70));
+              trk.add(playback[parseInt(pulses[i])].get(note)!.end, JZZ.MIDI.noteOff(0, note, 70));
+            }
+          })
+        }
+        smf.dump();
+        let element = document.createElement("a");
+        let midiUrl = "data:audio/midi;base64," + window.btoa(smf.dump());
+        element.setAttribute("href", midiUrl);
+        element.setAttribute("download", `${trackName}.mid`);
+        element.style.display = "none";
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+      }
+      controlsDispatch({type: 'export', export: false});
+    }
+  }, [controlsState.export]);
 
   function getOctaveArray() {
     let octaveArray: number[] = []
@@ -239,58 +274,84 @@ function App() {
       return state;
     })
   }
+  function setYGridSize(size: number) {
+    setGridSize((gridSize) => {
+      let state = [...gridSize]
+      state[1] = size;
+      return state;
+    })
+  }
 
   function setFocusLogin(focus: boolean) {
     setFocus(focus);
   }
-
+  
   const bgSizeTrack = 100 / midiState.numMeasures;
-
+  // {console.log(selectorsRef.current)}
   return (
-    <div className="App" id='App'>
-      <style>
-        {`
-        @media only screen and (min-width: 768px) {
-          #midi {
-            grid-template:
-            'labels' 'midi' / 100px ${window.innerWidth - 100}px;
-          }
+    // <div className="App">
+      <div className="App" id='App'>
+        <style>
+          {`
+            .App {
+              width: ${100 + gridSize[0]}%;
+            }
+
+            #midi {
+              grid-template-columns: fit-content(100px) calc(${window.innerWidth}px + ${gridSize[0]}%);
+              width: calc(${100}% + ${gridSize[0]}%);
+              padding-top: ${selectorsRef.current?.offsetHeight}px;
+            }
 
             #midi-note-labels {
+              grid-template-rows: repeat(${getOctaveArray().length}, ${(100 + gridSize[1]) / getOctaveArray().length}%);
               max-width: 100px;
+              min-width: 100px;
               width: 100%;
             }
             #midi-track {  
-              width: calc(100% + ${gridSize[0]});
+              width: ${100 + gridSize[0]}%;
+              height: ${100 + gridSize[1]}%;
             }
-        }
-        `}
-      </style>
-      
-      <div ref={selectorsRef} id='selectors'>
-        {(user.length > 0) ? <span>welcome {user}</span>: <></>}
-        <ShowLoginModal setFocus={setFocus} setUser={setUser} />
-        <SoundSettings soundDetails={soundDetails} sound={soundState.sound} octave={soundState.octave} volume={soundState.volume} pianoDispatch={soundDispatch} />
-        <MidiSettings soundDetails={soundDetails} numMeasures={midiState.numMeasures} subdiv={midiState.subdiv} bpm={midiState.bpm} mode={midiState.mode} controlsDispatch={controlsDispatch} midiDispatch={midiDispatch}/>
-        <UISettings setXGridSize={setXGridSize} />
-        <div ref={timerRef} id='timer-buttons'>
-          <TimerButtons metPlay={metPlay} metronome={midiState.metronome} mode={midiState.mode} pulseNum={pulseNum} midiDispatch={midiDispatch} />
-          <KbFunctions controlsPressed={controlsPressed} metronome={midiState.metronome} mode={midiState.mode} octaveMinMax={octaveMinMax} selectorsRef={selectorsRef} clearControls={clearControls} controlsDispatch={controlsDispatch} midiDispatch={midiDispatch} soundDispatch={soundDispatch} />
+
+            .note-label {
+              // height: ${(100) / 12}%;
+            }
+          `}
+        </style>
+        
+        <div ref={selectorsRef} id='selectors'>
+          <div className='login-elems'>
+            {(user.length > 0) ? <span id='welcome-user'> welcome {user} </span>: <></>}
+            <ShowLoginModal user={user} setFocus={setFocus} setUser={setUser} />
+          </div>
+          <br></br>
+          <br></br>
+          <div className='settings-buttons'>
+            {(menuShown === 'PianoSettings') ? <><button className='settings-button left-settings-button' onClick={() => setMenuShown('')}>Piano Settings</button><SoundSettings soundDetails={soundDetails} sound={soundState.sound} octave={soundState.octave} volume={soundState.volume} pianoDispatch={soundDispatch} /></> : <button className='settings-button left-settings-button' onClick={() => setMenuShown('PianoSettings')}>Piano Settings</button>}
+            {(menuShown === 'MidiSettings') ? <><MidiSettings soundDetails={soundDetails} numMeasures={midiState.numMeasures} subdiv={midiState.subdiv} bpm={midiState.bpm} mode={midiState.mode} controlsDispatch={controlsDispatch} midiDispatch={midiDispatch}/><button className='settings-button' onClick={() => setMenuShown('')}>Midi Settings</button></> : <button className='settings-button' onClick={() => setMenuShown('MidiSettings')}>Midi Settings</button>}
+            {(menuShown === 'UISettings') ? <><button className='settings-button' onClick={() => setMenuShown('')}>UI Settings</button><UISettings gridSize={gridSize} setXGridSize={setXGridSize} setYGridSize={setYGridSize} /></> : <button className='settings-button' onClick={() => setMenuShown('UISettings')}>UI Settings</button>}
+            {(menuShown === 'SaveExportSettings') ? <><SaveExport controlsDispatch={controlsDispatch} midiNoteInfo={midiNoteInfo} midiNoteInfoLength={midiNoteInfo.length} mode={midiState.mode} selectorsRef={selectorsRef} trackName={trackName} username={user} setFocus={setFocus} setTrackName={setTrackName} setMidiNoteInfo={setMidiNoteInfo} /><button className='settings-button right-settings-button' onClick={() => setMenuShown('')}>Save, Export, Load</button></> : <button className='settings-button right-settings-button' onClick={() => setMenuShown('SaveExportSettings')}>Save, Export, Load</button>}
+          </div>
+            <div ref={timerRef} id='timer-buttons'>
+              <TimerButtons metPlay={metPlay} metronome={midiState.metronome} mode={midiState.mode} pulseNum={pulseNum} midiDispatch={midiDispatch} />
+              <input readOnly={true} id='time' className='settings input' value={(pulseNum / pulseRate/1000).toFixed(2)}></input>
+              <KbFunctions controlsPressed={controlsPressed} metronome={midiState.metronome} mode={midiState.mode} octaveMinMax={octaveMinMax} selectorsRef={selectorsRef} clearControls={clearControls} controlsDispatch={controlsDispatch} midiDispatch={midiDispatch} soundDispatch={soundDispatch} />
+            </div>
         </div>
-      </div>
-      <div id='midi'>
-        <PianoRoll labelsRef={labelsRef} midiLength={midiLength} noteTracksRef={noteTracksRef} numMeasures={midiState.numMeasures} octave={soundState.octave} pulseNum={pulseNum} pulseRate={pulseRate} sound={soundState.sound} soundDetails={soundDetails} subdiv={midiState.subdiv} time={pulseNum} handleNotePlayed={pianoRollKeysPressed} />
-        <div id='midi-track' style={{backgroundSize: `${bgSizeTrack}%`, width: `calc(100% - ${gridSize[0]})`}}>
-          <Grid gridSize={gridSize} midiLength={midiLength} noteTracksRef={noteTracksRef} numMeasures={midiState.numMeasures} pulseNum={pulseNum} pulseRate={pulseRate} subdiv={midiState.subdiv} time={time} octaveArray={getOctaveArray()} setNoteTracks={setNoteTracks} />
+        <div id='midi'>
+          <PianoRoll labelsRef={labelsRef} midiLength={midiLength} noteTracksRef={noteTracksRef} numMeasures={midiState.numMeasures} octave={soundState.octave} pulseNum={pulseNum} pulseRate={pulseRate} sound={soundState.sound} soundDetails={soundDetails} subdiv={midiState.subdiv} time={pulseNum} handleNotePlayed={pianoRollKeysPressed} />
+          <div id='midi-track' style={{backgroundSize: `${bgSizeTrack}%`}}>
+            {(noteTracksRef.current && selectorsRef.current) ? <input ref={timeSliderRef} type='range' id='time-slider' min='0' max={`${midiLength * pulseRate}`} value={pulseNum} style={{position: 'sticky', height: 'max-content', top: `${selectorsHeight}px`}} onChange={(e) => {setTime(parseInt(e.target.value) / pulseRate); setPulseNum(parseInt(e.target.value))}}></input> : null}
+            <Grid gridSize={gridSize} midiLength={midiLength} noteTracksRef={noteTracksRef} numMeasures={midiState.numMeasures} pulseNum={pulseNum} pulseRate={pulseRate} selectorsRef={selectorsRef} subdiv={midiState.subdiv} time={time} octaveArray={getOctaveArray()} setPulseNum={setPulseNum} setTime={setTime} />
+          </div>
         </div>
+        <KeyNoteInput focus={focus} octave={soundState.octave} pianoRollKey={pianoRollKeyRef.current} pulseNum={pulseNum} onControlsPressed={setControlsPressed} onNotePlayed={setKeysPressed} setKeysPressed={setKeysPressed} setKeysUnpressed={setKeysUnpressed} />
+        <MidiRecorder controlsState={controlsState} gridSize={gridSize} keysPressed={keysPressed} keysUnpressed={keysUnpressed} midiLength={midiLength} midiNoteInfo={midiNoteInfo} midiState={midiState} noteTracksRef={noteTracksRef} pulseNum={pulseNum} pulseRate={pulseRate} controlsDispatch={controlsDispatch} setKeysUnpressed={setKeysUnpressed} setMidiNoteInfo={setMidiNoteInfo} setPlayback={setPlayback} />
+        <Timer bpm={midiState.bpm} metronome={midiState.metronome} midiLength={midiLength} time={time} timerRef={timerRef} mode={midiState.mode} ppq={midiState.ppq} pulseNum={pulseNum} pulseRate={pulseRate} handleMetPlay={metPlayed} handleSetTime={setTime} handleSetPulseNum={setPulseNum} />
+        <Piano pulseNum={pulseNum} soundDetails={soundDetails} sound={soundState.sound} octave={soundState.octave} octaveMinMax={octaveMinMax} volume={soundState.volume} mode={midiState.mode} keysPressed={keysPressed} keysUnpressed={keysUnpressed} playback={playback} labelsRef={labelsRef} setKeysUnpressed={setKeysUnpressed} />
       </div>
-      <KeyNoteInput focus={focus} octave={soundState.octave} pianoRollKey={pianoRollKeyRef.current} pulseNum={pulseNum} onControlsPressed={setControlsPressed} onNotePlayed={setKeysPressed} setKeysPressed={setKeysPressed} setKeysUnpressed={setKeysUnpressed} />
-      <Timer bpm={midiState.bpm} metronome={midiState.metronome} midiLength={midiLength} time={time} timerRef={timerRef} mode={midiState.mode} ppq={midiState.ppq} pulseNum={pulseNum} pulseRate={pulseRate} handleMetPlay={metPlayed} handleSetTime={setTime} handleSetPulseNum={setPulseNum} />
-      <ErrorBoundary>
-        <MidiRecorder controlsState={controlsState} gridSize={gridSize} keysPressed={keysPressed} keysUnpressed={keysUnpressed} midiLength={midiLength} midiState={midiState} noteTracks={noteTracks} noteTracksRef={noteTracksRef} pulseNum={pulseNum} pulseRate={pulseRate} selectorsRef={selectorsRef} username={user} controlsDispatch={controlsDispatch} midiDispatch={midiDispatch} setFocus={setFocus} setKeysUnpressed={setKeysUnpressed} setPlayback={setPlayback} setTrackName={setTrackName} />
-      </ErrorBoundary>
-      <Piano pulseNum={pulseNum} soundDetails={soundDetails} sound={soundState.sound} octave={soundState.octave} octaveMinMax={octaveMinMax} volume={soundState.volume} mode={midiState.mode} keysPressed={keysPressed} keysUnpressed={keysUnpressed} playback={playback} labelsRef={labelsRef} />
-    </div>
+    // </div>
   );
 }
 

@@ -60,8 +60,8 @@ function RegModal(props: RegModalProps) {
 
             const credentials = await axios.post(url, options)
             .then((res) => {
-                alert(res.data.message);
-                props.setShowRegister(false)
+              alert(res.data.message);
+              props.setShowRegister(false)
             }).catch((err) => console.error(err));
             console.log(credentials)
           }}
@@ -92,8 +92,29 @@ function LoginModal(props: LoginModalProps) {
   const [user, setUser] = useState('');
 
   useEffect(() => {
-    console.log(user)
-    if(user.length > 0) props.setUser(user);
+    async function getCookie() {
+      const url = `${process.env.REACT_APP_API}/cookie/${user}`;
+      const options = {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Origin-Allow': process.env.REACT_APP_APP,
+            'Access-Control-Allow-Credentials': true,
+        },
+        withCredentials: true
+      };
+      const cookie = await axios.get(url, options)
+      .then((res) => {
+        console.log(res.data)
+      }).catch((err) => console.error(err))
+    }
+
+    // console.log(user)
+    if(user.length > 0) {
+      props.setUser(user);
+      // getCookie();
+    }
   }, [user]);
  
 
@@ -119,9 +140,11 @@ function LoginModal(props: LoginModalProps) {
               method: 'POST',
               mode: 'cors',
               headers: {
-                  'Content-Type': 'application/json',
-                  'Access-Control-Origin-Allow': true
+                'Content-Type': 'application/json',
+                'Access-Control-Origin-Allow': process.env.REACT_APP_APP,
+                'Access-Control-Allow-Credentials': true,
               },
+              withCredentials: true,
               username: username,
               password: password,
             };
@@ -134,13 +157,16 @@ function LoginModal(props: LoginModalProps) {
               return;
             }
 
-            const credentials = await axios.post(url, options)
+            await axios.post(url, options)
             .then((res) => {
-              console.log(res.data)
-              alert(res.data.message);
+              console.log(res)
+              window.localStorage.setItem('token', res.data.data);
+              window.localStorage.setItem('loggedIn', 'true');
+              // alert(res.data.message);
               setUser(username);
             }).catch((err) => console.error(err));
-            console.log(credentials)
+            
+            // console.log(credentials)
           }}
         >
           <label className='credentials-label'>Username/Email:</label>
@@ -157,6 +183,7 @@ function LoginModal(props: LoginModalProps) {
 }
 
 interface ShowLoginModalProps {
+  user: string;
   setFocus: Function;
   setUser: Function;
 }
@@ -165,6 +192,30 @@ function ShowLoginModal(props: ShowLoginModalProps) {
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [user, setUser] = useState('');
+  const loginButton = useMemo<JSX.Element>(() => {
+    function logout() {
+      window.localStorage.clear();
+      const url = `${process.env.REACT_APP_API}/logout`
+      const options = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Origin-Allow': process.env.REACT_APP_APP
+        },
+        withCredentials: true,
+        username: user
+      }
+      axios.post(url, options)
+      .then((res) => {
+        console.log(res.data);
+      }).catch((err) => console.error(err))
+
+      setUser('');
+      props.setUser('')
+    }
+    return (user.length === 0) ? <button className='loginout settings button' onClick={() => setShowLogin(true)} >Login</button> : <button className='loginout settings button' onClick={() => {logout()}}>Logout</button>
+  }, [user])
   const logreg = useMemo<JSX.Element>(() => {
     if(showLogin && !showRegister) {
       return createPortal(
@@ -189,25 +240,16 @@ function ShowLoginModal(props: ShowLoginModalProps) {
   // const [elemToShow, setElemToShow] = useState<()
 
   useEffect(() => {
-    // setElemToShow(
-    //   <>
-    //     <button onClick={() => setShowLogin(true)} >Login</button>
-    //     {showLogin && createPortal(
-    //       (showRegister) ? <LoginModal onClose={setShowLogin} onRegister={setShowRegister} /> : <RegModal onClose={setShowLogin} onRegister={setShowRegister} />,
-    //       document.body
-    //     )}
-    //   </>
-    // )
-  }, [showRegister]);
+    setUser(props.user)
+  }, [props.user]);
 
   useEffect(() => {
-    console.log(showLogin);
     props.setFocus(showLogin);
   }, [showLogin]);
 
   // useEffect(() => {
-
-  // }, [showLogin, showRegister])
+  //   props.setUser(user);
+  // }, [user])
 
   function setFocusLogin(focus: boolean) {
     
@@ -215,15 +257,7 @@ function ShowLoginModal(props: ShowLoginModalProps) {
 
   return(
     <>
-      {(user.length === 0) ? <button onClick={() => setShowLogin(true)} >Login</button> : <button>Logout</button>}
-      {/* {showLogin && !showRegister && createPortal(
-        <LoginModal onClose={setShowLogin} onRegister={setShowRegister} />,
-        document.body
-      )}
-      {showRegister && createPortal(
-        <RegModal onClose={setShowLogin} onRegister={setShowRegister} />,
-        document.body
-      )} */}
+      {loginButton}
       {logreg}
     </>
   )

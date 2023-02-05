@@ -97,27 +97,16 @@ function KeyNoteInput(props: KeyNoteInputProps) {
   }, [props.octave, props.pulseNum, props.focus, keysPressed, keysUnpressed]);
 
   // useEffect(() => {
-  //   const element = ref.current;
-  //   if(element) {
-  //     element.addEventListener('focusout', () => {
-  //       let tempController = JSON.stringify(controller).replaceAll('true', 'false');
-  //       tempController = JSON.stringify(controller).replaceAll('-1', '0');
-  //       setController(JSON.parse(tempController))
-  //     });
-  //     return () => {
-  //       element.removeEventListener('focusout', () => element.focus());
-  //     };
+  //   while(keysPressed.size > 0 ) {
+  //     setTimeout(() => {
+  //       setKeysUnpressed((keysUnpressed) => {
+  //         let state = new Map(keysUnpressed);
+  //         state.delete(Array.from(state.keys())[0]);
+  //         return state;
+  //       })
+  //     }, 1000)
   //   }
-  //   // console.log(!element);
-  //   // if(element) {
-  //   //   console.log('huh');
-  //   //   .focus();
-    
-  //   //   return () => {
-  //   //     element.removeEventListener('focusout', () => element.focus());
-  //   //   };
-  //   // }
-  // }, []);
+  // }, [keysPressed]);
 
   useEffect(() => {
     props.setKeysPressed(keysPressed);

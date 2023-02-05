@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { TimerProps, MetronomeProps } from './Interfaces';
 import {Howl, Howler} from 'howler';
-import { createPortal } from 'react-dom';
+// import { createPortal } from 'react-dom';
 
 function Metronome(props: MetronomeProps) {
   const [metronome, setMetronome] = useState<Howl>()
@@ -31,7 +31,7 @@ function Metronome(props: MetronomeProps) {
     if(props.pulseNum >= props.midiLength * props.pulseRate) {
       return;
     }
-    if(metronome && props.mode != 'keyboard' && props.metronome === 'on' ) {
+    if(metronome && props.mode != 'keyboard' && props.mode != 'stop' && props.metronome === 'on' ) {
       if(props.pulseNum % (props.ppq * 2) === 0) { 
         // setMetPlayed(metPlayed);
         props.handleMetPlay(true)
@@ -40,10 +40,8 @@ function Metronome(props: MetronomeProps) {
         props.handleMetPlay(false)
       }
       if(props.pulseNum % (props.ppq * 4) === 0) {
-        console.error('met');
         metronome.play('firstBeat');
       } else if(props.pulseNum % props.ppq === 0) {
-        console.error('met');
         metronome.play('beat');
       }
     }
@@ -72,7 +70,7 @@ function Timer(props: TimerProps) {
         if(tempTime % props.pulseRate < 5) pulseNum++
         // pulseNum = Math.round(tempTime * props.pulseRate);
         // pulseNum++;
-        console.log(pulseNum)
+        // console.log(pulseNum)
         start = performance.now();
         props.handleSetTime(tempTime);
         props.handleSetPulseNum(pulseNum);
@@ -92,7 +90,7 @@ function Timer(props: TimerProps) {
 
   return (
     <>
-      {(props.timerRef.current) ? createPortal(<input readOnly={true} value={props.time/1000}></input>, props.timerRef.current) : null}
+      {/* {(props.timerRef.current) ? createPortal(<input readOnly={true} id='time' className='settings input' value={(props.pulseNum / props.pulseRate/1000).toFixed(2)}></input>, props.timerRef.current) : null} */}
       <Metronome metronome={props.metronome} midiLength={props.midiLength} mode={props.mode} ppq={props.ppq} pulseNum={props.pulseNum} pulseRate={props.pulseRate} handleMetPlay={metPlay} />
     </>
   )

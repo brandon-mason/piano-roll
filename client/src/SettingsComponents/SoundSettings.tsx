@@ -86,13 +86,13 @@ function Settings(props: SoundSettingsProps) {
 
   return (
     <>
-      <select name='sound' id='sound-selector' value={props.sound} onChange={(e) => {props.pianoDispatch({type: 'sound', sound: e.target.value})}}>
+      <select name='sound' id='sound-selector' className='settings' value={props.sound} onChange={(e) => {props.pianoDispatch({type: 'sound', sound: e.target.value})}}>
         {renderSounds()}
       </select>
-      <select name='octave' id='octave-selector' value={props.octave} onChange={(e) => {props.pianoDispatch({type: 'octave', octave: parseInt(e.target.value)})}}>
+      <select name='octave' id='octave-selector' className='settings' value={props.octave} onChange={(e) => {props.pianoDispatch({type: 'octave', octave: parseInt(e.target.value)})}}>
         {renderOctaves()}
       </select>
-      <select name='volume' id='volume-selector' value={props.volume} onChange={(e) => {props.pianoDispatch({type: 'volume', volume: e.target.value})}}>
+      <select name='volume' id='volume-selector' className='settings' value={props.volume} onChange={(e) => {props.pianoDispatch({type: 'volume', volume: e.target.value})}}>
         {renderVolumes()}
       </select>
     </>

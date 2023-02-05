@@ -67,15 +67,15 @@ function MidiNotes(props: MidiNotesProps) {
         let key = Object.keys(noteStart)[0];
 
         if(Object.keys(widths).includes(key)) {
-          let left = widths[key].start / (props.midiLength * props.pulseRate) * props.noteTracksRef.current!.offsetWidth + 1;
-          let width = (widths[key].end - widths[key].start) / (props.midiLength * props.pulseRate) * props.noteTracksRef.current!.offsetWidth;
+          let left = widths[key].start / (props.midiLength * props.pulseRate) * props.noteTracksRef.current!.offsetWidth + 2;
+          let width = (widths[key].end - widths[key].start) / (props.midiLength * props.pulseRate) * props.noteTracksRef.current!.offsetWidth - 2;
 
           if(widths[key].end === -1) {
             width = (props.pulseNum - widths[key].start) / (props.midiLength * props.pulseRate) * props.noteTracksRef.current!.offsetWidth;
           }
 
           var elem = createElement('span', {...noteStart[key].props, key: noteStart[key].key, style: {
-            height: '23.5px',
+            height: `${document.getElementById(noteStart[key].noteTrackId)!.offsetHeight - 4}px`,
             left: `${left}px` ,
             width: `${width}px`,
           }});
