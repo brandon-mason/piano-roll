@@ -80,7 +80,7 @@ function App() {
   const [noteTracks, setNoteTracks] = useState<HTMLCollection | null>(null)
   const [gridSize, setGridSize] = useState<number[]>([]);
   const [focus, setFocus] = useState(false);
-  const [user, setUser] = useState('');
+  const [username, setUsername] = useState('');
   const [trackName, setTrackName] = useState('');
   const [midiNoteInfo, setMidiNoteInfo] = useState<MidiNoteInfo[]>([]);
   const [menuShown, setMenuShown] = useState('')
@@ -112,7 +112,7 @@ function App() {
       await axios.post(url, options)
       .then(res => {
         console.log(res.data);
-        setUser(res.data.username)
+        setUsername(res.data.username)
       })
     }
     if(window.localStorage.getItem('loggedIn') === 'true') isLoggedIn();
@@ -160,11 +160,21 @@ function App() {
     // console.log(pulseNum , 1000 / (midiState.bpm / 60) * midiState.numMeasures * 4)
     // console.log(time);
     if(pulseNum === midiLength * pulseRate) {
-      midiDispatch({type: 'mode', mode: 'stop'}); 
-      setTimeout(() => midiDispatch({type: 'mode', mode: 'keyboard'}));
+      // midiDispatch({type: 'mode', mode: 'stop'}); 
+      midiDispatch({type: 'mode', mode: 'keyboard'});
       
     }
   }, [pulseNum])
+
+  useEffect(() => {
+    console.log(time >= midiLength && midiState.mode === 'playing' || midiState.mode === 'recording');
+    if(time >= midiLength && midiState.mode === 'playing' || midiState.mode === 'recording') {
+      let mode = midiState.mode;
+      console.log(mode);
+      midiDispatch({type: 'mode', mode: 'stop'}); 
+      setTimeout(() => midiDispatch({type: 'mode', mode: mode}));
+    }
+  }, [midiState.mode]);
 
   useEffect(() => {
     if(midiState.mode === 'stop') {
@@ -298,16 +308,15 @@ function App() {
             }
 
             #midi {
-              grid-template-columns: fit-content(100px) calc(${window.innerWidth}px + ${gridSize[0]}%);
               width: calc(${100}% + ${gridSize[0]}%);
               padding-top: ${selectorsRef.current?.offsetHeight}px;
             }
 
             #midi-note-labels {
               grid-template-rows: repeat(${getOctaveArray().length}, ${(100 + gridSize[1]) / getOctaveArray().length}%);
-              max-width: 100px;
-              min-width: 100px;
-              width: 100%;
+              max-width: ${(document.body.offsetWidth <= noteTracksRef.current?.offsetWidth! + labelsRef.current?.offsetWidth!) ? '8vmax' : '8%'};
+              min-width: min-content;
+             
             }
             #midi-track {  
               width: ${100 + gridSize[0]}%;
@@ -317,13 +326,14 @@ function App() {
             .note-label {
               // height: ${(100) / 12}%;
             }
+
           `}
         </style>
         
         <div ref={selectorsRef} id='selectors'>
           <div className='login-elems'>
-            {(user.length > 0) ? <span id='welcome-user'> welcome {user} </span>: <></>}
-            <ShowLoginModal user={user} setFocus={setFocus} setUser={setUser} />
+            {(username.length > 0) ? <span id='welcome-user'> welcome {username} </span>: <></>}
+            <ShowLoginModal username={username} setFocus={setFocus} setUsername={setUsername} />
           </div>
           <br></br>
           <br></br>
@@ -331,12 +341,12 @@ function App() {
             {(menuShown === 'PianoSettings') ? <><button className='settings-button left-settings-button' onClick={() => setMenuShown('')}>Piano Settings</button><SoundSettings soundDetails={soundDetails} sound={soundState.sound} octave={soundState.octave} volume={soundState.volume} pianoDispatch={soundDispatch} /></> : <button className='settings-button left-settings-button' onClick={() => setMenuShown('PianoSettings')}>Piano Settings</button>}
             {(menuShown === 'MidiSettings') ? <><MidiSettings soundDetails={soundDetails} numMeasures={midiState.numMeasures} subdiv={midiState.subdiv} bpm={midiState.bpm} mode={midiState.mode} controlsDispatch={controlsDispatch} midiDispatch={midiDispatch}/><button className='settings-button' onClick={() => setMenuShown('')}>Midi Settings</button></> : <button className='settings-button' onClick={() => setMenuShown('MidiSettings')}>Midi Settings</button>}
             {(menuShown === 'UISettings') ? <><button className='settings-button' onClick={() => setMenuShown('')}>UI Settings</button><UISettings gridSize={gridSize} setXGridSize={setXGridSize} setYGridSize={setYGridSize} /></> : <button className='settings-button' onClick={() => setMenuShown('UISettings')}>UI Settings</button>}
-            {(menuShown === 'SaveExportSettings') ? <><SaveExport controlsDispatch={controlsDispatch} midiNoteInfo={midiNoteInfo} midiNoteInfoLength={midiNoteInfo.length} mode={midiState.mode} selectorsRef={selectorsRef} trackName={trackName} username={user} setFocus={setFocus} setTrackName={setTrackName} setMidiNoteInfo={setMidiNoteInfo} /><button className='settings-button right-settings-button' onClick={() => setMenuShown('')}>Save, Export, Load</button></> : <button className='settings-button right-settings-button' onClick={() => setMenuShown('SaveExportSettings')}>Save, Export, Load</button>}
+            {(menuShown === 'SaveExportSettings') ? <><SaveExport controlsDispatch={controlsDispatch} midiNoteInfo={midiNoteInfo} midiNoteInfoLength={midiNoteInfo.length} mode={midiState.mode} selectorsRef={selectorsRef} trackName={trackName} username={username} setFocus={setFocus} setTrackName={setTrackName} setMidiNoteInfo={setMidiNoteInfo} /><button className='settings-button right-settings-button' onClick={() => setMenuShown('')}>Save, Export, Delete</button></> : <button className='settings-button right-settings-button' onClick={() => setMenuShown('SaveExportSettings')}>Save, Export, Load</button>}
           </div>
             <div ref={timerRef} id='timer-buttons'>
               <TimerButtons metPlay={metPlay} metronome={midiState.metronome} mode={midiState.mode} pulseNum={pulseNum} midiDispatch={midiDispatch} />
               <input readOnly={true} id='time' className='settings input' value={(pulseNum / pulseRate/1000).toFixed(2)}></input>
-              <KbFunctions controlsPressed={controlsPressed} metronome={midiState.metronome} mode={midiState.mode} octaveMinMax={octaveMinMax} selectorsRef={selectorsRef} clearControls={clearControls} controlsDispatch={controlsDispatch} midiDispatch={midiDispatch} soundDispatch={soundDispatch} />
+              <KbFunctions controlsPressed={controlsPressed} metronome={midiState.metronome} mode={midiState.mode} octave={soundState.octave} octaveMinMax={octaveMinMax} selectorsRef={selectorsRef} clearControls={clearControls} controlsDispatch={controlsDispatch} midiDispatch={midiDispatch} soundDispatch={soundDispatch} />
             </div>
         </div>
         <div id='midi'>

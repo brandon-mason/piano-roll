@@ -20,15 +20,14 @@ function KeyNoteInput(props: KeyNoteInputProps) {
         return;
       };
       const control = e.metaKey || e.ctrlKey;
-      
       if(Object.keys(kbControls).includes(e.key)) {
         e.preventDefault();
         props.onControlsPressed([e.key, control]);
       }
-      if(!Object.keys(qwertyNote).includes(e.key)) {
+      if(!Object.keys(qwertyNote).includes(e.key.toLocaleLowerCase())) {
         return;
       }
-      let octave = props.octave + qwertyNote[e.key.toLowerCase()].octave;
+      let octave = props.octave + qwertyNote[e.key.toLocaleLowerCase()].octave;
       let pressed = true;
 
       if(parseInt(e.code) - parseInt(e.code) === 0) {
@@ -56,19 +55,20 @@ function KeyNoteInput(props: KeyNoteInputProps) {
 
     const onKeyUp = (e: KeyboardEvent) => {
       if(!Object.keys(qwertyNote).includes(e.key)) return;
-      let octave = props.octave + qwertyNote[e.key.toLowerCase()].octave;
+      let octave = props.octave + qwertyNote[e.key.toLocaleLowerCase()].octave;
       let pressed = false
       if(parseInt(e.code) - parseInt(e.code) === 0) {
         octave = parseInt(e.code);
       }
       
-      let note = qwertyNote[e.key.toLowerCase()].note;
+      let note = qwertyNote[e.key.toLocaleLowerCase()].note;
       let noteOct = note + octave
       // console.log(note);
       // setKeysUnpressed((keysUnpressed) => ({...keysUnpressed, [note + octave]: {start: keysPressed.get(note + octave)!.start, key: e.key.toLowerCase(), pressed: false, end: props.pulseNum}}));
       if(keysPressed.size > 0) {
         setKeysUnpressed((keysUnpressed) => {
           let state = new Map(keysUnpressed)
+          console.log(keysPressed.get(note + octave));
           state.set(note + octave, {start: keysPressed.get(note + octave)!.start, key: e.key.toLowerCase(), pressed: false, end: props.pulseNum})
           return state
         })

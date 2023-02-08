@@ -120,7 +120,7 @@ function LoginModal(props: LoginModalProps) {
 
   return(
     <>
-      <div id='login-bg'></div>
+      <div id='popup-bg'></div>
       <div id='loginreg-modal'>
         <button className='loginreg-element close-button' onClick={() => props.onClose(false)}>X</button>
         <form 
@@ -174,6 +174,22 @@ function LoginModal(props: LoginModalProps) {
           <label className='credentials-label'> Password:</label>
           <input type='password' name='password' id='login-passsword' className='loginreg-element'></input>
           <input type='submit' id='login' className='loginreg-element button' value='Login'></input>
+          <span style={{fontSize: '12px', textDecoration: 'underline'}} onClick={async () => {
+            const url = `${process.env.REACT_APP_API}/forgot-password`;
+            const options = {
+              method: 'POST',
+              mode: 'cors',
+              headers: {
+                'Content-Type': 'applications/json',
+                'Access-Control-Origin-Allow': process.env.REACT_APP_APP,
+              }
+            }
+
+            await axios.post(url, options)
+            .then((res) => {
+              console.log(res.data);
+            })
+          }}>Forgot Password</span>
           <label className='register-label'> Don't have an account?</label>
           <button id='register' className='loginreg-element button' onClick={() => props.onRegister(true)}>Register</button>
         </form>
@@ -183,15 +199,15 @@ function LoginModal(props: LoginModalProps) {
 }
 
 interface ShowLoginModalProps {
-  user: string;
+  username: string;
   setFocus: Function;
-  setUser: Function;
+  setUsername: Function;
 }
 
 function ShowLoginModal(props: ShowLoginModalProps) {
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
-  const [user, setUser] = useState('');
+  // const [username, setUsername] = useState('');
   const loginButton = useMemo<JSX.Element>(() => {
     function logout() {
       window.localStorage.clear();
@@ -204,18 +220,18 @@ function ShowLoginModal(props: ShowLoginModalProps) {
           'Access-Control-Origin-Allow': process.env.REACT_APP_APP
         },
         withCredentials: true,
-        username: user
+        username: props.username
       }
       axios.post(url, options)
       .then((res) => {
         console.log(res.data);
       }).catch((err) => console.error(err))
 
-      setUser('');
-      props.setUser('')
+      // setUsername('');
+      props.setUsername('')
     }
-    return (user.length === 0) ? <button className='loginout settings button' onClick={() => setShowLogin(true)} >Login</button> : <button className='loginout settings button' onClick={() => {logout()}}>Logout</button>
-  }, [user])
+    return (props.username.length === 0) ? <button className='loginout settings button' onClick={() => setShowLogin(true)} >Login</button> : <button className='loginout settings button' onClick={() => {logout()}}>Logout</button>
+  }, [props.username])
   const logreg = useMemo<JSX.Element>(() => {
     if(showLogin && !showRegister) {
       return createPortal(
@@ -229,9 +245,9 @@ function ShowLoginModal(props: ShowLoginModalProps) {
       )
       }
 
-    function loggedIn(user: string) {
-      props.setUser(user)
-      setUser(user)
+    function loggedIn(username: string) {
+      props.setUsername(username)
+      // setUsername(username)
       setShowLogin(false)
     }
 
@@ -239,9 +255,9 @@ function ShowLoginModal(props: ShowLoginModalProps) {
   }, [showLogin, showRegister])
   // const [elemToShow, setElemToShow] = useState<()
 
-  useEffect(() => {
-    setUser(props.user)
-  }, [props.user]);
+  // useEffect(() => {
+  //   setUsername(props.username)
+  // }, [props.username]);
 
   useEffect(() => {
     props.setFocus(showLogin);

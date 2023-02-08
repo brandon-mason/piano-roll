@@ -10,19 +10,6 @@ function OctavesInView(props: OctavesInViewProps) {
   const observer = useRef<IntersectionObserver | null>(null);
 
   useEffect(() => {
-    let octavesInView: number[] = [];
-
-    // const buildThresholdArr = () => {
-    //   let arr: number[] = [0];
-
-    //   for(let i = 1; i < props.octaveMax + 1; i++) {
-    //     let num = i / props.octaveMax;
-    //     arr.push(Math[num < 0 ? 'ceil' : 'floor'](num * 100) / 100);
-    //   } 
-
-    //   return arr;
-    // }
-
     const callback = (entries: IntersectionObserverEntry[], observer: IntersectionObserver) => {
       let toFetchTemp: number[] = [];
       entries.forEach((entry) => {
@@ -50,12 +37,12 @@ function OctavesInView(props: OctavesInViewProps) {
     return (() => {
       if(observer.current) observer.current.disconnect();
     })
-  }, [props.labelsRef, props.octaveMax])
+  }, [props.octaveMax, props.volume])
 
   useEffect(() => {
     props.handleViewChange([props.octave, props.octave + 1])
     // console.log(props.octave);
-  }, [props.octave])
+  }, [props.octave, props.volume])
 
   return null;
 }
@@ -274,6 +261,7 @@ function Piano(props: PianoProps) {
   }, [props.mode, props.pulseNum, props.keysPressed, props.keysUnpressed, props.playback])
 
   function loadSound(url: string) {
+    console.error(url);
     let octaveSound: any;
       octaveSound = new Howl({
         src: [url + '.webm', url + 'mp3'],
@@ -298,24 +286,30 @@ function Piano(props: PianoProps) {
 
   function setView(toFetch: number[]) {
     let notFetched: number[] = [];
-    // console.log(toFetch)
+    if(props.octaveMinMax[0] !== props.octaveMinMax[1])
     for(let i = 0; i < toFetch.length; i++) {
+      console.log(toFetch[i])
       let url = `${process.env.REACT_APP_SERVER}/sounds/Instruments/${props.sound}/${toFetch[i]}/${props.volume}`;
-      if(!fetchedSounds[toFetch[i]] || fetchedSounds[toFetch[i]][props.volume]._src != url + '.webm' || fetchedSounds[toFetch[i]][props.volume]._src != url + '.mp3') {
+      console.log(!fetchedSounds[toFetch[i]] === undefined)
+      // console.log(fetchedSounds[toFetch[i]][props.volume]._src != url + '.webm' || fetchedSounds[toFetch[i]][props.volume]._src != url + '.mp3');
+      if(!(toFetch[i] in fetchedSounds)) {
+        notFetched.push(toFetch[i]);
+      } else if(!(props.volume in fetchedSounds[toFetch[i]])) {
         notFetched.push(toFetch[i]);
       }
-      
+      console.log(notFetched)
       if(notFetched.length > 0) {
-        // console.log('hehe');
+        console.log('hehe');
         setFetchedSounds((fetchedSounds) => ({...fetchedSounds, [toFetch[i]]: {[props.volume]: loadSound(url)}}))
       }
     }
+    console.log('hoho');
   }
 
   return (
     <>
       {/* <KeyNoteInput key='KeyNoteInput' octave={props.octave} pianoRollKey={props.pianoRollKey} onNotePlayed={setNoteProps} /> */}
-      <OctavesInView octaveMax={props.octaveMinMax[1]} labelsRef={props.labelsRef} octave={props.octave} handleViewChange={setView} />
+      <OctavesInView octaveMax={props.octaveMinMax[1]} labelsRef={props.labelsRef} octave={props.octave} volume={props.volume} handleViewChange={setView} />
     </>
   );
 }

@@ -2,7 +2,6 @@ import axios from 'axios';
 import React, { useState, useEffect, useRef, ReactPortal } from 'react';
 import SavedTracks from './SavedTracks';
 import { MidiNoteInfo, MidiSettingsProps } from '../Tools/Interfaces';
-import Popup from 'reactjs-popup';
 // import  {DraggableNumber} from './libs/draggable-number'
 import './Settings.css';
 import { createPortal } from 'react-dom';
@@ -23,9 +22,9 @@ interface SaveExportProps {
 function SaveExport(props: SaveExportProps) {
   const nameRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
-  const [midiNoteString, setMidiNoteString] = useState<string[]>()
-  const [trackNames, setTrackNames] = useState<string[]>([])
-  const [overwriteModal, setOverwriteModal] = useState<ReactPortal | null>()
+  const [midiNoteString, setMidiNoteString] = useState<string[]>();
+  const [trackNames, setTrackNames] = useState<string[]>([]);
+  const [modal, setModal] = useState<ReactPortal | null>();
 
   useEffect(() => {
     async function getSavedTracks() {
@@ -106,44 +105,45 @@ function SaveExport(props: SaveExportProps) {
     })
   }
 
-  function submit(trackname: string, callback: Function) {
-    // e.preventDefault();
-    // const target = e.target as typeof e.target & {
-    //   trackname: {value: string};
-    // };
-    // const trackname: string = target.trackname.value;
-    // var overwrite = true
-    console.log(trackNames.includes(trackname) && props.selectorsRef.current);
+  function overwrite(trackname: string, callback: Function) {
     if(trackNames.includes(trackname) && props.selectorsRef.current) {
-      var over = 0;
+      var picked = 'none';
       pickOverwrite();
-      console.group()
-      console.log('overwriting?')
-      console.groupEnd()
       function pickOverwrite() {
-        console.log(over)
-        if(over === 0 && props.selectorsRef.current) {
-          setOverwriteModal(createPortal(
-            <div id='overwrite-modal' style={{
-                top: `${props.selectorsRef.current.offsetHeight / 3}px`,
+        if(picked === 'none' && props.selectorsRef.current) {
+          setModal(createPortal(<>
+            <div id='popup-bg'></div>
+            <div id='popup-select' className='popup select' style={{
+                marginTop: `${props.selectorsRef.current.offsetHeight / 3}px`,
                 left: `${props.selectorsRef.current.offsetWidth / 2}px`,
                 zIndex: 6
               }}>
-              <button className='overwrite-button' onClick={() => {over = 1; setOverwriteModal(null)}}>Overwrite {trackname}?</button>
-              <button className='overwrite-button' onClick={() => {over = 2; setOverwriteModal(null)}}>Don't overwrite {trackname}</button>
-            </div>, document.body))
+              <button type='button' className='popup-button settings button' 
+                onClick={() => {
+                  picked = 'overwrite'; 
+                  document.getElementById('popup-bg')!.classList.toggle('lift-out');
+                  document.getElementById('popup-select')!.classList.toggle('lift-out');
+                  setTimeout(() => setModal(null), 500);
+                }}
+              >Overwrite {trackname}?</button>
+              <button type='button' className='popup-button settings button' 
+                onClick={() => {
+                  picked = 'dont'; 
+                  document.getElementById('popup-bg')!.classList.toggle('lift-out');
+                  document.getElementById('popup-select')!.classList.toggle('lift-out');
+                  setTimeout(() => setModal(null), 500);
+                }}
+              >Don't Overwrite {trackname}</button>
+            </div></>, props.selectorsRef.current)
+          )
             // console.log('hhhhh');
-            setTimeout(pickOverwrite, 0)
+          setTimeout(pickOverwrite, 0)
         } else {
-          console.log('callback');
-          if(over === 1) {
-            console.log('1');
+          if(picked === 'overwrite') {
             callback();
-          } else if(over === 2) {
-            console.log('2');
+          } else if(picked === 'dont') {
             return;
           }
-          
         }
       }
     } else {
@@ -152,7 +152,7 @@ function SaveExport(props: SaveExportProps) {
     }
   }
 
-  async function overwrite(trackname: string) {
+  async function overwriteCB(trackname: string) {
     const url = `${process.env.REACT_APP_API}/save-track`
     const options = {
       method: 'POST',
@@ -168,22 +168,131 @@ function SaveExport(props: SaveExportProps) {
     
     const track = await axios.post(url, options)
     .then((res) => {
-      alert('savve')
+      // alert('savve')
     }).catch((err) => console.error(err));
     console.log(track)
   }
 
+  function deleteTrack(trackname: string, callback: Function) {
+    if(trackNames.includes(trackname) && props.selectorsRef.current) {
+      var picked = 'none'
+      console.log('hhh');
+      pickDelete();
+      function pickDelete() {
+        console.log(picked === 'none');
+        if(picked === 'none' && props.selectorsRef.current) {
+          setModal(createPortal(<div id='popup'>
+            <div id='popup-bg'></div>
+            <div id='popup-select' className='popup select' style={{
+              marginTop: `${props.selectorsRef.current.offsetHeight / 3}px`,
+              left: `${props.selectorsRef.current.offsetWidth / 2}px`,
+              zIndex: 6
+            }}>
+              <button type='button' className='popup-button settings button' 
+                onClick={() => {
+                  picked = 'delete'; 
+                  document.getElementById('popup-bg')!.classList.toggle('lift-out');
+                  document.getElementById('popup-select')!.classList.toggle('lift-out');
+                  setTimeout(() => setModal(null), 500)
+                }}
+              >Delete</button>
+              <button type='button' className='popup-button settings button' 
+                onClick={() => {
+                  picked = 'dont'; 
+                  document.getElementById('popup-bg')!.classList.toggle('lift-out');
+                  document.getElementById('popup-select')!.classList.toggle('lift-out');
+                  setTimeout(() => setModal(null), 500)
+                }}
+              >Don't Delete</button>
+            </div></div>, props.selectorsRef.current)
+          );
+          setTimeout(pickDelete, 0);
+        } else {
+          if(picked === 'delete') {
+            console.log('delete');
+            callback();
+          } else if(picked === 'dont') {
+            console.log('dont delete');
+            return;
+          }
+        }
+      }
+    }
+  }
+
+  async function deleteCB() {
+    const url = `${process.env.REACT_APP_API}/delete-track`
+    const options = {
+      method: 'DELETE',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Origin-Allow': true
+      },
+      data: {
+        username: props.username,
+        trackname: props.trackName
+      }
+    }
+
+    axios.delete(url, options)
+    .then((res) => console.log(res.data))
+    .catch((err) => console.error(err));
+  }
+
+  function newTrack() {
+    var picked = 'none';
+
+    pickNew();
+    function pickNew() {
+      if(picked === 'none' && props.selectorsRef.current) {
+        setModal(createPortal(<div id='popup'>
+          <div id='popup-bg'></div>
+          <div id='popup-select' className='popup select' style={{
+            marginTop: `${props.selectorsRef.current.offsetHeight / 3}px`,
+            left: `${props.selectorsRef.current.offsetWidth / 2}px`,
+            zIndex: 6
+          }}>
+            <button type='button' className='popup-button settings button' 
+              onClick={() => {
+                picked = 'new'; 
+                document.getElementById('popup-bg')!.classList.toggle('lift-out');
+                document.getElementById('popup-select')!.classList.toggle('lift-out');
+                setTimeout(() => setModal(null), 500)
+              }}
+            >Start New Track</button>
+            <button type='button' className='popup-button settings button' 
+              onClick={() => {
+                picked = 'dont'; 
+                document.getElementById('popup-bg')!.classList.toggle('lift-out');
+                document.getElementById('popup-select')!.classList.toggle('lift-out');
+                setTimeout(() => setModal(null), 500)
+              }}
+            >Don't Start New Track</button>
+          </div></div>, props.selectorsRef.current)
+        );
+        setTimeout(pickNew, 0);
+      } else {
+        if(picked === 'new') {
+          props.setMidiNoteInfo([]);
+        } else if(picked === 'dont') {
+          return;
+        }
+      }
+    }
+  }
+
   return (
     <>
-    {overwriteModal}
-    <button className='settings button'
+    {modal}
+    
+    <button type='button' className='settings button'
       onClick={() => {
-
-      }}>Delete</button>
-    <button className='settings button' 
+        deleteTrack(props.trackName, () => deleteCB())}}>Delete</button>
+    <button type='button' className='settings button' 
       onClick={() => {
-        if(props.midiNoteInfoLength > 0) alert()
-        props.setMidiNoteInfo([]);
+        if(props.midiNoteInfoLength > 0) newTrack()
+        else props.setMidiNoteInfo([]);
       }}>New</button>
       <form 
       ref={formRef}
@@ -196,9 +305,7 @@ function SaveExport(props: SaveExportProps) {
           trackname: {value: string};
         };
         const trackname: string = target.trackname.value;
-        submit(trackname, () => {
-          overwrite(trackname)
-        });
+        overwrite(trackname, () => overwriteCB(trackname));
       }}>
         <input ref={nameRef} type='trackname' name='trackname' className='settings input' list='track-names' onChange={(e) => {props.setTrackName(e.target.value)}}></input>
           <datalist id="track-names">

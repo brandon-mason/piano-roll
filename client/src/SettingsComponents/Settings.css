@@ -60,7 +60,7 @@
   display: inline-block;
 }
 
-#overwrite-modal {
+.popup {
   display: flex;
   position: fixed;
   background-color: var(--main-color);
@@ -69,10 +69,20 @@
   height: max-content;
   width: max-content;
   align-items: center;
+  border: 1px solid black;
+  animation-name: drop-in;
+  animation-duration: 500ms;
+  animation-fill-mode: forwards;
 }
 
-.overwrite-button {
-  margin: 10px 10px 10px 10px
+.lift-out {
+  animation-name: lift-out!important; 
+  animation-duration: 500ms!important;
+  animation-fill-mode: forwards!important;
+}
+
+.popup-button {
+  margin: 10px 10px 10px 10px;
 }
 
 .bpm-input {
@@ -93,7 +103,6 @@
   padding: .5% .5%;
   text-align: center;
   text-decoration: none;
-  /* display: inline-block; */
   font-size: 16px;
   outline: 4px;
   cursor: pointer;

@@ -1,4 +1,4 @@
-import { DetailedReactHTMLElement, HTMLAttributes, ReactElement, ReactPortal } from "react";
+import { DetailedReactHTMLElement, HTMLAttributes, ReactElement, ReactPortal } from 'react';
 
 // Universal interfaces (2)
 export interface QwertyNote {
@@ -172,6 +172,7 @@ export interface OctavesInViewProps {
   octaveMax: number;
   labelsRef: React.RefObject<HTMLDivElement>;
   octave: number;
+  volume: string;
   handleViewChange: Function;
 }
 
@@ -197,7 +198,7 @@ export interface Keys {
 }
 
 export interface FetchedSounds {
-  [octaves: string]: {
+  [octave: string]: {
     [volume: string]: any;
   };
 }
@@ -251,7 +252,7 @@ export interface GridProps {
   octaveArray: number[];
   pulseNum: number;
   pulseRate: number;
-  selectorsRef: React.RefObject<any>;
+  selectorsRef: React.RefObject<HTMLDivElement>;
   subdiv: number;
   time: number;
   noteTracksRef: React.RefObject<HTMLDivElement>;

@@ -106,6 +106,9 @@ logregRouter
     // console.log(req.sessionID);
     // console.log('ie', req.cookies);
   })
+  .post('/reset-password', (req: any, res: any) => {
+    
+  })
  
   // .get('/protected', login, (req: any, res: any) => {
   //   console.log('hello');
