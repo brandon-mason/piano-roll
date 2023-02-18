@@ -1,12 +1,8 @@
 .midi-note {
   display: inline-block;
-  /* flex-direction: row; */
-  /* float: left; */
   position: absolute;
   left: 0;
   background: var(--main-color);
   top: 2px;
-  /* transform-style: preserve-3d; */
   outline: black solid 1px;
-  /* outline: black solid 1px; */
 }

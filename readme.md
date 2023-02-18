@@ -19,3 +19,4 @@
 - Add backdrop to selectors when overwrite popup appears.
 - Add warnings for save, new, delete, load.
 - Reset password feature
+- invalid messages on register page

@@ -6,7 +6,7 @@ import SoundSettings from './SettingsComponents/SoundSettings'
 import MidiSettings from './SettingsComponents/MidiSettings'
 import TimerButtons from './SettingsComponents/TimerButtons'
 import KbFunctions from './Tools/KbFunctions'
-import KeyNoteInput from './Tools/KeyNoteInputCp';
+import KeyNoteInput from './Tools/KeyNoteInput';
 import Timer from './Tools/Timer';
 import MidiRecorder from './MidiComponents/MidiRecorder';
 import Piano from './PianoComponents/Piano';
@@ -17,6 +17,8 @@ import './App.css';
 import UISettings from './SettingsComponents/UISettings';
 import ShowLoginModal from './LoginModal';
 import SaveExport from './SettingsComponents/SaveExport';
+import { FaCircle, FaInfoCircle, FaPlay, FaRegCircle, FaStop } from 'react-icons/fa';
+import { createPortal } from 'react-dom';
 var JZZ = require('jzz');
 require('jzz-midi-smf')(JZZ);
 
@@ -84,6 +86,7 @@ function App() {
   const [trackName, setTrackName] = useState('');
   const [midiNoteInfo, setMidiNoteInfo] = useState<MidiNoteInfo[]>([]);
   const [menuShown, setMenuShown] = useState('')
+  const [infoModal, setInfoModal] = useState<React.ReactPortal | null>()
   const selectorsRef = useRef<HTMLDivElement>(null);
   const noteTracksRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<HTMLDivElement>(null);
@@ -111,7 +114,7 @@ function App() {
       }
       await axios.post(url, options)
       .then(res => {
-        console.log(res.data);
+        // console.log(res.data);
         setUsername(res.data.username)
       })
     }
@@ -135,7 +138,7 @@ function App() {
       const soundDeets = await axios.get(url, options)
       .then(res => {
         soundDetails = res.data;
-        console.log(soundDetails)
+        // console.log(soundDetails)
         return res.data;
       }).catch(err => console.error(err));
       setSoundDetails(soundDetails);
@@ -162,17 +165,18 @@ function App() {
     if(pulseNum === midiLength * pulseRate) {
       // midiDispatch({type: 'mode', mode: 'stop'}); 
       midiDispatch({type: 'mode', mode: 'keyboard'});
+      // setTimeout(() => midiDispatch({type: 'mode', mode: 'stop'}));
       
     }
   }, [pulseNum])
 
   useEffect(() => {
-    console.log(time >= midiLength && midiState.mode === 'playing' || midiState.mode === 'recording');
-    if(time >= midiLength && midiState.mode === 'playing' || midiState.mode === 'recording') {
+    // console.log(midiState.mode === 'recording');
+    if(pulseNum === midiLength * pulseRate && (midiState.mode === 'playing' || midiState.mode === 'recording')) {
       let mode = midiState.mode;
-      console.log(mode);
+      // console.log(mode);
       midiDispatch({type: 'mode', mode: 'stop'}); 
-      setTimeout(() => midiDispatch({type: 'mode', mode: mode}));
+      setTimeout(() => midiDispatch({type: 'mode', mode: mode}), 2);
     }
   }, [midiState.mode]);
 
@@ -256,15 +260,6 @@ function App() {
     return octaveArray;
   }
 
-  function setResetPlayback(recording: KeysPressed, playbackOff: KeysPressed) {
-    console.log(recording, playbackOff, midiState.mode)
-    if(midiState.mode === 'playing' || midiState.mode === 'recording') {
-      // setPlayback(recording)
-    } else if(midiState.mode === 'stop') {
-      // setPlayback(recording)
-    }
-  }
-
   function pianoRollKeysPressed(keyPressed: any[]) {
     pianoRollKeyRef.current = keyPressed;
   }
@@ -295,6 +290,55 @@ function App() {
   function setFocusLogin(focus: boolean) {
     setFocus(focus);
   }
+
+  function info() {
+    var picked = 'none';
+
+    closeInfo()
+    function closeInfo() {
+      if(picked === 'none') {
+        setInfoModal(createPortal(
+          <>
+          <div id='popup-bg'></div>
+          <div id='popup-info' className='info'>
+            {/* <div id='popup-info' className='' style={{zIndex: 11}}> */}
+              <button type='button' className='popup-button info exit-button'
+                onClick={() => {
+                  picked = 'new';
+                  document.getElementById('popup-bg')!.classList.toggle('lift-out');
+                  document.getElementById('popup-info')!.classList.toggle('lift-out');
+                  setTimeout(() => setInfoModal(null), 500);
+                }}
+              >X</button>
+              <span className='info-text'>Double click <FaCircle style={{verticalAlign: 'middle'}} />(or press 'n') to record what you play using the keys below. Click <FaPlay style={{verticalAlign: 'middle'}} />(or press 'spacebar') to play it. Click <FaStop style={{verticalAlign: 'middle'}} />(or press 'b') to return the timer to 0.00s. Click <FaRegCircle style={{verticalAlign: 'middle'}} /><FaCircle style={{verticalAlign: 'middle'}} />(or press 'm') to turn on the metronome. Click any box in the grid to add a note.</span>
+              <div className='keyboard'>
+                <div className='top-row'>
+                  <span className='key'>Key:w<br></br><br></br>Note:C#</span>
+                  <span className='key'>Key:e<br></br><br></br>Note:Eb</span>
+                  <span className='key hidden'></span>
+                  <span className='key'>Key:t<br></br><br></br>Note:F#</span>
+                  <span className='key'>Key:y<br></br><br></br>Note:G#</span>
+                  <span className='key'>Key:u<br></br><br></br>Note:Bb</span>
+                  <span className='key hidden'></span>
+                  <span className='key'>Key:o<br></br><br></br>Note:C#</span>
+                </div>
+                <div className='bottom-row'>
+                  <span className='key'>Key:a<br></br><br></br>Note:C</span>
+                  <span className='key'>Key:s<br></br><br></br>Note:D</span>
+                  <span className='key'>Key:d<br></br><br></br>Note:E</span>
+                  <span className='key'>Key:f<br></br><br></br>Note:F</span>
+                  <span className='key'>Key:g<br></br><br></br>Note:G</span>
+                  <span className='key'>Key:h<br></br><br></br>Note:A</span>
+                  <span className='key'>Key:j<br></br><br></br>Note:B</span>
+                  <span className='key'>Key:k<br></br><br></br>Note:C</span>
+                  <span className='key'>Key:l<br></br><br></br>Note:D</span>
+                </div>
+              </div>
+            {/* </div> */}
+          </div></>, document.body))
+      }
+    }
+  }
   
   const bgSizeTrack = 100 / midiState.numMeasures;
   // {console.log(selectorsRef.current)}
@@ -322,15 +366,11 @@ function App() {
               width: ${100 + gridSize[0]}%;
               height: ${100 + gridSize[1]}%;
             }
-
-            .note-label {
-              // height: ${(100) / 12}%;
-            }
-
           `}
         </style>
-        
+        {infoModal}
         <div ref={selectorsRef} id='selectors'>
+          <button id='info-button' className='info' onClick={() => info()}><FaInfoCircle style={{color: 'white', margin: '2px 2px'}} /></button>
           <div className='login-elems'>
             {(username.length > 0) ? <span id='welcome-user'> welcome {username} </span>: <></>}
             <ShowLoginModal username={username} setFocus={setFocus} setUsername={setUsername} />
@@ -338,10 +378,10 @@ function App() {
           <br></br>
           <br></br>
           <div className='settings-buttons'>
-            {(menuShown === 'PianoSettings') ? <><button className='settings-button left-settings-button' onClick={() => setMenuShown('')}>Piano Settings</button><SoundSettings soundDetails={soundDetails} sound={soundState.sound} octave={soundState.octave} volume={soundState.volume} pianoDispatch={soundDispatch} /></> : <button className='settings-button left-settings-button' onClick={() => setMenuShown('PianoSettings')}>Piano Settings</button>}
-            {(menuShown === 'MidiSettings') ? <><MidiSettings soundDetails={soundDetails} numMeasures={midiState.numMeasures} subdiv={midiState.subdiv} bpm={midiState.bpm} mode={midiState.mode} controlsDispatch={controlsDispatch} midiDispatch={midiDispatch}/><button className='settings-button' onClick={() => setMenuShown('')}>Midi Settings</button></> : <button className='settings-button' onClick={() => setMenuShown('MidiSettings')}>Midi Settings</button>}
-            {(menuShown === 'UISettings') ? <><button className='settings-button' onClick={() => setMenuShown('')}>UI Settings</button><UISettings gridSize={gridSize} setXGridSize={setXGridSize} setYGridSize={setYGridSize} /></> : <button className='settings-button' onClick={() => setMenuShown('UISettings')}>UI Settings</button>}
-            {(menuShown === 'SaveExportSettings') ? <><SaveExport controlsDispatch={controlsDispatch} midiNoteInfo={midiNoteInfo} midiNoteInfoLength={midiNoteInfo.length} mode={midiState.mode} selectorsRef={selectorsRef} trackName={trackName} username={username} setFocus={setFocus} setTrackName={setTrackName} setMidiNoteInfo={setMidiNoteInfo} /><button className='settings-button right-settings-button' onClick={() => setMenuShown('')}>Save, Export, Delete</button></> : <button className='settings-button right-settings-button' onClick={() => setMenuShown('SaveExportSettings')}>Save, Export, Load</button>}
+            {(menuShown === 'PianoSettings') ? <><button className='settings-button left-settings-button' onClick={() => setMenuShown('')}>X</button><SoundSettings soundDetails={soundDetails} sound={soundState.sound} octave={soundState.octave} volume={soundState.volume} pianoDispatch={soundDispatch} /></> : <button className='settings-button left-settings-button' onClick={() => setMenuShown('PianoSettings')}>Piano Settings</button>}
+            {(menuShown === 'MidiSettings') ? <><button className='settings-button' onClick={() => setMenuShown('')}>X</button><MidiSettings soundDetails={soundDetails} numMeasures={midiState.numMeasures} subdiv={midiState.subdiv} bpm={midiState.bpm} mode={midiState.mode} controlsDispatch={controlsDispatch} midiDispatch={midiDispatch}/></> : <button className='settings-button' onClick={() => setMenuShown('MidiSettings')}>Midi Settings</button>}
+            {(menuShown === 'UISettings') ? <><UISettings gridSize={gridSize} setXGridSize={setXGridSize} setYGridSize={setYGridSize} /><button className='settings-button' onClick={() => setMenuShown('')}>X</button></> : <button className='settings-button' onClick={() => setMenuShown('UISettings')}>UI Settings</button>}
+            {(menuShown === 'SaveExportSettings') ? <><SaveExport controlsDispatch={controlsDispatch} midiNoteInfo={midiNoteInfo} midiNoteInfoLength={midiNoteInfo.length} mode={midiState.mode} selectorsRef={selectorsRef} trackName={trackName} username={username} setFocus={setFocus} setTrackName={setTrackName} setMidiNoteInfo={setMidiNoteInfo} /><button className='settings-button right-settings-button' onClick={() => setMenuShown('')}>X</button></> : <button className='settings-button right-settings-button' onClick={() => setMenuShown('SaveExportSettings')}>Save, Export, Load</button>}
           </div>
             <div ref={timerRef} id='timer-buttons'>
               <TimerButtons metPlay={metPlay} metronome={midiState.metronome} mode={midiState.mode} pulseNum={pulseNum} midiDispatch={midiDispatch} />

@@ -168,7 +168,7 @@ function Piano(props: PianoProps) {
                 Object.keys(prevNotes).some((playedNote) => {
                   // if(playedNote === noteName) console.log(playedNote , noteName)
                   if(playedNote === noteName) {
-                    fetchedSounds[octave][props.volume].fade(1, 0, 300, prevNotes[noteName]);
+                    fetchedSounds[octave][props.volume].fade(.5, 0, 300, prevNotes[noteName]);
                     // console.log('soundoff')
                   }
                 });
@@ -261,7 +261,7 @@ function Piano(props: PianoProps) {
   }, [props.mode, props.pulseNum, props.keysPressed, props.keysUnpressed, props.playback])
 
   function loadSound(url: string) {
-    console.error(url);
+    // console.error(url);
     let octaveSound: any;
       octaveSound = new Howl({
         src: [url + '.webm', url + 'mp3'],
@@ -279,7 +279,7 @@ function Piano(props: PianoProps) {
           Bb: [50000, 4999],
           B: [55000, 5000],
         },
-        volume: .75,
+        volume: .5,
       });
       return octaveSound;
   }
@@ -288,22 +288,22 @@ function Piano(props: PianoProps) {
     let notFetched: number[] = [];
     if(props.octaveMinMax[0] !== props.octaveMinMax[1])
     for(let i = 0; i < toFetch.length; i++) {
-      console.log(toFetch[i])
+      // console.log(toFetch[i])
       let url = `${process.env.REACT_APP_SERVER}/sounds/Instruments/${props.sound}/${toFetch[i]}/${props.volume}`;
-      console.log(!fetchedSounds[toFetch[i]] === undefined)
+      // console.log(!fetchedSounds[toFetch[i]] === undefined)
       // console.log(fetchedSounds[toFetch[i]][props.volume]._src != url + '.webm' || fetchedSounds[toFetch[i]][props.volume]._src != url + '.mp3');
       if(!(toFetch[i] in fetchedSounds)) {
         notFetched.push(toFetch[i]);
       } else if(!(props.volume in fetchedSounds[toFetch[i]])) {
         notFetched.push(toFetch[i]);
       }
-      console.log(notFetched)
+      // console.log(notFetched)
       if(notFetched.length > 0) {
-        console.log('hehe');
+        // console.log('hehe');
         setFetchedSounds((fetchedSounds) => ({...fetchedSounds, [toFetch[i]]: {[props.volume]: loadSound(url)}}))
       }
     }
-    console.log('hoho');
+    // console.log('hoho');
   }
 
   return (

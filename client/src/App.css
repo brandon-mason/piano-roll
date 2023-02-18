@@ -19,9 +19,10 @@
 
 .login-elems {
   display: block;
-  position: absolute;
-  left: 0;
+  position: relative;
+  float:right;
   border-radius: 4px;
+  margin: 0 2vw;
   /* float: left; */
 }
 
@@ -59,3 +60,77 @@
     transform: rotate(360deg);
   }
 }
+
+#info-button {
+  float: left;
+  margin: 0;
+  border: none;
+  background: none;
+  font-size: 24px;
+}
+
+@keyframes drop-in-info{
+  0% {top: -100%; position: absolute;}
+  100% {top: 25vh; position: fixed;}
+}
+
+#popup-info {
+  display: flex;
+  position: fixed;
+  flex-direction: column;
+  top: 25vh;
+  left: 12.5vw;
+  height: 50vh;
+  width: 75vw;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--main-color);
+  z-index: 11;
+  border-radius: 20px;
+  animation-name: drop-in-info;
+  animation-duration: 500ms;
+  animation-fill-mode: forwards;
+}
+
+.info-text {
+  display: block;
+  font-size: medium;
+  margin: 0 3em 3em 3em;
+  text-align: center;
+}
+
+.keyboard {
+  display: flex;
+  flex-direction: column;
+}
+
+.keyboard .top-row {
+  display: inherit;
+  justify-content: center;
+}
+
+.keyboard .bottom-row {
+  display: inherit;
+}
+
+.info .keyboard .key {
+  display: inline-flex;
+  height: 5em;
+  width: 5em;
+  background: white;
+  border-radius: 10px;
+  font-size: 1em;
+  align-items: center;
+  justify-content: center;
+}
+
+.info .keyboard .key.hidden {
+  visibility: hidden;
+}
+
+.exit-button {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+

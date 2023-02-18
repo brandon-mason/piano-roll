@@ -215,12 +215,12 @@ function MidiRecorder(props: MidiRecorderProps) {
   }, [clickCoords])
 
   useEffect(() => {
-    console.log(props.controlsState);
+    // console.log(props.controlsState);
   }, [props.controlsState]);
 
   // Undo add or remove note from midiNoteInfo.
   useEffect(() => {
-    console.log(props.controlsState.undo,orderOfEvents.length > 0)
+    // console.log(props.controlsState.undo,orderOfEvents.length > 0)
     if(props.controlsState.undo && orderOfEvents.length > 0) {
       if(orderOfEvents[0] === 1 && notesRemoved.length > 0) {
         let remIndex = parseInt(Object.keys(notesRemoved[0])[0]);
