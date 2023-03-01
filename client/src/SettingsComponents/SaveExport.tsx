@@ -22,7 +22,6 @@ interface SaveExportProps {
 function SaveExport(props: SaveExportProps) {
   const nameRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
-  const [midiNoteString, setMidiNoteString] = useState<string[]>();
   const [trackNames, setTrackNames] = useState<string[]>([]);
   const [modal, setModal] = useState<ReactPortal | null>();
 
@@ -72,16 +71,6 @@ function SaveExport(props: SaveExportProps) {
     }
   },[]);
 
-  useEffect(() => {
-    var midiNoteTemp: string[] = [];
-    if(props.midiNoteInfo.length > 0) {
-      // props.midiNoteInfo.map((midiNote) => {
-      //   midiNoteTemp.push(JSON.stringify(midiNote))
-      // })
-      // console.log(props.midiNoteInfo)
-    }
-  }, [props.midiNoteInfo])
-
   async function changeSelected(selectedTrack: string) {
     if(!trackNames.includes(selectedTrack)) return;
     const url = `${process.env.REACT_APP_API}/get-track/${props.username}/${selectedTrack}`
@@ -97,7 +86,6 @@ function SaveExport(props: SaveExportProps) {
     var midiNoteInfo: MidiNoteInfo[] = [];
     const track = axios.get(url, options)
     .then((res) => {
-      // console.log(res.data);
       Object.entries(res.data).forEach((midiNote: any) => {
         midiNoteInfo.push(midiNote[1])
       })
@@ -136,7 +124,6 @@ function SaveExport(props: SaveExportProps) {
               >Don't Overwrite {trackname}</button>
             </div></>, props.selectorsRef.current)
           )
-            // console.log('hhhhh');
           setTimeout(pickOverwrite, 0)
         } else {
           if(picked === 'overwrite') {
@@ -168,18 +155,16 @@ function SaveExport(props: SaveExportProps) {
     
     const track = await axios.post(url, options)
     .then((res) => {
-      // alert('savve')
+      // TODO: Add Save Message
     }).catch((err) => console.error(err));
-    console.log(track)
   }
 
   function deleteTrack(trackname: string, callback: Function) {
     if(trackNames.includes(trackname) && props.selectorsRef.current) {
-      var picked = 'none'
-      console.log('hhh');
+      var picked = 'none';
+
       pickDelete();
       function pickDelete() {
-        console.log(picked === 'none');
         if(picked === 'none' && props.selectorsRef.current) {
           setModal(createPortal(<div id='popup'>
             <div id='popup-bg'></div>
@@ -209,10 +194,8 @@ function SaveExport(props: SaveExportProps) {
           setTimeout(pickDelete, 0);
         } else {
           if(picked === 'delete') {
-            console.log('delete');
             callback();
           } else if(picked === 'dont') {
-            console.log('dont delete');
             return;
           }
         }

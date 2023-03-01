@@ -15,7 +15,6 @@ function DragLabel(props: DragLabelProps) {
   const [startVal, setStartVal] = useState(0);
 
   const onStart = useCallback((e: any) => {
-    console.log(e.clientY);
     (props.plane === 'y') ? setStartVal(e.clientY) : setStartVal(e.clientX);
     setOrigVal(props.value);
   }, [props.value])
@@ -24,8 +23,6 @@ function DragLabel(props: DragLabelProps) {
     function onUpdate(e: MouseEvent) {
       if(startVal) {
         if(props.plane === 'y') {
-          // console.log(props.range)
-          console.log(startVal, e.clientY , origVal , props.range[0] , startVal - e.clientY + origVal , props.range[1])
           if(startVal - e.clientY + origVal > props.range[0] && startVal - e.clientY + origVal < props.range[1]) props.setValue(startVal - e.clientY + origVal);
         } else {
           if(startVal - e.clientX + origVal > props.range[0] && startVal - e.clientX + origVal < props.range[1]) props.setValue(startVal - e.clientX + origVal);

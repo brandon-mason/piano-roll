@@ -67,11 +67,11 @@ function RegModal(props: RegModalProps) {
           }}
         >
           <label className='credentials-label'>Email:</label>
-          <input type='email' name='email' id='email' className='loginreg-element'></input>
+          <input type='email' name='email' id='email' className='loginreg-element' required></input>
           <label className='credentials-label'>Username:</label>
-          <input type='username' name='username' id='reg-username' className='loginreg-element'></input>
+          <input type='username' name='username' id='reg-username' className='loginreg-element' required></input>
           <label className='credentials-label'> Password:</label>
-          <input type='password' name='password' id='reg-password' className='loginreg-element'></input>
+          <input type='password' name='password' id='reg-password' className='loginreg-element' required></input>
           <input type='submit' id='register' className='loginreg-element button' value='Register'></input>
         </form>
       </div>
@@ -170,9 +170,9 @@ function LoginModal(props: LoginModalProps) {
           }}
         >
           <label className='credentials-label'>Username/Email:</label>
-          <input type='username' name='username' id='login-username' className='loginreg-element'></input>
+          <input type='username' name='username' id='login-username' className='loginreg-element' required></input>
           <label className='credentials-label'> Password:</label>
-          <input type='password' name='password' id='login-passsword' className='loginreg-element'></input>
+          <input type='password' name='password' id='login-passsword' className='loginreg-element' required></input>
           <input type='submit' id='login' className='loginreg-element button' value='Login'></input>
           <span style={{fontSize: '12px', textDecoration: 'underline'}} onClick={async () => {
             const url = `${process.env.REACT_APP_API}/forgot-password`;

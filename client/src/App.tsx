@@ -94,11 +94,11 @@ function App() {
   const pianoRollKeyRef = useRef<any[] | null>(null)
   const labelsRef = useRef<HTMLDivElement>(null);
 
-
-  // const [soundDetails, setSoundDetails] = useState({});
-  useEffect(() => {
-    // console.log(gridSize)
-  }, [gridSize])
+  // const renderCount = useRef(1);
+  // useEffect(() => {
+  //   renderCount.current = renderCount.current + 1;
+  //   console.log(renderCount.current)
+  // })
 
   useEffect(() => {
     async function isLoggedIn() {
