@@ -17,7 +17,7 @@ import './App.css';
 import UISettings from './SettingsComponents/UISettings';
 import ShowLoginModal from './LoginModal';
 import SaveExport from './SettingsComponents/SaveExport';
-import { FaCircle, FaInfoCircle, FaPlay, FaRegCircle, FaStop } from 'react-icons/fa';
+import { FaCircle, FaInfoCircle, FaPlay, FaRegCircle, FaStop, FaTimesCircle } from 'react-icons/fa';
 import { createPortal } from 'react-dom';
 var JZZ = require('jzz');
 require('jzz-midi-smf')(JZZ);
@@ -307,9 +307,9 @@ function App() {
                   picked = 'new';
                   document.getElementById('popup-bg')!.classList.toggle('lift-out');
                   document.getElementById('popup-info')!.classList.toggle('lift-out');
-                  setTimeout(() => setInfoModal(null), 500);
+                  setTimeout(() => setInfoModal(null), 1000);
                 }}
-              >X</button>
+              ><FaTimesCircle style={{border: 'none'}} /></button>
               <span className='info-text'>Double click <FaCircle style={{verticalAlign: 'middle'}} />(or press 'n') to record what you play using the keys below. Click <FaPlay style={{verticalAlign: 'middle'}} />(or press 'spacebar') to play it. Click <FaStop style={{verticalAlign: 'middle'}} />(or press 'b') to return the timer to 0.00s. Click <FaRegCircle style={{verticalAlign: 'middle'}} /><FaCircle style={{verticalAlign: 'middle'}} />(or press 'm') to turn on the metronome. Click any box in the grid to add a note.</span>
               <div className='keyboard'>
                 <div className='top-row'>

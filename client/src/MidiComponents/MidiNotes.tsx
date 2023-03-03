@@ -55,7 +55,7 @@ function MidiNotes(props: MidiNotesProps) {
       })
       return state;
     })
-  }, [props.pulseNum, props.midiNoteInfo, props.gridSize])
+  }, [props.pulseNum, props.midiNoteInfo, props.gridSize, props.midiState.numMeasures])
 
   useLayoutEffect(() => {
     setMidiNotes([])

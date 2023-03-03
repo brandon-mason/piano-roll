@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Piano Roll",
+  "name": "Piano Roll",
   "icons": [
     {
       "src": "favicon.ico",
