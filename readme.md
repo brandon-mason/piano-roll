@@ -7,7 +7,7 @@
 ## Playing, Recording, Metronome
 <img width="599" alt="playback-buttons" src="https://user-images.githubusercontent.com/60440397/222622276-6c54e69f-fba9-4fb7-9730-37ab81e9032c.png">
 
-From left to right the buttons are stop: record, play, toggle metronome, and a display for the time of the current recording/playback.
+From left to right the buttons are: stop, record, play, toggle metronome, and a display for the time of the current recording/playback.
 
 ## Settings
 <img width="747" alt="piano" src="https://user-images.githubusercontent.com/60440397/222621669-193f01fc-0f49-43a0-b408-20ba34b9eb61.png">
