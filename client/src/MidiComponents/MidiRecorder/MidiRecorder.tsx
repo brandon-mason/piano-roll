@@ -1,13 +1,11 @@
-import React, { useState, useEffect, createElement, useLayoutEffect, ReactPortal, ReactElement, DetailedReactHTMLElement, HTMLAttributes} from 'react';
-import { createPortal } from 'react-dom';
-import { MidiRecorded, KeysPressed, MidiRecorderProps, MidiNoteInfo, NotesRemoved, KeyPressed } from '../Tools/Interfaces';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import { MidiRecorderProps, MidiNoteInfo, NotesRemoved, KeyPressed } from '../../Tools/Interfaces';
 // import MidiNotes from './MidiNotes';
-import MidiNotes from './MidiNotes';
+import MidiNotes from '../MidiNotes/MidiNotes';
 import './MidiRecorder.css';
-import SavedTracks from '../SettingsComponents/SavedTracks';
-import SaveExport from '../SettingsComponents/SaveExport';
-const qwertyNote = require('../Tools/note-to-qwerty-key-obj');
+// import SavedTracks from '../../SettingsComponents/SavedTracks/SavedTracks';
+// import SaveExport from '../../SettingsComponents/SaveExport/SaveExport';
+const qwertyNote = require('../../Tools/JSON/note-to-qwerty-key-obj');
 // replace midistate prop with mode prop
 
 interface NotesAdded {
@@ -439,7 +437,7 @@ function MidiRecorder(props: MidiRecorderProps) {
   // Set playback to current recording which includes what 
   useEffect(() => {
     if(props.midiState.mode === 'keyboard' ) {
-      console.log(midiRecorded)
+      // console.log(midiRecorded)
       props.setPlayback(midiRecorded);
     }
   }, [props.midiState.mode, midiRecorded]);

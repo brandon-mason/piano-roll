@@ -9,7 +9,7 @@
     "buffer": "^6.0.3",
     "fs": "^0.0.1-security",
     "howler": "^2.2.3",
-    "jzz": "^1.5.8",
+    "jzz": "^1.6.0",
     "jzz-midi-smf": "^1.7.1",
     "nodemon": "^2.0.20",
     "os": "^0.1.2",
@@ -40,6 +40,7 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
     "@types/howler": "^2.2.7",
     "@types/node": "^18.11.17",
     "@types/react": "^18.0.26",

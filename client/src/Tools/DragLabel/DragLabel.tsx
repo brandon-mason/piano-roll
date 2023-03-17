@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import '../SettingsComponents/Settings.css';
+import '../../SettingsComponents/Settings.css';
 
 interface DragLabelProps {
   style: {};

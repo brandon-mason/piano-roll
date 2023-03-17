@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './Settings.css';
-import { MidiNoteInfo } from '../Tools/Interfaces';
+import { MidiNoteInfo } from '../../Tools/Interfaces';
 
 interface SavedTracksProps {
   midiNoteInfoLength: number;

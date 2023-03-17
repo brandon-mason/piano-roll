@@ -1,25 +1,22 @@
 import React, { useState, useEffect, createElement, useLayoutEffect, ReactPortal, ReactElement, DetailedReactHTMLElement, HTMLAttributes} from 'react';
-import { createPortal, unmountComponentAtNode } from 'react-dom';
-import { ControlsState, KeysPressed, MidiNoteInfo, MidiRecorded, MidiState, NotesRemoved, NoteTrackChilds, QwertyNoteObj, Widths } from '../Tools/Interfaces';
+import { createPortal } from 'react-dom';
+import { ControlsState, MidiNoteInfo, MidiState, NotesRemoved, NoteTrackChilds, Widths } from '../../Tools/Interfaces';
 import './MidiNotes.css';
-import { createRoot } from 'react-dom/client';
-// const myWorker = new Worker('./ToolComponents/midiNoteWorker')
-const qwertyNote = require('../Tools/note-to-qwerty-key-obj');
 
 interface MidiNotesProps {
-    controlsState: ControlsState;
-    gridSize: number[];
-    midiLength: number;
-    midiNoteInfo: MidiNoteInfo[];
-    midiState: MidiState;
-    notesRemoved: NotesRemoved[]
-    orderOfEvents: number[];
-    pulseNum: number;
-    pulseRate: number;
-    noteTracksRef: React.RefObject<HTMLDivElement>;
-    subdiv: number;
-    controlsDispatch: React.Dispatch<any>;
-  }
+  controlsState: ControlsState;
+  gridSize: number[];
+  midiLength: number;
+  midiNoteInfo: MidiNoteInfo[];
+  midiState: MidiState;
+  notesRemoved: NotesRemoved[]
+  orderOfEvents: number[];
+  pulseNum: number;
+  pulseRate: number;
+  noteTracksRef: React.RefObject<HTMLDivElement>;
+  subdiv: number;
+  controlsDispatch: React.Dispatch<any>;
+}
 
 function MidiNotes(props: MidiNotesProps) {
   const [widths, setWidths] = useState<Widths>({});

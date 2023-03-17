@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MidiSettingsProps } from '../Tools/Interfaces';
-import DragLabel from '../Tools/DragLabel'
-import './Settings.css';
+import { MidiSettingsProps } from '../../Tools/Interfaces';
+import DragLabel from '../../Tools/DragLabel/DragLabel'
+import '../Settings.css';
 import { FaArrowsAltV } from 'react-icons/fa';
 
 interface BpmInputProps {

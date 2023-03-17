@@ -1,9 +1,8 @@
 import axios from 'axios';
 import React, { useState, useEffect, useRef, ReactPortal } from 'react';
-import SavedTracks from './SavedTracks';
-import { MidiNoteInfo, MidiSettingsProps } from '../Tools/Interfaces';
+// import SavedTracks from '../SavedTracks/SavedTracks';
+import { MidiNoteInfo } from '../../Tools/Interfaces';
 // import  {DraggableNumber} from './libs/draggable-number'
-import './Settings.css';
 import { createPortal } from 'react-dom';
 
 interface SaveExportProps {

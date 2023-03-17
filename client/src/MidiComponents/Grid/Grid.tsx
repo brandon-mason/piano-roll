@@ -1,17 +1,18 @@
-import React, { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } from 'react';
-import {NoteTrackProps, GridProps} from '../Tools/Interfaces';
+import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
+import { GridProps} from '../../Tools/Interfaces';
 import './Grid.css';
-const qwertyNote = require('../Tools/note-to-qwerty-key');
+const qwertyNote = require('../../Tools/JSON/note-to-qwerty-key-obj');
 
 function Grid(props: GridProps) {
   const [grid, setGrid] = useState<JSX.Element[]>();
-  const [trackPosition, setTrackPosition] = useState<any>();
   const [position, setPosition] = useState<any>();
   const gridMeasure = useMemo(() => {
+    const qwertyKeys = Object.keys(qwertyNote);
     let gridMeasure = []
+
     for(var x = props.octaveArray.length - 1; x >= 0; x--) {
       for(var y = 11; y >= 0; y--) {
-        gridMeasure.push(<div key={qwertyNote[y].note + props.octaveArray[x]} id={`${qwertyNote[y].note + props.octaveArray[x]}-track`} className='note-track'></div>);
+        gridMeasure.push(<div key={qwertyNote[qwertyKeys[y]].note + props.octaveArray[x]} id={`${qwertyNote[qwertyKeys[y]].note + props.octaveArray[x]}-track`} className='note-track'></div>);
       }
     }
     return gridMeasure;

@@ -1,24 +1,24 @@
-import * as React from 'react';
-import { useState, useReducer, useEffect, useRef, useMemo, useCallback } from 'react'
+import React, { useState, useReducer, useEffect, useRef, useMemo, useCallback } from 'react';
+// import { useState, useReducer, useEffect, useRef, useMemo, useCallback } from 'react'
 import axios from 'axios';
 import { Reducer, SoundState, SoundAction, MidiState, MidiAction, KeysPressed, ControlsState, ControlsAction, MidiRecorded, KeyPressed, MidiNoteInfo } from './Tools/Interfaces';
-import SoundSettings from './SettingsComponents/SoundSettings'
-import MidiSettings from './SettingsComponents/MidiSettings'
-import TimerButtons from './SettingsComponents/TimerButtons'
-import KbFunctions from './Tools/KbFunctions'
-import KeyNoteInput from './Tools/KeyNoteInput';
-import Timer from './Tools/Timer';
-import MidiRecorder from './MidiComponents/MidiRecorder';
-import Piano from './PianoComponents/Piano';
-import PianoRoll from './PianoComponents/PianoRoll';
-import Grid from './MidiComponents/Grid';
-import { ErrorBoundary } from './Tools/ErrorBoundary';
-import './App.css';
-import UISettings from './SettingsComponents/UISettings';
-import ShowLoginModal from './LoginModal';
-import SaveExport from './SettingsComponents/SaveExport';
+import SoundSettings from './SettingsComponents/SoundSettings/SoundSettings'
+import MidiSettings from './SettingsComponents/MidiSettings/MidiSettings'
+import TimerButtons from './SettingsComponents/TimerButtons/TimerButtons'
+import KbFunctions from './Tools/KbFunctions/KbFunctions'
+import KeyNoteInput from './Tools/KeyNoteInput/KeyNoteInput';
+import Timer from './Tools/Timer/Timer';
+import MidiRecorder from './MidiComponents/MidiRecorder/MidiRecorder';
+import Piano from './PianoComponents/Piano/Piano';
+import PianoRoll from './PianoComponents/PianoRoll/PianoRoll';
+import Grid from './MidiComponents/Grid/Grid';
+import { ErrorBoundary } from './Tools/ErrorBoundary/ErrorBoundary';
+import UISettings from './SettingsComponents/UISettings/UISettings';
+import ShowLoginModal from './SettingsComponents/LoginModal/LoginModal';
+import SaveExport from './SettingsComponents/SaveExport/SaveExport';
 import { FaCircle, FaInfoCircle, FaPlay, FaRegCircle, FaStop, FaTimesCircle } from 'react-icons/fa';
 import { createPortal } from 'react-dom';
+import './App.css';
 var JZZ = require('jzz');
 require('jzz-midi-smf')(JZZ);
 
@@ -68,23 +68,24 @@ function App() {
   const [soundState, soundDispatch] = useReducer<Reducer<SoundState, SoundAction>>(soundReducer, {octave: 3, sound: 'GrandPiano', volume: '2mf'});
   const [midiState, midiDispatch] = useReducer<Reducer<MidiState, MidiAction>>(midiReducer, {bpm: 120, metronome: 'off', mode: 'keyboard', numMeasures: 4, ppq: 96,  subdiv: 4});
   const [controlsState, controlsDispatch] = useReducer<Reducer<ControlsState, ControlsAction>>(controlsReducer, {export: false, undo: false});
-  const [octaveMinMax, setOctaveMinMax] = useState([0, 0]);
-  const [controlsPressed, setControlsPressed] = useState<(string | boolean)[]>(['', false])
-  const [selectorsHeight, setSelectorsHeight] = useState<number>()
   const midiLength = useMemo<number>(() => midiState.numMeasures * 4 / (midiState.bpm / 60 / 1000), [midiState.bpm, midiState.numMeasures]); // number of beats / bpm in ms
   const pulseRate = useMemo<number>(() => midiState.ppq * (midiState.bpm / 60 / 1000), [midiState.bpm, midiState.ppq]); // ppq * bpm in ms
+
+  const [midiNoteInfo, setMidiNoteInfo] = useState<MidiNoteInfo[]>([]);
+  const [username, setUsername] = useState('');
+  const [octaveMinMax, setOctaveMinMax] = useState([0, 0]);
   const [time, setTime] = useState(0); // 24 * 120 /60/1000 * 16 /(120/60/1000)
   const [pulseNum, setPulseNum] = useState(0);
   const [keysPressed, setKeysPressed] = useState<Map<string, KeyPressed>>(new Map());
   const [keysUnpressed, setKeysUnpressed] = useState<Map<string, KeyPressed>>(new Map());
+  const [gridSize, setGridSize] = useState<number[]>([]);
+  
   const [playback, setPlayback] = useState<Map<string, KeyPressed>[]>([]);
   const [metPlay, setMetPlay] = useState(false);
-  const [noteTracks, setNoteTracks] = useState<HTMLCollection | null>(null)
-  const [gridSize, setGridSize] = useState<number[]>([]);
+  const [controlsPressed, setControlsPressed] = useState<(string | boolean)[]>(['', false])
   const [focus, setFocus] = useState(false);
-  const [username, setUsername] = useState('');
+  const [selectorsHeight, setSelectorsHeight] = useState<number>()
   const [trackName, setTrackName] = useState('');
-  const [midiNoteInfo, setMidiNoteInfo] = useState<MidiNoteInfo[]>([]);
   const [menuShown, setMenuShown] = useState('')
   const [infoModal, setInfoModal] = useState<React.ReactPortal | null>()
   const selectorsRef = useRef<HTMLDivElement>(null);
@@ -99,6 +100,10 @@ function App() {
   //   renderCount.current = renderCount.current + 1;
   //   console.log(renderCount.current)
   // })
+
+  useEffect(() => {
+
+  }, []);
 
   useEffect(() => {
     async function isLoggedIn() {
@@ -118,12 +123,12 @@ function App() {
         setUsername(res.data.username)
       })
     }
+
     if(window.localStorage.getItem('loggedIn') === 'true') isLoggedIn();
+
     setXGridSize(0);
     setYGridSize(0);
-  }, []);
 
-  useEffect(() => {
     async function getSoundDetails() {
       const url = `${process.env.REACT_APP_API}/sounds/Instruments`;
       const options = {
@@ -134,6 +139,7 @@ function App() {
           'Access-Control-Allow-Origin': true,
         },
       }
+
       var soundDetails: Object = {};
       const soundDeets = await axios.get(url, options)
       .then(res => {
@@ -144,6 +150,7 @@ function App() {
       setSoundDetails(soundDetails);
       return soundDeets;
     }
+
     getSoundDetails();
   }, []);
 
@@ -160,27 +167,33 @@ function App() {
   }, [soundDetails]);
 
   useEffect(() => {
-    // console.log(pulseNum , 1000 / (midiState.bpm / 60) * midiState.numMeasures * 4)
-    // console.log(time);
     if(pulseNum === midiLength * pulseRate) {
-      // midiDispatch({type: 'mode', mode: 'stop'}); 
       midiDispatch({type: 'mode', mode: 'keyboard'});
-      // setTimeout(() => midiDispatch({type: 'mode', mode: 'stop'}));
+    }
+    if(playback[pulseNum]) {
+      let entries = Object.fromEntries(playback[pulseNum])
+
+      Object.keys(entries).forEach((key) => {
+        if(entries[key].end !== -1) {
+          setKeysUnpressed((keysUnpressed: Map<string, KeyPressed>) => {
+            let state = new Map(keysUnpressed);
+
+            state.set(key, entries[key])
+            return state;
+          })
+        }
+      });
       
     }
   }, [pulseNum])
 
   useEffect(() => {
-    // console.log(midiState.mode === 'recording');
     if(pulseNum === midiLength * pulseRate && (midiState.mode === 'playing' || midiState.mode === 'recording')) {
       let mode = midiState.mode;
       // console.log(mode);
       midiDispatch({type: 'mode', mode: 'stop'}); 
       setTimeout(() => midiDispatch({type: 'mode', mode: mode}), 2);
     }
-  }, [midiState.mode]);
-
-  useEffect(() => {
     if(midiState.mode === 'stop') {
       setPulseNum(0);
       setTime(0);
@@ -189,9 +202,6 @@ function App() {
       // setPlayback(tempPlayback)
       // setPlayback({})
     }
-  }, [midiState.mode])
-
-  useEffect(() => {
     if(midiState.mode === 'keyboard') {
       // let tempKeysPressed = {...keysPressed};
       // let tempPlayback = {...playback};
@@ -201,7 +211,7 @@ function App() {
       // })
       setKeysUnpressed(new Map());
     }
-  }, [midiState.mode])
+  }, [midiState.mode]);
 
   useEffect(() => {
     if(selectorsRef.current) {
@@ -399,7 +409,7 @@ function App() {
         <KeyNoteInput focus={focus} octave={soundState.octave} pianoRollKey={pianoRollKeyRef.current} pulseNum={pulseNum} onControlsPressed={setControlsPressed} onNotePlayed={setKeysPressed} setKeysPressed={setKeysPressed} setKeysUnpressed={setKeysUnpressed} />
         <MidiRecorder controlsState={controlsState} gridSize={gridSize} keysPressed={keysPressed} keysUnpressed={keysUnpressed} midiLength={midiLength} midiNoteInfo={midiNoteInfo} midiState={midiState} noteTracksRef={noteTracksRef} pulseNum={pulseNum} pulseRate={pulseRate} controlsDispatch={controlsDispatch} setKeysUnpressed={setKeysUnpressed} setMidiNoteInfo={setMidiNoteInfo} setPlayback={setPlayback} />
         <Timer bpm={midiState.bpm} metronome={midiState.metronome} midiLength={midiLength} time={time} timerRef={timerRef} mode={midiState.mode} ppq={midiState.ppq} pulseNum={pulseNum} pulseRate={pulseRate} handleMetPlay={metPlayed} handleSetTime={setTime} handleSetPulseNum={setPulseNum} />
-        <Piano pulseNum={pulseNum} soundDetails={soundDetails} sound={soundState.sound} octave={soundState.octave} octaveMinMax={octaveMinMax} volume={soundState.volume} mode={midiState.mode} keysPressed={keysPressed} keysUnpressed={keysUnpressed} playback={playback} labelsRef={labelsRef} setKeysUnpressed={setKeysUnpressed} />
+        <Piano pulseNum={pulseNum} soundDetails={soundDetails} sound={soundState.sound} octave={soundState.octave} octaveMinMax={octaveMinMax} volume={soundState.volume} mode={midiState.mode} keysPressed={keysPressed} keysUnpressed={keysUnpressed} playback={playback} labelsRef={labelsRef} />
       </div>
     // </div>
   );

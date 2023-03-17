@@ -31,7 +31,7 @@ Logging in is used to save recorded tracks, so that they can be loaded back onto
 From left to right the controls are: Delete current selected track, clear current track, name track, save current track, export current track to midi.
 
 # To run this app, Docker and Docker Compose is required.
-1. Download [Docker](https://www.docker.com) and then [download my repo as a zip.](https://github.com/brandonjmarquez/piano-roll/archive/refs/heads/master.zip)
+1. Download [Docker](https://www.docker.com) and then download my repo as a [zip].(https://github.com/brandonjmarquez/piano-roll/archive/refs/heads/master.zip)
 2. Unzip the file you just downloaded.
 3. Using the command line in the root directory of the unzipped file, run:
 ```docker compose up --build```

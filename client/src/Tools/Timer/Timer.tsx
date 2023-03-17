@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { TimerProps, MetronomeProps } from './Interfaces';
+import { TimerProps, MetronomeProps } from '../Interfaces';
 import {Howl, Howler} from 'howler';
 // import { createPortal } from 'react-dom';
 

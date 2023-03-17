@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { FaStop, FaCircle, FaRegCircle, FaPlay, FaPause } from 'react-icons/fa'
 
-
 interface TimerButtonProps {
   metPlay: boolean;
   metronome: string

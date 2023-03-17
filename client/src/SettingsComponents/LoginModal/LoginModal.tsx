@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Reducer } from './Tools/Interfaces'
 import './LoginModal.css';
 import axios from "axios";
 

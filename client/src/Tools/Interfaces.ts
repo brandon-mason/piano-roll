@@ -1,4 +1,5 @@
 import { DetailedReactHTMLElement, HTMLAttributes, ReactElement, ReactPortal } from 'react';
+import { Howl } from 'howler';
 
 // Universal interfaces (2)
 export interface QwertyNote {
@@ -17,7 +18,7 @@ export interface QwertyNoteObj {
 }
 
 export interface KeyPressed {
-  key?: string
+  key: string
   pressed: boolean;
   start: number;
   end: number;
@@ -169,11 +170,13 @@ export interface MidiRecorderProps {
 // Piano.tsx interfaces (5)
 
 export interface OctavesInViewProps {
-  octaveMax: number;
+  fetchedSounds: FetchedSounds;
   labelsRef: React.RefObject<HTMLDivElement>;
   octave: number;
+  octaveMinMax: number[];
+  sound: string;
   volume: string;
-  handleViewChange: Function;
+  setFetchedSounds: Function;
 }
 
 export interface PianoProps {
@@ -188,7 +191,6 @@ export interface PianoProps {
   sound: string;
   soundDetails: Object;
   volume: string;
-  setKeysUnpressed: Function;
 }
 
 export interface Keys {
@@ -199,7 +201,7 @@ export interface Keys {
 
 export interface FetchedSounds {
   [octave: string]: {
-    [volume: string]: any;
+    [volume: string]: Howl;
   };
 }
 

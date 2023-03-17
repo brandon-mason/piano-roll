@@ -1,5 +1,4 @@
 import React, { useLayoutEffect } from 'react';
-const kbControls = require('./keyboard-controls');
 
 interface KbFunctionsProps {
   controlsPressed: (string | boolean)[]; 
