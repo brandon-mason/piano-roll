@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createElement, useLayoutEffect, ReactPortal, ReactElement, DetailedReactHTMLElement, HTMLAttributes} from 'react';
+import React, { useState, useEffect, createElement, useLayoutEffect, ReactPortal, ReactElement, DetailedReactHTMLElement, HTMLAttributes, useCallback} from 'react';
 import { createPortal } from 'react-dom';
 import { ControlsState, MidiNoteInfo, MidiState, NotesRemoved, NoteTrackChilds, Widths } from '../../Tools/Interfaces';
 import './MidiNotes.css';
@@ -16,38 +16,46 @@ interface MidiNotesProps {
   noteTracksRef: React.RefObject<HTMLDivElement>;
   subdiv: number;
   controlsDispatch: React.Dispatch<any>;
+  setOrigVal: Function;
+  setStartVal: Function;
 }
 
 function MidiNotes(props: MidiNotesProps) {
   const [widths, setWidths] = useState<Widths>({});
   const [midiNotes, setMidiNotes] = useState<ReactPortal[]>([]);
 
-  useEffect(() => {
-    // console.warn(widths)
-  }, [widths])
+  const onStart = useCallback((e: MouseEvent) => {
+    if(e.target instanceof Element) {
+      let noteOct = e.target.id.substring(0, e.target.id.indexOf('-'));
 
-  useEffect(() => {
-    // console.log(props.midiNoteInfo)
+      props.midiNoteInfo.some((midiNote) => {
+        if(Object.keys(midiNote)[0] === noteOct) {
+          if(e.shiftKey) {
+            props.setOrigVal(midiNote[noteOct].keyPressed.start);
+            return true;
+          } else {
+            props.setOrigVal(midiNote[noteOct].keyPressed.end);
+            return true;
+          }
+        }
+      })
+      props.setStartVal(e.clientX);      
+    }
   }, [props.midiNoteInfo])
 
   useLayoutEffect(() => {
     setWidths((widths) => {
-      let state: Widths = {}
-
-      // Object.keys(state).forEach((key) => {
-      //   if(!props.midiNoteInfo.find((exists) => Object.keys(exists)[0] === key)) {
-      //     delete state[key];
-      //   }
-      // });
-
+      let state: Widths = {...widths}
+      
       props.midiNoteInfo.forEach((midiNote) => {
-        let noteStart = Object.keys(midiNote)[0];
-        let start = midiNote[noteStart].keyPressed!.start!;
-        let end = midiNote[noteStart].keyPressed!.end!;
-        if(midiNote[noteStart].keyPressed!.start >= 0) {
-          // console.log({start: start, end: end})
-          state[noteStart] = {start: start, end: end};
-          // console.log(noteStart, state[noteStart])
+        if(midiNote) {
+          let noteStart = Object.keys(props.midiNoteInfo[props.midiNoteInfo.indexOf(midiNote)])[0];
+          let start = midiNote[noteStart].keyPressed!.start!;
+          let end = midiNote[noteStart].keyPressed!.end!;
+
+          if(midiNote[noteStart].keyPressed!.start >= 0) {
+            state[noteStart] = {start: start, end: end};
+          }
         }
       })
       return state;
@@ -61,27 +69,29 @@ function MidiNotes(props: MidiNotesProps) {
       const midiNotesArr: ReactPortal[] = []
 
       props.midiNoteInfo.forEach((noteStart) => {
-        let key = Object.keys(noteStart)[0];
+        if(noteStart) {
+          let key = Object.keys(props.midiNoteInfo[props.midiNoteInfo.indexOf(noteStart)])[0];
 
-        if(Object.keys(widths).includes(key)) {
-          let left = widths[key].start / (props.midiLength * props.pulseRate) * props.noteTracksRef.current!.offsetWidth + 2;
-          let width = (widths[key].end - widths[key].start) / (props.midiLength * props.pulseRate) * props.noteTracksRef.current!.offsetWidth - 2;
+          if(Object.keys(widths).includes(key)) {
+            let left = widths[key].start / (props.midiLength * props.pulseRate) * props.noteTracksRef.current!.offsetWidth + 2;
+            let width = (widths[key].end - widths[key].start) / (props.midiLength * props.pulseRate) * props.noteTracksRef.current!.offsetWidth - 2;
 
-          if(widths[key].end === -1) {
-            width = (props.pulseNum - widths[key].start) / (props.midiLength * props.pulseRate) * props.noteTracksRef.current!.offsetWidth;
+            if(widths[key].end === -1) {
+              width = (props.pulseNum - widths[key].start) / (props.midiLength * props.pulseRate) * props.noteTracksRef.current!.offsetWidth;
+            }
+
+            var elem = createElement('span', {...noteStart[key].props, key: noteStart[key].key, onMouseDown: onStart, style: {
+              height: `${document.getElementById(noteStart[key].noteTrackId)!.offsetHeight - 4}px`,
+              left: `${left}px` ,
+              width: `${width}px`,
+            }});
+
+            if(!noteTrackChilds[noteStart[key].noteTrackId]) {
+              noteTrackChilds[noteStart[key].noteTrackId] = [];
+            }
+
+            noteTrackChilds[noteStart[key].noteTrackId].push(elem)
           }
-
-          var elem = createElement('span', {...noteStart[key].props, key: noteStart[key].key, style: {
-            height: `${document.getElementById(noteStart[key].noteTrackId)!.offsetHeight - 4}px`,
-            left: `${left}px` ,
-            width: `${width}px`,
-          }});
-
-          if(!noteTrackChilds[noteStart[key].noteTrackId]) {
-            noteTrackChilds[noteStart[key].noteTrackId] = [];
-          }
-
-          noteTrackChilds[noteStart[key].noteTrackId].push(elem)
         }
       });
       Object.keys(noteTrackChilds).forEach((noteTrackId) => {
@@ -91,10 +101,9 @@ function MidiNotes(props: MidiNotesProps) {
     }
 
     if(Object.keys(widths).length > 0) {
-      // console.log(renderPortals())
       setMidiNotes(renderPortals())
     }
-  }, [widths, props.pulseNum, props.gridSize])
+  }, [widths, props.pulseNum, props.gridSize]);
 
   return (
     <>
@@ -103,4 +112,4 @@ function MidiNotes(props: MidiNotesProps) {
   )
 }
 
-export default MidiNotes
+export default MidiNotes;

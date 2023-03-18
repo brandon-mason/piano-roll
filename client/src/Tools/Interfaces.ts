@@ -311,7 +311,7 @@ export interface MidiNotePortals {
 }
 
 export interface NoteTrackChilds {
-  [noteTrackId: string]: DetailedReactHTMLElement<HTMLAttributes<HTMLElement>, HTMLElement>[]
+  [noteTrackId: string]: JSX.Element[]
 }
 
 export interface NotesRemoved {

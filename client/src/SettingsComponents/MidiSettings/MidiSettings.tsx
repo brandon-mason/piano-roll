@@ -10,7 +10,6 @@ interface BpmInputProps {
 }
 
 function BpmInput(props: BpmInputProps) {
-  const [value, setValue] = useState(0);
   const ref = useRef(null);
 
   useEffect(() => {
