@@ -1,6 +1,6 @@
 import React, { useState, useEffect, createElement, useLayoutEffect, ReactPortal, ReactElement, DetailedReactHTMLElement, HTMLAttributes, useCallback} from 'react';
 import { createPortal } from 'react-dom';
-import { ControlsState, MidiNoteInfo, MidiState, NotesRemoved, NoteTrackChilds, Widths } from '../../Tools/Interfaces';
+import { ControlsState, MidiNoteInfo, MidiState, NoteTrackChilds, Widths } from '../../Tools/Interfaces';
 import './MidiNotes.css';
 
 interface MidiNotesProps {
@@ -9,8 +9,7 @@ interface MidiNotesProps {
   midiLength: number;
   midiNoteInfo: MidiNoteInfo[];
   midiState: MidiState;
-  notesRemoved: NotesRemoved[]
-  orderOfEvents: number[];
+  orderOfEvents: MidiNoteInfo[][];
   pulseNum: number;
   pulseRate: number;
   noteTracksRef: React.RefObject<HTMLDivElement>;
@@ -29,13 +28,15 @@ function MidiNotes(props: MidiNotesProps) {
       let noteOct = e.target.id.substring(0, e.target.id.indexOf('-'));
 
       props.midiNoteInfo.some((midiNote) => {
-        if(Object.keys(midiNote)[0] === noteOct) {
-          if(e.shiftKey) {
-            props.setOrigVal(midiNote[noteOct].keyPressed.start);
-            return true;
-          } else {
-            props.setOrigVal(midiNote[noteOct].keyPressed.end);
-            return true;
+        if(midiNote) {
+          if(Object.keys(midiNote)[0] === noteOct) {
+            if(e.shiftKey) {
+              props.setOrigVal(midiNote[noteOct].keyPressed.start);
+              return true;
+            } else {
+              props.setOrigVal(midiNote[noteOct].keyPressed.end);
+              return true;
+            }
           }
         }
       })
@@ -46,9 +47,10 @@ function MidiNotes(props: MidiNotesProps) {
   useLayoutEffect(() => {
     setWidths((widths) => {
       let state: Widths = {...widths}
-      
+      // console.log(props.midiNoteInfo)
       props.midiNoteInfo.forEach((midiNote) => {
         if(midiNote) {
+          // console.log(midiNote)
           let noteStart = Object.keys(props.midiNoteInfo[props.midiNoteInfo.indexOf(midiNote)])[0];
           let start = midiNote[noteStart].keyPressed!.start!;
           let end = midiNote[noteStart].keyPressed!.end!;

@@ -23,9 +23,9 @@ function DragLabel(props: DragLabelProps) {
     function onUpdate(e: MouseEvent) {
       if(startVal) {
         if(props.plane === 'y') {
-          if(startVal - e.clientY + origVal > props.range[0] && startVal - e.clientY + origVal < props.range[1]) props.setValue(startVal - e.clientY + origVal);
+          if(e.clientY - startVal + origVal > props.range[0] && e.clientY - startVal + origVal < props.range[1]) props.setValue(e.clientY - startVal + origVal);
         } else {
-          if(startVal - e.clientX + origVal > props.range[0] && startVal - e.clientX + origVal < props.range[1]) props.setValue(startVal - e.clientX + origVal);
+          if(e.clientX - startVal + origVal > props.range[0] && e.clientX - startVal + origVal < props.range[1]) props.setValue(e.clientX - startVal + origVal);
         }
       }
     }
