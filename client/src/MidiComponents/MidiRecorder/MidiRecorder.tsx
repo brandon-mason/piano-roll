@@ -23,7 +23,7 @@ function MidiRecorder(props: MidiRecorderProps) {
   const [orderOfEvents, setOrderOfEvents] = useState<MidiNoteInfo[][]>([]);
   const [startVal, setStartVal] = useState(0);
   const [origVal, setOrigVal] = useState<number>(0)
-  const moveNote = useRef<MidiNoteInfo>();
+  const moveNote = useRef<MidiNoteInfo>({});
 
   useEffect(() => {
     console.log(orderOfEvents)
@@ -37,7 +37,7 @@ function MidiRecorder(props: MidiRecorderProps) {
       let keyPressed;
       let midiNoteCp: MidiNoteInfo;
       
-      if(moveNote.current) {
+      if(Object.keys(moveNote.current).length > 0) {
         midiNoteCp = moveNote.current;
       } else {
         midiNoteCp = midiNote
@@ -87,7 +87,6 @@ function MidiRecorder(props: MidiRecorderProps) {
 
     const onUpdate = (e: MouseEvent) => {
       e.preventDefault();
-      // console.log(e)
       if(e.target instanceof Element) {
         if(e.target.className === 'midi-note' && props.noteTracksRef.current && (e.shiftKey || e.ctrlKey || e.metaKey)) {
           let noteOct = e.target.id.substring(0, e.target.id.indexOf('-'));
@@ -99,16 +98,15 @@ function MidiRecorder(props: MidiRecorderProps) {
             midiNoteInfo.some((midiNote) => {
               if(midiNote && Object.keys(midiNoteInfo[midiNoteInfo.indexOf(midiNote)])[0] === noteOct && startVal > 0 && state[state.indexOf(midiNote)][Object.keys(midiNote)[0]]) {
                 let length = state[state.indexOf(midiNote)][Object.keys(midiNote)[0]].keyPressed.end - state[state.indexOf(midiNote)][Object.keys(midiNote)[0]].keyPressed.start
+
                 if(e.shiftKey && (e.ctrlKey || e.metaKey) && modifier > 0 && modifier + length < props.midiLength * props.pulseRate) {
-                  console.log(state)
                   state = changeEnd(state, midiNote, modifier + length);
-                  console.log(state)
                   state = changeStart(state, midiNote, modifier, noteOct);
-                  moveNote.current = undefined
+                  moveNote.current = {}; // THIS IS WHAT IS CAUSING ORDEROFEVENTS TO UPDATE WHEN SETTINGS BUTTONS ARE CLICKED!!!
                   return true;
                 } else if(!e.shiftKey && (e.ctrlKey || e.metaKey) && modifier > midiNote[Object.keys(midiNote)[0]].keyPressed.start && modifier < props.midiLength * props.pulseRate) {
                   state = changeEnd(state, midiNote, modifier);
-                  moveNote.current = undefined;
+                  moveNote.current = {};
                   return true;
                 } else if(modifier > 0 && modifier < midiNote[Object.keys(midiNote)[0]].keyPressed.end) {
                   state = changeStart(state, midiNote, modifier, noteOct);
@@ -301,12 +299,12 @@ function MidiRecorder(props: MidiRecorderProps) {
       if(noteTrackId.length > 0 && subdivId.length > 0) {
         let noteOct = noteTrackId.replace('-track', '');
         let key = (() => {
+          let ret = '';
           Object.keys(qwertyNote).forEach((key) => {
-            if(qwertyNote[key].note === noteOct.replace(/[0-9]/g, '')) return key;
+            if(qwertyNote[key].note === noteOct.replace(/[0-9]/g, '')) {ret = key;}
           })
-          return '';
+          return ret;
         })();
-        // console.error(key)
         let subdiv = parseInt(subdivId.replace(/\D/g, ''));
         let rect = subdivElem!.getBoundingClientRect();
         let left = rect.left;
@@ -344,15 +342,13 @@ function MidiRecorder(props: MidiRecorderProps) {
   // Undo add or remove note from midiNoteInfo.
   useEffect(() => {
     if(props.controlsState.undo && orderOfEvents.length > 1) {
-      props.setMidiNoteInfo((midiNoteInfo: MidiNoteInfo[]) => orderOfEvents[1]);
-      console.log(orderOfEvents[1])
+      props.setMidiNoteInfo(orderOfEvents[1]);
       setOrderOfEvents((orderOfEvents: MidiNoteInfo[][]) => orderOfEvents.slice(2));
     }
   }, [props.controlsState.undo])
 
   useEffect(() => {
     if(!props.controlsState.undo && !isDragging) {
-      console.log('rem')
       setOrderOfEvents((orderOfEvents) => [props.midiNoteInfo, ...orderOfEvents]);
     } else {
       props.controlsDispatch({type: 'undo', undo: false});
@@ -496,7 +492,7 @@ function MidiRecorder(props: MidiRecorderProps) {
   }, [props.midiState.mode, midiRecorded]);
   
   return (
-      <MidiNotes gridSize={props.gridSize} midiNoteInfo={props.midiNoteInfo} orderOfEvents={orderOfEvents} controlsState={props.controlsState} midiLength={props.midiLength} midiState={props.midiState} pulseNum={props.pulseNum} pulseRate={props.pulseRate} noteTracksRef={props.noteTracksRef} subdiv={props.midiState.subdiv} controlsDispatch={props.controlsDispatch} setOrigVal={setOrigVal} setStartVal={setStartVal} />
+      <MidiNotes gridSize={props.gridSize} midiNoteInfo={props.midiNoteInfo} controlsState={props.controlsState} midiLength={props.midiLength} midiState={props.midiState} pulseNum={props.pulseNum} pulseRate={props.pulseRate} noteTracksRef={props.noteTracksRef} subdiv={props.midiState.subdiv} controlsDispatch={props.controlsDispatch} setOrigVal={setOrigVal} setStartVal={setStartVal} />
   )
 }
 

@@ -9,13 +9,15 @@ function OctavesInView(props: OctavesInViewProps) { // Loads sounds as the page 
   const [toFetch, setToFetch] = useState<number[]>([]);
   const observer = useRef<IntersectionObserver | null>(null);
 
+  // Determines what octaves need to be fetched on sound change.
   useEffect(() => {
     const callback = (entries: IntersectionObserverEntry[], observer: IntersectionObserver) => {
       let toFetchTemp: number[] = [];
 
-      entries.forEach((entry) => {
+      entries.some((entry) => {
         if(entry.isIntersecting) {
           toFetchTemp.push(parseInt(entry.target.getAttribute('id')!.substring(0, 1)));
+          return true;
         }
       });
       
@@ -26,7 +28,7 @@ function OctavesInView(props: OctavesInViewProps) { // Loads sounds as the page 
     const options = {root: null, rootMargin: '0px', threshold: 0}
 
     observer.current = new IntersectionObserver(callback, options)
-  }, [props.octaveMinMax[1], toFetch]);
+  }, [props.sound]);
 
   useEffect(() => { 
     if(observer.current && props.labelsRef.current && props.labelsRef.current.children.length === props.octaveMinMax[1]) {

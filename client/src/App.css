@@ -78,12 +78,13 @@
   display: flex;
   position: fixed;
   flex-direction: column;
-  top: 25vh;
+  top: 12.5vh;
   left: 12.5vw;
-  height: 50vh;
+  height: fit-content;
   width: 75vw;
   justify-content: center;
   align-items: center;
+  padding: 2em;
   background-color: var(--main-color);
   z-index: 11;
   border-radius: 20px;
@@ -92,11 +93,17 @@
   animation-fill-mode: forwards;
 }
 
+.info-text-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
 .info-text {
   display: block;
   font-size: medium;
-  margin: 0 3em 3em 3em;
-  text-align: center;
+  margin: 0;
+  text-align: left;
 }
 
 .keyboard {
@@ -126,6 +133,18 @@
 
 .info .keyboard .key.hidden {
   visibility: hidden;
+}
+
+button.info {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: none;
+  background: none;
+}
+
+button.info.close {
+  font-size: 1.5em;
 }
 
 .exit-button {

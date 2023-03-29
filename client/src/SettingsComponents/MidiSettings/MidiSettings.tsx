@@ -25,15 +25,6 @@ function BpmInput(props: BpmInputProps) {
   </>
 }
 
-// interface MidiSettingsProps {
-//   soundDetails: Object;
-//   numMeasures: number;
-//   subdiv: number;
-//   bpm: number;
-//   mode: string;
-//   midiDispatch: Function;
-// }
-
 function MidiSettings(props: MidiSettingsProps) {
   
 
@@ -60,11 +51,6 @@ function MidiSettings(props: MidiSettingsProps) {
         <option value='32'>1/32</option>
       </select>
       <button id='undo-button' className='settings button' onClick={() => props.controlsDispatch({type: 'undo', undo: true})}>Undo</button>
-      {/* <form>
-        <input type='trackName' name='trackName' onChange={(e) => props.setTrackName(e.target.value)}></input>
-        <input type='submit' value='Save'></input>
-        <button onClick={() => props.controlsDispatch({type: 'export', export: true})}>Export</button>
-      </form> */}
     </>
     )
 }

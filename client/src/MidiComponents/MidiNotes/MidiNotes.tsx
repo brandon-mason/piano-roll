@@ -9,7 +9,6 @@ interface MidiNotesProps {
   midiLength: number;
   midiNoteInfo: MidiNoteInfo[];
   midiState: MidiState;
-  orderOfEvents: MidiNoteInfo[][];
   pulseNum: number;
   pulseRate: number;
   noteTracksRef: React.RefObject<HTMLDivElement>;

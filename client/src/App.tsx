@@ -297,10 +297,6 @@ function App() {
     })
   }
 
-  function setFocusLogin(focus: boolean) {
-    setFocus(focus);
-  }
-
   function info() {
     var picked = 'none';
 
@@ -312,15 +308,35 @@ function App() {
           <div id='popup-bg'></div>
           <div id='popup-info' className='info'>
             {/* <div id='popup-info' className='' style={{zIndex: 11}}> */}
-              <button type='button' className='popup-button info exit-button'
+              <button type='button' className='popup-button info close'
                 onClick={() => {
                   picked = 'new';
                   document.getElementById('popup-bg')!.classList.toggle('lift-out');
                   document.getElementById('popup-info')!.classList.toggle('lift-out');
-                  setTimeout(() => setInfoModal(null), 1000);
+                  setTimeout(() => setInfoModal(null), 500);
                 }}
-              ><FaTimesCircle style={{border: 'none'}} /></button>
-              <span className='info-text'>Double click <FaCircle style={{verticalAlign: 'middle'}} />(or press 'n') to record what you play using the keys below. Click <FaPlay style={{verticalAlign: 'middle'}} />(or press 'spacebar') to play it. Click <FaStop style={{verticalAlign: 'middle'}} />(or press 'b') to return the timer to 0.00s. Click <FaRegCircle style={{verticalAlign: 'middle'}} /><FaCircle style={{verticalAlign: 'middle'}} />(or press 'm') to turn on the metronome. Click any box in the grid to add a note.</span>
+              >X</button>
+              <div className='info-text-container'>
+                <span className='info-text'>Double click <FaCircle style={{verticalAlign: 'middle'}} />(or press 'n') to record what you play using the keys below.</span>
+                <br />
+                <span className='info-text'>Click <FaPlay style={{verticalAlign: 'middle'}} />(or press 'spacebar') to play what you've recorded.</span>
+                <br />
+                <span className='info-text'>Click <FaStop style={{verticalAlign: 'middle'}} />(or press 'b') to return the timer to 0.00s and to save your track to localStorage.</span>
+                <br />
+                <span className='info-text'>Click <FaRegCircle style={{verticalAlign: 'middle'}} /><FaCircle style={{verticalAlign: 'middle'}} />(or press 'm') to turn on the metronome.</span>
+                <br />
+                <span className='info-text'>Click any box in the grid to add a note.</span>
+                <br />
+                <span className='info-text'>Click and drag the black dot to scrub through the time.</span>
+                <br />
+                <span className='info-text'>Hold ctrl/cmd and click and drag on a note to move its ending.</span>
+                <br />
+                <span className='info-text'>Hold shift and click and drag on a note to move its ending.</span>
+                <br />
+                <span className='info-text'>Hold both ctrl/cmd + shift and click and drag on a note to move the note.</span>
+                <br />
+              </div>
+
               <div className='keyboard'>
                 <div className='top-row'>
                   <span className='key'>Key:w<br></br><br></br>Note:C#</span>
