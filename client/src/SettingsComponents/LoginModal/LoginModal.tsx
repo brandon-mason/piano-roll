@@ -31,7 +31,6 @@ function RegModal(props: RegModalProps) {
             const email = target.email.value; // typechecks!
             const username = target.username.value;
             const password = target.password.value; // typechecks!
-            console.log(email, username, password)
             const url = `${process.env.REACT_APP_API}/register`;
             const options = {
               method: 'POST',
@@ -62,7 +61,6 @@ function RegModal(props: RegModalProps) {
               alert(res.data.message);
               props.setShowRegister(false)
             }).catch((err) => console.error(err));
-            console.log(credentials)
           }}
         >
           <label className='credentials-label'>Email:</label>
@@ -158,7 +156,6 @@ function LoginModal(props: LoginModalProps) {
 
             await axios.post(url, options)
             .then((res) => {
-              console.log(res)
               window.localStorage.setItem('token', res.data.data);
               window.localStorage.setItem('loggedIn', 'true');
               // alert(res.data.message);

@@ -95,16 +95,6 @@ function App() {
   const pianoRollKeyRef = useRef<any[] | null>(null)
   const labelsRef = useRef<HTMLDivElement>(null);
 
-  // const renderCount = useRef(1);
-  // useEffect(() => {
-  //   renderCount.current = renderCount.current + 1;
-  //   console.log(renderCount.current)
-  // })
-
-  useEffect(() => {
-
-  }, []);
-
   useEffect(() => {
     async function isLoggedIn() {
       const url = `${process.env.REACT_APP_API}/logged-in`;
@@ -119,7 +109,6 @@ function App() {
       }
       await axios.post(url, options)
       .then(res => {
-        // console.log(res.data);
         setUsername(res.data.username)
       })
     }
@@ -144,7 +133,6 @@ function App() {
       const soundDeets = await axios.get(url, options)
       .then(res => {
         soundDetails = res.data;
-        // console.log(soundDetails)
         return res.data;
       }).catch(err => console.error(err));
       setSoundDetails(soundDetails);
@@ -190,7 +178,7 @@ function App() {
   useEffect(() => {
     if(pulseNum === midiLength * pulseRate && (midiState.mode === 'playing' || midiState.mode === 'recording')) {
       let mode = midiState.mode;
-      // console.log(mode);
+
       midiDispatch({type: 'mode', mode: 'stop'}); 
       setTimeout(() => midiDispatch({type: 'mode', mode: mode}), 2);
     }
@@ -367,9 +355,8 @@ function App() {
   }
   
   const bgSizeTrack = 100 / midiState.numMeasures;
-  // {console.log(selectorsRef.current)}
+
   return (
-    // <div className="App">
       <div className="App" id='App'>
         <style>
           {`

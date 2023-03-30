@@ -45,11 +45,10 @@ function MidiNotes(props: MidiNotesProps) {
 
   useLayoutEffect(() => {
     setWidths((widths) => {
-      let state: Widths = {...widths}
-      // console.log(props.midiNoteInfo)
+      let state: Widths = {...widths};
+
       props.midiNoteInfo.forEach((midiNote) => {
         if(midiNote) {
-          // console.log(midiNote)
           let noteStart = Object.keys(props.midiNoteInfo[props.midiNoteInfo.indexOf(midiNote)])[0];
           let start = midiNote[noteStart].keyPressed!.start!;
           let end = midiNote[noteStart].keyPressed!.end!;

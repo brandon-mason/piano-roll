@@ -9,18 +9,16 @@ function OctavesInView(props: OctavesInViewProps) { // Loads sounds as the page 
   const [toFetch, setToFetch] = useState<number[]>([]);
   const observer = useRef<IntersectionObserver | null>(null);
 
-  // Determines what octaves need to be fetched on sound change.
   useEffect(() => {
     const callback = (entries: IntersectionObserverEntry[], observer: IntersectionObserver) => {
       let toFetchTemp: number[] = [];
 
-      entries.some((entry) => {
+      entries.forEach((entry) => {
         if(entry.isIntersecting) {
           toFetchTemp.push(parseInt(entry.target.getAttribute('id')!.substring(0, 1)));
-          return true;
         }
       });
-      
+
       props.setFetchedSounds((fetchedSounds: FetchedSounds) => ({...fetchedSounds, ...setView(toFetchTemp, fetchedSounds, props.octaveMinMax, props.sound, props.volume)}));
       setToFetch(toFetchTemp);
     }
@@ -28,7 +26,7 @@ function OctavesInView(props: OctavesInViewProps) { // Loads sounds as the page 
     const options = {root: null, rootMargin: '0px', threshold: 0}
 
     observer.current = new IntersectionObserver(callback, options)
-  }, [props.sound]);
+  }, [props.octaveMinMax[1], toFetch, props.sound, props.volume]);
 
   useEffect(() => { 
     if(observer.current && props.labelsRef.current && props.labelsRef.current.children.length === props.octaveMinMax[1]) {
@@ -50,7 +48,7 @@ function OctavesInView(props: OctavesInViewProps) { // Loads sounds as the page 
 
   useEffect(() => {
     let octaveArr = Object.keys(props.fetchedSounds).reduce((accum: number[], curr: string) => { accum.push(parseInt(curr)); return accum; }, []);
-      
+
     props.setFetchedSounds((fetchedSounds: FetchedSounds) => {
       let state = {...fetchedSounds};
       let newVol = setView(octaveArr, props.fetchedSounds, props.octaveMinMax, props.sound, props.volume);
@@ -73,7 +71,6 @@ function Piano(props: PianoProps) {
   // Handle window losing focus while piano is being played.
   // useEffect(() => {
   //   const focusOut = (e: Event) => {
-  //     console.log(e.target);
   //     playNote(playbackOff, prevNotes.current, qwertyNote, props.octaveMinMax, fetchedSounds, props.volume);
   //     setPlaybackOff({})
   //   }
@@ -130,10 +127,6 @@ function Piano(props: PianoProps) {
       }
     }
   }, [props.mode])
-
-  useEffect(() => {
-    // console.log(props.keysUnpressed);
-  }, [props.keysUnpressed]);
 
   // Plays notes from keystrokes while recording, playing back, and doing neither
   // of those. Also plays notes from the playback variable. Uses playNote function 

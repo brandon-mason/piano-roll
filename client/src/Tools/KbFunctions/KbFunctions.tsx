@@ -87,7 +87,7 @@ function KbFunctions(props: KbFunctionsProps) {
     //   }
     // }
     let newOctave = props.octave + 1;
-    console.log(newOctave , props.octaveMinMax[1] - 1, newOctave);
+
     if(newOctave <= props.octaveMinMax[1] - 1) props.soundDispatch({type: 'octave', octave: newOctave})
     props.clearControls();
   }
@@ -102,14 +102,12 @@ function KbFunctions(props: KbFunctionsProps) {
     //   }
     // }
     let newOctave = props.octave - 1;
-    console.log(props.octaveMinMax);
-    console.log(newOctave >= props.octaveMinMax[0], newOctave);
+
     if(newOctave >= props.octaveMinMax[0] - 1) props.soundDispatch({type: 'octave', octave: newOctave})
     props.clearControls();
   }
 
   function undo() {
-    console.log('UNDO')
     props.controlsDispatch({type: 'undo', undo :true});
   }
 

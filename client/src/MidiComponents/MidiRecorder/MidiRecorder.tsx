@@ -26,10 +26,6 @@ function MidiRecorder(props: MidiRecorderProps) {
   const moveNote = useRef<MidiNoteInfo>({});
 
   useEffect(() => {
-    console.log(orderOfEvents)
-  }, [orderOfEvents]);
-
-  useEffect(() => {
     const changeStart = (midiNoteInfo: MidiNoteInfo[], midiNote: MidiNoteInfo, modifier: number, noteOct: string) => {
       let state = [...midiNoteInfo];
       let props;
@@ -119,32 +115,41 @@ function MidiRecorder(props: MidiRecorderProps) {
           });
         }
 
-        if(e.target.tagName === 'SPAN') {
-          let noteStart = e.target.id.substring(0, e.target.id.indexOf('-'));
-          let start = -1;
-          let end = -1;
-  
-          props.midiNoteInfo.forEach((noteInfo, i) => {
-            if(noteInfo) {
-              if(noteStart === Object.keys(noteInfo)[0]) {
-                start = noteInfo[noteStart].keyPressed.start;
-                end = noteInfo[noteStart].keyPressed.end;
-              } else if(end > -1 && start > -1) {
-                let start2 = noteInfo[Object.keys(noteInfo)[0]].keyPressed.start;
-                let end2 = noteInfo[Object.keys(noteInfo)[0]].keyPressed.end;
+        // if(e.target.tagName === 'SPAN') {
+        //   // console.log(e)
+        //   let noteStart = e.target.id.substring(0, e.target.id.indexOf('-'));
+        //   let note = (e.target.id.indexOf('#') !== -1 || e.target.id.indexOf('b') !== -1) ? e.target.id.substring(e.target.id.indexOf('-') - 3, e.target.id.indexOf('-')) : e.target.id.substring(e.target.id.indexOf('-') - 2, e.target.id.indexOf('-'));
+        //   let start = -1; // parseInt(noteStart.substring(0, noteStart.indexOf(note)));
+        //   let end = -1;
+        //   console.log(note)
+        //   props.midiNoteInfo.forEach((noteInfo, i) => {
+        //     if(noteInfo) {
+        //       let noteStart2 = Object.keys(noteInfo)[0];
+        //       let note2 = (noteStart2.indexOf('#') !== -1 || noteStart2.indexOf('b') !== -1) ? noteStart2.substring(noteStart2.length - 3, noteStart2.length) : noteStart2.substring(noteStart2.length - 2, noteStart2.length);
 
-                if(start < start2 && end > start2) {
-                  props.setMidiNoteInfo((midiNoteInfo: MidiNoteInfo[]) => {
-                    let state = [...midiNoteInfo];
+        //       if(note === note2 && noteStart !== noteStart2) {
+        //         console.log(note, note2)
+        //         start = noteInfo[noteStart].keyPressed.start;
+        //         end = noteInfo[noteStart].keyPressed.end;
+        //       } else if(end > -1 && start > -1) {
+        //         // console.log(end, start)
+        //         let start2 = noteInfo[noteStart2].keyPressed.start;
+        //         let end2 = noteInfo[noteStart2].keyPressed.end;
 
-                    delete state[i]
-                    return state;
-                  })
-                }
-              }
-            }
-          })
-        }
+        //         if(start < start2 && end > start2) {
+        //           console.log(start , start2 , end , start2)
+        //           props.setMidiNoteInfo((midiNoteInfo: MidiNoteInfo[]) => {
+        //             let state = [...midiNoteInfo];
+
+        //             console.log(state[i])
+        //             delete state[i];
+        //             return state;
+        //           })
+        //         }
+        //       }
+        //     }
+        //   })
+        // }
       }      
     }
 

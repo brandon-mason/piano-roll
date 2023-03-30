@@ -17,8 +17,6 @@ app.use(express.urlencoded({extended: true}));
 
 // const uri = `mongodb://${process.env.ME_CONFIG_MONGODB_ADMINUSERNAME}:${process.env.ME_CONFIG_MONGODB_ADMINPASSWORD}@localhost:27017/?maxPoolSize=20`;
 const uri = `mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:${process.env.MONGO_INITDB_ROOT_PASSWORD}@mongo-piano:27017/${process.env.MONGO_INITDB_DATABASE}?authSource=admin&&retryWrites=true&w=majority`;
-console.log(uri)
-console.log()
 
 mongoose.set('strictQuery', true);
 mongoose.connect(uri, {useNewUrlParser: true});

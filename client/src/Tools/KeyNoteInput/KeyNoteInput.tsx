@@ -26,11 +26,10 @@ function KeyNoteInput(props: KeyNoteInputProps) {
 
       if(parseInt(e.code) - parseInt(e.code) === 0) {
         octave = parseInt(e.code);
-        // console.log(octave)
       }
       if(!control) {
         let note = qwertyNote[e.key.toLowerCase()].note; // toLowerCase() is for caps lock
-        // console.log(note);
+
         setKeysPressed((keysPressed) => {
           let state = new Map(keysPressed);
           state.set(note + octave, {key: e.key.toLowerCase(), pressed: true, start: props.pulseNum, end: -1})
