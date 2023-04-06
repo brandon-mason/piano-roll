@@ -27,33 +27,10 @@ connection.once('open', () => {
   console.log('Successfully connected to MongoDB!');
 });
 
-// var store = new MongoDBStore({uri, collection: 'sessions'});
-
-// store.on('error', (err: Error) => {
-//   console.error(err)
-// });
-
-// app.use(session({
-//   secret: process.env.SECRET, 
-//   resave: false, 
-//   saveUninitialized: false, 
-//   store: store, 
-//   cookie: {
-//     maxAge: 30 * 24 * 60 * 60 * 1000, 
-//     httpOnly: false,
-//     secure: false
-//   }
-// }));
-
-// app.use(function (req: any, res: any, next: any) {
-//   // req.session.test = "test";
-//   next();
-// });
-
 app.get('/', async (req: any, res: any) => {
-  // console.log(req.session, 'hhhh')
-  res.send('<h1>Hello Express!</h1>')
-})
+  res.send('<h1>Hello Express!</h1>');
+});
+
 app.use('/api', require('./routes/login-register'))
 app.use('/api', require('./routes/tracks'))
 
@@ -65,3 +42,4 @@ app.listen(PORT, () => {
   console.log(`node server is running on port %s`, PORT);
 });
 
+// module.exports = app;

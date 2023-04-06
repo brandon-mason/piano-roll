@@ -2,8 +2,22 @@
   "version": 2,
   "builds": [
     {
-      "src": "server.ts",
+      "src": "./index.ts",
       "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)", 
+      "dest": "/index.ts"
+    },
+    {
+      "src": "/api/.*", 
+      "dest": "index.ts"
+    },
+    {
+      "src": "/sounds/.*", 
+      "dest": "index.ts"
     }
   ]
 }

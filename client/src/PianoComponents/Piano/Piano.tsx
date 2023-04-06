@@ -18,29 +18,31 @@ function OctavesInView(props: OctavesInViewProps) { // Loads sounds as the page 
           toFetchTemp.push(parseInt(entry.target.getAttribute('id')!.substring(0, 1)));
         }
       });
-
+      console.log(props.octaveMinMax)
       props.setFetchedSounds((fetchedSounds: FetchedSounds) => ({...fetchedSounds, ...setView(toFetchTemp, fetchedSounds, props.octaveMinMax, props.sound, props.volume)}));
       setToFetch(toFetchTemp);
     }
-
     const options = {root: null, rootMargin: '0px', threshold: 0}
 
     observer.current = new IntersectionObserver(callback, options)
-  }, [props.octaveMinMax[1], toFetch, props.sound, props.volume]);
+  }, [props.octaveMinMax, toFetch, props.sound, props.volume]);
 
   useEffect(() => { 
-    if(observer.current && props.labelsRef.current && props.labelsRef.current.children.length === props.octaveMinMax[1]) {
+    console.log(observer.current && props.labelsRef.current)
+    if(observer.current && props.labelsRef.current) {
       let children = props.labelsRef.current.children;
-
+      
+      console.log(props.labelsRef.current)
       for(let i = 0; i < children.length; i++) {
         observer.current.observe(children[i]);
+        console.log(children[i])
       }
     }
 
     return (() => {
       if(observer.current) observer.current.disconnect();
     })
-  }, [props.octaveMinMax[1], props.volume])
+  }, [props.octaveMinMax, props.volume])
 
   useEffect(() => {
     props.setFetchedSounds((fetchedSounds: FetchedSounds) => ({...fetchedSounds, ...setView([props.octave, props.octave + 1], props.fetchedSounds, props.octaveMinMax, props.sound, props.volume)}));
