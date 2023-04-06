@@ -2,4 +2,6 @@
 node_modules
 /.vscode
 client/readme.md
-/client/dist
+client/dist
+server/sounds/Instruments/GrandPiano/0
+server/dist
