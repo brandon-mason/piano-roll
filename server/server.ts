@@ -49,9 +49,9 @@ connection.once('open', () => {
 //   next();
 // });
 
-app.get('/', async (req: any, res: any) => {
-  // console.log(req.session, 'hhhh')
-})
+// app.get('/', async (req: any, res: any) => {
+//   // console.log(req.session, 'hhhh')
+// })
 app.use('/api', require('./routes/login-register'))
 app.use('/api', require('./routes/tracks'))
 
