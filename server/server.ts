@@ -52,10 +52,10 @@ connection.once('open', () => {
 // app.get('/', async (req: any, res: any) => {
 //   // console.log(req.session, 'hhhh')
 // })
-app.use('/api', require('./routes/login-register'))
-app.use('/api', require('./routes/tracks'))
+app.use('/api', require('./routes/login-register.ts'))
+app.use('/api', require('./routes/tracks.ts'))
 
-app.use('/api', require('./routes/sound-file-count'));
+app.use('/api', require('./routes/sound-file-count.ts'));
 app.use('/sounds', express.static(path.join(__dirname, '/sounds')));
 
 //server 
