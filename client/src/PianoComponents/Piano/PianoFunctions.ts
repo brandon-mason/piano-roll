@@ -59,8 +59,7 @@ const loadSound = (url: string) => {
 export const setView = (toFetch: number[], fetchedSounds: FetchedSounds, octaveMinMax: number[], sound: string, volume: string) => {
   let notFetched: number[] = [];
   let fetched: FetchedSounds = {...fetchedSounds};
-  console.log(toFetch)
-  console.log(octaveMinMax)
+
   if(octaveMinMax[0] !== octaveMinMax[1]) {
     for(let i = 0; i < toFetch.length; i++) {
       let url = `${process.env.REACT_APP_SERVER}/sounds/Instruments/${sound}/${toFetch[i]}/${volume}`;
@@ -70,10 +69,9 @@ export const setView = (toFetch: number[], fetchedSounds: FetchedSounds, octaveM
       } else if(!(volume in fetched[toFetch[i]])) {
         notFetched.push(toFetch[i]);
       }
-      console.log(notFetched)
+
       if(notFetched.length > 0) {
         fetched = {...fetched, [toFetch[i]]: {[volume]: loadSound(url)}};
-        console.log(fetched)
       }
     }
     

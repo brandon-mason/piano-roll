@@ -9,6 +9,7 @@ function KeyNoteInput(props: KeyNoteInputProps) {
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
+      e.preventDefault();
       if(e.repeat) {
         // setController((controller) => ({...controller, [note + octave]: {...controller[note + octave], ...{end: props.pulseNum}}}));
         return;

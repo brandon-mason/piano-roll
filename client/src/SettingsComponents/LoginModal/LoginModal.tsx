@@ -89,25 +89,6 @@ function LoginModal(props: LoginModalProps) {
   const [user, setUser] = useState('');
 
   useEffect(() => {
-    async function getCookie() {
-      const url = `${process.env.REACT_APP_API}/cookie/${user}`;
-      const options = {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Origin-Allow': process.env.REACT_APP_APP,
-            'Access-Control-Allow-Credentials': true,
-        },
-        withCredentials: true
-      };
-      const cookie = await axios.get(url, options)
-      .then((res) => {
-        console.log(res.data)
-      }).catch((err) => console.error(err))
-    }
-
-    // console.log(user)
     if(user.length > 0) {
       props.setUser(user);
       // getCookie();

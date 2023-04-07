@@ -96,13 +96,6 @@ function App() {
   const labelsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    console.log(octaveMinMax)
-  }, [octaveMinMax]);
-  useEffect(() => {
-    console.log('rerender')
-  });
-
-  useEffect(() => {
     async function isLoggedIn() {
       const url = `${process.env.REACT_APP_API}/logged-in`;
       const options = {
@@ -117,10 +110,14 @@ function App() {
       await axios.post(url, options)
       .then(res => {
         setUsername(res.data.username)
-      })
+      }).catch((err) => console.error(err))
     }
 
-    if(window.localStorage.getItem('loggedIn') === 'true') isLoggedIn();
+    if(window.localStorage.getItem('loggedIn') === 'true') {
+      isLoggedIn();
+    } else {
+      info()
+    }
 
     setXGridSize(0);
     setYGridSize(0);
@@ -142,22 +139,12 @@ function App() {
         soundDetails = res.data;
         return res.data;
       }).catch(err => console.error(err));
-      console.log(soundDetails)
-      // if(Object.keys(soundDetails).length > 0) {
-      //   let octavesArray = Object.keys(soundDetails[soundState.sound as keyof typeof soundDetails]);
-      //   let octaveNums: number[] = [];
-      //   octavesArray.forEach((octave) => {
-      //     octaveNums.push(parseInt(octave));
-      //   });
-      //   let result: number[] = [Math.min(...octaveNums) + 1, Math.max(...octaveNums) + 1]; 
-      //   setOctaveMinMax(result);
-      // }
+
       setSoundDetails(soundDetails);
       return soundDeets;
     }
 
     getSoundDetails();
-    info();
   }, []);
 
   useEffect(() => {
