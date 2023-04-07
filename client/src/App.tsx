@@ -115,7 +115,7 @@ function App() {
 
     if(window.localStorage.getItem('loggedIn') === 'true') {
       isLoggedIn();
-    } else {
+    } else if(window.innerWidth > 500){
       info()
     }
 
@@ -312,25 +312,25 @@ function App() {
 
               <div className='keyboard'>
                 <div className='top-row'>
-                  <span className='key'>Key:w<br></br><br></br>Note:C#</span>
-                  <span className='key'>Key:e<br></br><br></br>Note:Eb</span>
+                  <span className='key'>Key:w<br></br>Note:C#</span>
+                  <span className='key'>Key:e<br></br>Note:Eb</span>
                   <span className='key hidden'></span>
-                  <span className='key'>Key:t<br></br><br></br>Note:F#</span>
-                  <span className='key'>Key:y<br></br><br></br>Note:G#</span>
-                  <span className='key'>Key:u<br></br><br></br>Note:Bb</span>
+                  <span className='key'>Key:t<br></br>Note:F#</span>
+                  <span className='key'>Key:y<br></br>Note:G#</span>
+                  <span className='key'>Key:u<br></br>Note:Bb</span>
                   <span className='key hidden'></span>
-                  <span className='key'>Key:o<br></br><br></br>Note:C#</span>
+                  <span className='key'>Key:o<br></br>Note:C#</span>
                 </div>
                 <div className='bottom-row'>
-                  <span className='key'>Key:a<br></br><br></br>Note:C</span>
-                  <span className='key'>Key:s<br></br><br></br>Note:D</span>
-                  <span className='key'>Key:d<br></br><br></br>Note:E</span>
-                  <span className='key'>Key:f<br></br><br></br>Note:F</span>
-                  <span className='key'>Key:g<br></br><br></br>Note:G</span>
-                  <span className='key'>Key:h<br></br><br></br>Note:A</span>
-                  <span className='key'>Key:j<br></br><br></br>Note:B</span>
-                  <span className='key'>Key:k<br></br><br></br>Note:C</span>
-                  <span className='key'>Key:l<br></br><br></br>Note:D</span>
+                  <span className='key'>Key:a<br></br>Note:C</span>
+                  <span className='key'>Key:s<br></br>Note:D</span>
+                  <span className='key'>Key:d<br></br>Note:E</span>
+                  <span className='key'>Key:f<br></br>Note:F</span>
+                  <span className='key'>Key:g<br></br>Note:G</span>
+                  <span className='key'>Key:h<br></br>Note:A</span>
+                  <span className='key'>Key:j<br></br>Note:B</span>
+                  <span className='key'>Key:k<br></br>Note:C</span>
+                  <span className='key'>Key:l<br></br>Note:D</span>
                 </div>
               </div>
               <br />

@@ -83,7 +83,7 @@
   /* top: 6.5vh;
   left: 12.5vw; */
   height: fit-content;
-  /* width: 75vw; */
+  width: 75%;
   /* justify-content: center; */
   align-items: center;
   padding: 2em;
@@ -124,8 +124,8 @@
 
 .info .keyboard .key {
   display: inline-flex;
-  height: 5em;
-  width: 5em;
+  height: 5rem;
+  width: 5rem;
   background: white;
   border-radius: 10px;
   font-size: 1em;
@@ -161,6 +161,14 @@ button.info.close {
   display: none;
 }
 
+@media screen and (max-width: 950px) {
+  .info .keyboard .key {
+    width: 3rem;
+    height: 3rem;
+    font-size: 10px;
+  }
+}
+
 @media screen and (max-width: 500px) {
   #selectors, #midi {
     display: none;
@@ -168,5 +176,13 @@ button.info.close {
 
   #small-screen-msg {
     display: block;
+  }
+
+  #popup-info {
+    display: none;
+  }
+
+  #popup-bg {
+    display: none;
   }
 }

@@ -18,7 +18,7 @@ function OctavesInView(props: OctavesInViewProps) { // Loads sounds as the page 
           toFetchTemp.push(parseInt(entry.target.getAttribute('id')!.substring(0, 1)));
         }
       });
-      console.log(props.octaveMinMax)
+
       props.setFetchedSounds((fetchedSounds: FetchedSounds) => ({...fetchedSounds, ...setView(toFetchTemp, fetchedSounds, props.octaveMinMax, props.sound, props.volume)}));
       setToFetch(toFetchTemp);
     }
@@ -28,14 +28,11 @@ function OctavesInView(props: OctavesInViewProps) { // Loads sounds as the page 
   }, [props.octaveMinMax, toFetch, props.sound, props.volume]);
 
   useEffect(() => { 
-    console.log(observer.current && props.labelsRef.current)
     if(observer.current && props.labelsRef.current) {
       let children = props.labelsRef.current.children;
       
-      console.log(props.labelsRef.current)
       for(let i = 0; i < children.length; i++) {
         observer.current.observe(children[i]);
-        console.log(children[i])
       }
     }
 
