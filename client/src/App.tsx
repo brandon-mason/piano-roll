@@ -157,6 +157,7 @@ function App() {
     }
 
     getSoundDetails();
+    info();
   }, []);
 
   useEffect(() => {
@@ -310,7 +311,7 @@ function App() {
       if(picked === 'none') {
         setInfoModal(createPortal(
           <>
-          <div id='popup-bg'></div>
+          <div id='popup-bg'>
           <div id='popup-info' className='info'>
             {/* <div id='popup-info' className='' style={{zIndex: 11}}> */}
               <button type='button' className='popup-button info close'
@@ -321,26 +322,6 @@ function App() {
                   setTimeout(() => setInfoModal(null), 500);
                 }}
               >X</button>
-              <div className='info-text-container'>
-                <span className='info-text'>Double click <FaCircle style={{verticalAlign: 'middle'}} />(or press 'n') to record what you play using the keys below.</span>
-                <br />
-                <span className='info-text'>Click <FaPlay style={{verticalAlign: 'middle'}} />(or press 'spacebar') to play what you've recorded.</span>
-                <br />
-                <span className='info-text'>Click <FaStop style={{verticalAlign: 'middle'}} />(or press 'b') to return the timer to 0.00s and to save your track to localStorage.</span>
-                <br />
-                <span className='info-text'>Click <FaRegCircle style={{verticalAlign: 'middle'}} /><FaCircle style={{verticalAlign: 'middle'}} />(or press 'm') to turn on the metronome.</span>
-                <br />
-                <span className='info-text'>Click any box in the grid to add a note.</span>
-                <br />
-                <span className='info-text'>Click and drag the black dot to scrub through the time.</span>
-                <br />
-                <span className='info-text'>Hold ctrl/cmd and click and drag on a note to move its ending.</span>
-                <br />
-                <span className='info-text'>Hold shift and click and drag on a note to move its ending.</span>
-                <br />
-                <span className='info-text'>Hold both ctrl/cmd + shift and click and drag on a note to move the note.</span>
-                <br />
-              </div>
 
               <div className='keyboard'>
                 <div className='top-row'>
@@ -365,7 +346,29 @@ function App() {
                   <span className='key'>Key:l<br></br><br></br>Note:D</span>
                 </div>
               </div>
-            {/* </div> */}
+              <br />
+              <br />
+              <div className='info-text-container'>
+                <span className='info-text'>Double click <FaCircle style={{verticalAlign: 'middle'}} />(or press 'n') to record what you play using the keys below.</span>
+                <br />
+                <span className='info-text'>Click <FaPlay style={{verticalAlign: 'middle'}} />(or press 'spacebar') to play what you've recorded.</span>
+                <br />
+                <span className='info-text'>Click <FaStop style={{verticalAlign: 'middle'}} />(or press 'b') to return the timer to 0.00s and to save your track to localStorage.</span>
+                <br />
+                <span className='info-text'>Click <FaRegCircle style={{verticalAlign: 'middle'}} /><FaCircle style={{verticalAlign: 'middle'}} />(or press 'm') to turn on the metronome.</span>
+                <br />
+                <span className='info-text'>Click any box in the grid to add a note.</span>
+                <br />
+                <span className='info-text'>Click the horizontal black line at the top of the grid to scrub through the time.</span>
+                <br />
+                <span className='info-text'>Hold ctrl/cmd and click and drag on a note to move its ending.</span>
+                <br />
+                <span className='info-text'>Hold shift and click and drag on a note to move its ending.</span>
+                <br />
+                <span className='info-text'>Hold both ctrl/cmd + shift and click and drag on a note to move the note.</span>
+                <br />
+              </div>
+            </div>
           </div></>, document.body))
       }
     }
@@ -430,6 +433,9 @@ function App() {
         <MidiRecorder controlsState={controlsState} gridSize={gridSize} keysPressed={keysPressed} keysUnpressed={keysUnpressed} midiLength={midiLength} midiNoteInfo={midiNoteInfo} midiState={midiState} noteTracksRef={noteTracksRef} pulseNum={pulseNum} pulseRate={pulseRate} controlsDispatch={controlsDispatch} setKeysUnpressed={setKeysUnpressed} setMidiNoteInfo={setMidiNoteInfo} setPlayback={setPlayback} />
         <Timer bpm={midiState.bpm} metronome={midiState.metronome} midiLength={midiLength} time={time} timerRef={timerRef} mode={midiState.mode} ppq={midiState.ppq} pulseNum={pulseNum} pulseRate={pulseRate} handleMetPlay={metPlayed} handleSetTime={setTime} handleSetPulseNum={setPulseNum} />
         <Piano pulseNum={pulseNum} soundDetails={soundDetails} sound={soundState.sound} octave={soundState.octave} octaveMinMax={octaveMinMax} volume={soundState.volume} mode={midiState.mode} keysPressed={keysPressed} keysUnpressed={keysUnpressed} playback={playback} labelsRef={labelsRef} />
+        <div id="small-screen-msg"> 
+          <h3>Please visit on a bigger screen to use this app.</h3>
+        </div>
       </div>
     // </div>
   );

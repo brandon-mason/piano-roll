@@ -76,13 +76,15 @@
 
 #popup-info {
   display: flex;
-  position: fixed;
+  /* position: fixed; */
+  justify-self: center;
+  align-self: center;
   flex-direction: column;
-  top: 12.5vh;
-  left: 12.5vw;
+  /* top: 6.5vh;
+  left: 12.5vw; */
   height: fit-content;
-  width: 75vw;
-  justify-content: center;
+  /* width: 75vw; */
+  /* justify-content: center; */
   align-items: center;
   padding: 2em;
   background-color: var(--main-color);
@@ -155,3 +157,16 @@ button.info.close {
   background-color: transparent;
 }
 
+#small-screen-msg {
+  display: none;
+}
+
+@media screen and (max-width: 500px) {
+  #selectors, #midi {
+    display: none;
+  }
+
+  #small-screen-msg {
+    display: block;
+  }
+}

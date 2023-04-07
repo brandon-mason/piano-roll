@@ -15,7 +15,6 @@ function KeyNoteInput(props: KeyNoteInputProps) {
       };
       const control = e.metaKey || e.ctrlKey;
       if(Object.keys(kbControls).includes(e.key.toLocaleLowerCase())) {
-        e.preventDefault();
         props.onControlsPressed([e.key.toLocaleLowerCase(), control]);
       }
       if(!Object.keys(qwertyNote).includes(e.key.toLocaleLowerCase())) {
