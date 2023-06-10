@@ -78,10 +78,7 @@ function NoteLabels(props: NoteLabelsProps) {
 }
 
 function PianoRoll(props: PianoRollProps) {
-  const gridRef = useRef(null);
-  const [labels, setLabels] = useState([]);
   const [octaveArray, setOctaveArray] = useState<number[]>([]);
-  const bgSizeTrack = 100 / props.numMeasures;
 
   useLayoutEffect(() => {
     getOctaveArray();
@@ -109,21 +106,10 @@ function PianoRoll(props: PianoRollProps) {
       }
     })
   }
-  
-  function trackPosition() {
-    let position = {};
-    if(props.noteTracksRef.current) {
-      position = {left: `${(.08 + props.pulseNum / (props.midiLength * props.pulseRate)) * props.noteTracksRef.current.offsetWidth}px`};
-    } else {
-      position = {left: `${(8 + props.pulseNum / (props.midiLength * props.pulseRate) * 92)}%`};
-    }
-    return <div id='track-position' className='keyboard' style={position}></div>;
-  }
 
   return (
     <>
         <NoteLabels octaveArray={octaveArray} octave={props.octave} labelsRef={props.labelsRef} />
-        {/* {trackPosition()} */}
     </>
   );
 }

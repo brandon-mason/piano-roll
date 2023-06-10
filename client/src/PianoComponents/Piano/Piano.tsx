@@ -68,17 +68,17 @@ function Piano(props: PianoProps) {
   const [playbackOff, setPlaybackOff] = useState<KeysPressed>({})
 
   // Handle window losing focus while piano is being played.
-  // useEffect(() => {
-  //   const focusOut = (e: Event) => {
-  //     playNote(playbackOff, prevNotes.current, qwertyNote, props.octaveMinMax, fetchedSounds, props.volume);
-  //     setPlaybackOff({})
-  //   }
+  useEffect(() => {
+    const focusOut = (e: Event) => {
+      playNote(playbackOff, prevNotes.current, qwertyNote, props.octaveMinMax, fetchedSounds, props.volume);
+      setPlaybackOff({})
+    }
 
-  //   window.addEventListener('blur', focusOut)
-  //   return(() => {
-  //     window.removeEventListener('blur', focusOut)
-  //   })
-  // }, []);
+    window.addEventListener('blur', focusOut)
+    return(() => {
+      window.removeEventListener('blur', focusOut)
+    })
+  }, []);
 
   // Sets playback to all notes currently playing from playback, with their end
   // times set to the current time. playbackOff is used when props.mode = ''.
