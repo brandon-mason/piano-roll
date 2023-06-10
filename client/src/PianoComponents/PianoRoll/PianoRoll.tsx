@@ -109,7 +109,7 @@ function PianoRoll(props: PianoRollProps) {
 
   return (
     <>
-        <NoteLabels octaveArray={octaveArray} octave={props.octave} labelsRef={props.labelsRef} />
+      <NoteLabels octaveArray={octaveArray} octave={props.octave} labelsRef={props.labelsRef} />
     </>
   );
 }
