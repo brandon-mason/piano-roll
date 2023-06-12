@@ -3,32 +3,32 @@ import { Howl, Howler } from 'howler';
 
 // Plays notes from keystrokes and playback. 
 export const playNote = (output: KeysPressed, prevNotes: PrevNotes, qwertyNote: any, octaveMinMax: number[], fetchedSounds: FetchedSounds, volume: string) => {
-  let prevNotesTemp: PrevNotes = prevNotes;
+  let prevNotesTemp: PrevNotes = {...prevNotes};
 
   Object.keys(output).forEach((noteOct) => {
     let noteName: string;
     let key = output[noteOct].key;
     let note = noteOct.replace(/[0-9]/g, ''); // Replaces all numbers 0-9 in noteOct with an empty string.
     let octave = parseInt(noteOct.replace(/\D/g,'')); // Replaces all letters Aa-Zz in noteOct with an empty string.
-
+    
     if(Object.keys(qwertyNote).includes(key) && octave < octaveMinMax[1] && fetchedSounds[octave][volume]) {
       let labelElem: HTMLElement | null = null;
       (note.includes('#')) ? noteName = note.replace('#', 'sharp') + (octave) : noteName = note.replace('b', 'flat') + (octave);
-      (document.getElementById(noteName.toLowerCase() + '-label')) ? labelElem = document.getElementById(noteName.toLowerCase() + '-label') : null;;
+      (document.getElementById(noteName.toLowerCase() + '-label')) ? labelElem = document.getElementById(noteName.toLowerCase() + '-label') : null;
 
-      if(output[noteOct].pressed && (!prevNotes[noteName] || prevNotes[noteName] === 0) && labelElem) { // For pressed keys.
+      if(output[noteOct].pressed && (!prevNotesTemp[noteName] || prevNotesTemp[noteName] === 0) && labelElem) { // For pressed keys.
         let sound = fetchedSounds[octave][volume];
         let soundID = sound.play(note); // Plays note and stores the note ID in the soundId variable
-        
+
         labelElem.classList.toggle('active'); // Toggles the 'active' class which lights up whatever keys are currently playing.
         prevNotesTemp[noteName] = soundID; // Stores the soundID variable in prevNotesTemp with noteName as its key.
-      } else if(!output[noteOct].pressed && prevNotes[noteName as keyof typeof prevNotes] > 0 && labelElem) { // For unpressed keys.
+      } else if(!output[noteOct].pressed && prevNotes[noteName as keyof typeof prevNotes] !== 0 && labelElem) { // For unpressed keys.
         if(Object.keys(prevNotes).some((playedNote) => playedNote === noteName)) { // Checks that a note exists in prevNotes that matches noteName
           labelElem.classList.toggle('active');
           fetchedSounds[octave][volume].fade(.5, 0, 300, prevNotes[noteName]); // Fades out whatever notes are being unpressed.
         }
 
-        prevNotesTemp[noteName] = 0; // Resets prevNotesTemp key for notes that have been unpressed.
+        delete prevNotesTemp[noteName]; // Resets prevNotesTemp key for notes that have been unpressed.
       }
     }
   })

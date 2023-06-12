@@ -136,25 +136,27 @@ function Piano(props: PianoProps) {
 
       if(props.playback[props.pulseNum]) {
         pb = Object.fromEntries(props.playback[props.pulseNum]);
+        prevNotes.current = playNote(pb, prevNotes.current, qwertyNote, props.octaveMinMax, fetchedSounds, props.volume);
       }
-      if(props.playback.length > 0 && props.playback[props.pulseNum]) {
-          playNote(pb, prevNotes.current, qwertyNote, props.octaveMinMax, fetchedSounds, props.volume);
-      }
-      if(props.keysPressed.size > 0 && pb) {
-        playNote({...pb, ...Object.fromEntries(props.keysPressed)}, prevNotes.current, qwertyNote, props.octaveMinMax, fetchedSounds, props.volume)
-        playNote({...pb, ...Object.fromEntries(props.keysUnpressed)}, prevNotes.current, qwertyNote, props.octaveMinMax, fetchedSounds, props.volume)
-      }
-      else {
-        playNote(Object.fromEntries(props.keysPressed), prevNotes.current, qwertyNote, props.octaveMinMax, fetchedSounds, props.volume);
-        playNote(Object.fromEntries(props.keysUnpressed), prevNotes.current, qwertyNote, props.octaveMinMax, fetchedSounds, props.volume);
+      
+      if(props.keysPressed.size > 0 && Object.keys(pb).length > 0) {
+        prevNotes.current = playNote({...pb, ...Object.fromEntries(props.keysPressed)}, prevNotes.current, qwertyNote, props.octaveMinMax, fetchedSounds, props.volume);
+        prevNotes.current = playNote({...pb, ...Object.fromEntries(props.keysUnpressed)}, prevNotes.current, qwertyNote, props.octaveMinMax, fetchedSounds, props.volume);
+      } else if(Object.keys(pb).length === 0) {
+        if(props.keysPressed.size > 0)
+          prevNotes.current = playNote(Object.fromEntries(props.keysPressed), prevNotes.current, qwertyNote, props.octaveMinMax, fetchedSounds, props.volume);
+        if(props.keysUnpressed.size > 0) 
+          prevNotes.current = playNote(Object.fromEntries(props.keysUnpressed), prevNotes.current, qwertyNote, props.octaveMinMax, fetchedSounds, props.volume);
       }
     }
+
     if(props.mode === 'keyboard') {
-      playNote(Object.fromEntries(props.keysPressed), prevNotes.current, qwertyNote, props.octaveMinMax, fetchedSounds, props.volume);
-      playNote(Object.fromEntries(props.keysUnpressed), prevNotes.current, qwertyNote, props.octaveMinMax, fetchedSounds, props.volume);
+      prevNotes.current = playNote(Object.fromEntries(props.keysPressed), prevNotes.current, qwertyNote, props.octaveMinMax, fetchedSounds, props.volume);
+      prevNotes.current = playNote(Object.fromEntries(props.keysUnpressed), prevNotes.current, qwertyNote, props.octaveMinMax, fetchedSounds, props.volume);
     } else if(props.mode === 'stop') {
-      playNote(playbackOff, prevNotes.current, qwertyNote, props.octaveMinMax, fetchedSounds, props.volume);
-      setPlaybackOff({})
+      prevNotes.current = playNote(playbackOff, prevNotes.current, qwertyNote, props.octaveMinMax, fetchedSounds, props.volume);
+      
+      setPlaybackOff({});
     }
   }, [props.mode, props.pulseNum, props.keysPressed, props.keysUnpressed, props.playback])
 

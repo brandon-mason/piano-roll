@@ -174,6 +174,13 @@ function App() {
             state.set(key, entries[key])
             return state;
           })
+        } else if(pulseNum - entries[key].end > 1) {
+          setKeysUnpressed((keysUnpressed: Map<string, KeyPressed>) => {
+            let state = new Map(keysUnpressed);
+
+            state.delete(key);
+            return state;
+          })
         }
       });
       

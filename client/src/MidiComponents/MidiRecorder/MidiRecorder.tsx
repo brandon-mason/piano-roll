@@ -491,7 +491,7 @@ function MidiRecorder(props: MidiRecorderProps) {
 
   // Set playback to current recording which includes what 
   useEffect(() => {
-    if(props.midiState.mode === 'keyboard' ) {
+    if(props.midiState.mode === 'keyboard') {
       props.setPlayback(midiRecorded);
     }
   }, [props.midiState.mode, midiRecorded]);
