@@ -5,6 +5,7 @@ import { Howl, Howler } from 'howler';
 export const playNote = (output: KeysPressed, prevNotes: PrevNotes, qwertyNote: any, octaveMinMax: number[], fetchedSounds: FetchedSounds, volume: string) => {
   let prevNotesTemp: PrevNotes = {...prevNotes};
 
+  console.log(prevNotes)
   Object.keys(output).forEach((noteOct) => {
     let noteName: string;
     let key = output[noteOct].key;
@@ -19,10 +20,9 @@ export const playNote = (output: KeysPressed, prevNotes: PrevNotes, qwertyNote: 
       if(output[noteOct].pressed && (!prevNotesTemp[noteName] || prevNotesTemp[noteName] === 0) && labelElem) { // For pressed keys.
         let sound = fetchedSounds[octave][volume];
         let soundID = sound.play(note); // Plays note and stores the note ID in the soundId variable
-
         labelElem.classList.toggle('active'); // Toggles the 'active' class which lights up whatever keys are currently playing.
         prevNotesTemp[noteName] = soundID; // Stores the soundID variable in prevNotesTemp with noteName as its key.
-      } else if(!output[noteOct].pressed && prevNotes[noteName as keyof typeof prevNotes] !== 0 && labelElem) { // For unpressed keys.
+      } else if(!output[noteOct].pressed && prevNotes[noteName as keyof typeof prevNotes] > 0 && labelElem) { // For unpressed keys.
         if(Object.keys(prevNotes).some((playedNote) => playedNote === noteName)) { // Checks that a note exists in prevNotes that matches noteName
           labelElem.classList.toggle('active');
           fetchedSounds[octave][volume].fade(.5, 0, 300, prevNotes[noteName]); // Fades out whatever notes are being unpressed.

@@ -173,15 +173,16 @@ function App() {
 
             state.set(key, entries[key])
             return state;
-          })
-        } else if(pulseNum - entries[key].end > 1) {
+          });
+        }
+        if(pulseNum - entries[key].end > 1) {
           setKeysUnpressed((keysUnpressed: Map<string, KeyPressed>) => {
             let state = new Map(keysUnpressed);
-
+            console.log(state);
             state.delete(key);
             return state;
-          })
-        }
+          });
+        } 
       });
       
     }
@@ -203,12 +204,7 @@ function App() {
       // setPlayback({})
     }
     if(midiState.mode === 'keyboard') {
-      // let tempKeysPressed = {...keysPressed};
-      // let tempPlayback = {...playback};
-
-      // Object.entries(keysPressed).forEach((keyPressed) => {
-      //   tempKeysPressed[keyPressed[0]] = {...keyPressed[1], end: -1}
-      // })
+      console.log('hello');
       setKeysUnpressed(new Map());
     }
   }, [midiState.mode]);
@@ -423,7 +419,7 @@ function App() {
             <Grid gridSize={gridSize} midiLength={midiLength} noteTracksRef={noteTracksRef} numMeasures={midiState.numMeasures} pulseNum={pulseNum} pulseRate={pulseRate} selectorsRef={selectorsRef} subdiv={midiState.subdiv} time={time} octaveArray={getOctaveArray()} setPulseNum={setPulseNum} setTime={setTime} />
           </div>
         </div>
-        <KeyNoteInput focus={focus} octave={soundState.octave} pianoRollKey={pianoRollKeyRef.current} pulseNum={pulseNum} onControlsPressed={setControlsPressed} onNotePlayed={setKeysPressed} setKeysPressed={setKeysPressed} setKeysUnpressed={setKeysUnpressed} />
+        <KeyNoteInput focus={focus} octave={soundState.octave} pianoRollKey={pianoRollKeyRef.current} pulseNum={pulseNum} keysPressed={keysPressed} keysUnpressed={keysUnpressed} onControlsPressed={setControlsPressed} onNotePlayed={setKeysPressed} setKeysPressed={setKeysPressed} setKeysUnpressed={setKeysUnpressed} />
         <MidiRecorder controlsState={controlsState} gridSize={gridSize} keysPressed={keysPressed} keysUnpressed={keysUnpressed} midiLength={midiLength} midiNoteInfo={midiNoteInfo} midiState={midiState} noteTracksRef={noteTracksRef} pulseNum={pulseNum} pulseRate={pulseRate} controlsDispatch={controlsDispatch} setKeysUnpressed={setKeysUnpressed} setMidiNoteInfo={setMidiNoteInfo} setPlayback={setPlayback} />
         <Timer bpm={midiState.bpm} metronome={midiState.metronome} midiLength={midiLength} time={time} timerRef={timerRef} mode={midiState.mode} ppq={midiState.ppq} pulseNum={pulseNum} pulseRate={pulseRate} handleMetPlay={metPlayed} handleSetTime={setTime} handleSetPulseNum={setPulseNum} />
         <Piano pulseNum={pulseNum} soundDetails={soundDetails} sound={soundState.sound} octave={soundState.octave} octaveMinMax={octaveMinMax} volume={soundState.volume} mode={midiState.mode} keysPressed={keysPressed} keysUnpressed={keysUnpressed} playback={playback} labelsRef={labelsRef} />

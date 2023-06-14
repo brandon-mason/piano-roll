@@ -110,6 +110,8 @@ export interface MidiSettingsProps {
 //Key-Note-Input.tsx interfaces (1)
 export interface KeyNoteInputProps {
   focus: boolean
+  keysPressed: Map<string, KeyPressed>;
+  keysUnpressed: Map<string, KeyPressed>;
   octave: number;
   pianoRollKey: any[] | null;
   pulseNum: number;

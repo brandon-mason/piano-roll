@@ -4,8 +4,8 @@ const qwertyNote = require('../JSON/note-to-qwerty-key-obj');
 const kbControls = require('../JSON/keyboard-controls');
 
 function KeyNoteInput(props: KeyNoteInputProps) {
-  const [keysPressed, setKeysPressed] = useState<Map<string, KeyPressed>>(new Map());
-  const [keysUnpressed, setKeysUnpressed] = useState<Map<string, KeyPressed>>(new Map());
+  // const [keysPressed, setKeysPressed] = useState<Map<string, KeyPressed>>(new Map());
+  // const [keysUnpressed, setKeysUnpressed] = useState<Map<string, KeyPressed>>(new Map());
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -30,13 +30,13 @@ function KeyNoteInput(props: KeyNoteInputProps) {
       if(!control) {
         let note = qwertyNote[e.key.toLowerCase()].note; // toLowerCase() is for caps lock
 
-        setKeysPressed((keysPressed) => {
+        props.setKeysPressed((keysPressed: Map<string, KeyPressed>) => {
           let state = new Map(keysPressed);
           state.set(note + octave, {key: e.key.toLowerCase(), pressed: true, start: props.pulseNum, end: -1})
           return state;
         });
-        if(keysUnpressed.get(note + octave)) {
-          setKeysUnpressed((keysPressed) => {
+        if(props.keysUnpressed.get(note + octave)) {
+          props.setKeysUnpressed((keysPressed: Map<string, KeyPressed>) => {
             let state = new Map(keysPressed);
   
             state.delete(note + octave);
@@ -58,15 +58,15 @@ function KeyNoteInput(props: KeyNoteInputProps) {
       let note = qwertyNote[e.key.toLocaleLowerCase()].note;
       let noteOct = note + octave;
 
-      if(keysPressed.size > 0 && keysPressed.get(noteOct)) {
-        setKeysUnpressed((keysUnpressed) => {
+      if(props.keysPressed.size > 0 && props.keysPressed.get(noteOct)) {
+        props.setKeysUnpressed((keysUnpressed: Map<string, KeyPressed>) => {
           let state = new Map(keysUnpressed);
           
-          state.set(noteOct, {start: keysPressed.get(noteOct)!.start, key: e.key.toLowerCase(), pressed: false, end: props.pulseNum})
+          state.set(noteOct, {start: props.keysPressed.get(noteOct)!.start, key: e.key.toLowerCase(), pressed: false, end: props.pulseNum})
           return state
         })
-        if(keysPressed.get(noteOct)) {
-          setKeysPressed((keysPressed) => {
+        if(props.keysPressed.get(noteOct)) {
+          props.setKeysPressed((keysPressed: Map<string, KeyPressed>) => {
             let state = new Map(keysPressed);
 
             state.delete(noteOct);
@@ -87,17 +87,18 @@ function KeyNoteInput(props: KeyNoteInputProps) {
       document.removeEventListener('keydown', onKeyDown);
       document.removeEventListener('keyup', onKeyUp);
     }
-  }, [props.octave, props.pulseNum, props.focus, keysPressed, keysUnpressed]);
+  }, [props.octave, props.pulseNum, props.focus, props.keysPressed, props.keysUnpressed]);
 
-  useEffect(() => {
-    props.setKeysPressed(keysPressed);
-    // eslint-disable-next-line
-  }, [keysPressed]);
+  // useEffect(() => {
+  //   props.setKeysPressed(keysPressed);
+  //   // eslint-disable-next-line
+  // }, [keysPressed]);
 
-  useEffect(() => {
-    props.setKeysUnpressed(keysUnpressed);
-    // eslint-disable-next-line
-  }, [keysUnpressed]);
+  // useEffect(() => {
+  //   console.log(keysUnpressed)
+  //   props.setKeysUnpressed(keysUnpressed);
+  //   // eslint-disable-next-line
+  // }, [keysUnpressed]);
 
   return null;
 }

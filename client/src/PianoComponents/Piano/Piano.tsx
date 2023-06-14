@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FetchedSounds, PrevNotes, KeysPressed, OctavesInViewProps, PianoProps } from '../../Tools/Interfaces'
 import {Howl, Howler} from 'howler';
 import './Piano.css';
-import { playNote, setView } from './PianoFunctions'
+import { playNote, setView } from './PianoFunctions';
 const qwertyNote = require('../../Tools/JSON/note-to-qwerty-key-obj');
 
 function OctavesInView(props: OctavesInViewProps) { // Loads sounds as the page scrolls their keys into view.
@@ -145,7 +145,7 @@ function Piano(props: PianoProps) {
       } else if(Object.keys(pb).length === 0) {
         if(props.keysPressed.size > 0)
           prevNotes.current = playNote(Object.fromEntries(props.keysPressed), prevNotes.current, qwertyNote, props.octaveMinMax, fetchedSounds, props.volume);
-        if(props.keysUnpressed.size > 0) 
+        if(props.keysUnpressed.size > 0)
           prevNotes.current = playNote(Object.fromEntries(props.keysUnpressed), prevNotes.current, qwertyNote, props.octaveMinMax, fetchedSounds, props.volume);
       }
     }
