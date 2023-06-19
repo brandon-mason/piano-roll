@@ -178,13 +178,12 @@ function App() {
         if(pulseNum - entries[key].end > 1) {
           setKeysUnpressed((keysUnpressed: Map<string, KeyPressed>) => {
             let state = new Map(keysUnpressed);
-            console.log(state);
+
             state.delete(key);
             return state;
           });
         } 
       });
-      
     }
   }, [pulseNum])
 
@@ -204,7 +203,6 @@ function App() {
       // setPlayback({})
     }
     if(midiState.mode === 'keyboard') {
-      console.log('hello');
       setKeysUnpressed(new Map());
     }
   }, [midiState.mode]);

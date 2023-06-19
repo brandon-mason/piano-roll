@@ -5,7 +5,6 @@ import { Howl, Howler } from 'howler';
 export const playNote = (output: KeysPressed, prevNotes: PrevNotes, qwertyNote: any, octaveMinMax: number[], fetchedSounds: FetchedSounds, volume: string) => {
   let prevNotesTemp: PrevNotes = {...prevNotes};
 
-  console.log(prevNotes)
   Object.keys(output).forEach((noteOct) => {
     let noteName: string;
     let key = output[noteOct].key;
