@@ -351,7 +351,7 @@ function App() {
                 <br />
                 <span className='info-text'>Hold ctrl/cmd and click and drag on a note to move its ending.</span>
                 <br />
-                <span className='info-text'>Hold shift and click and drag on a note to move its ending.</span>
+                <span className='info-text'>Hold shift and click and drag on a note to move its start.</span>
                 <br />
                 <span className='info-text'>Hold both ctrl/cmd + shift and click and drag on a note to move the note.</span>
                 <br />
