@@ -80,14 +80,15 @@ function App() {
   const [keysUnpressed, setKeysUnpressed] = useState<Map<string, KeyPressed>>(new Map());
   const [gridSize, setGridSize] = useState<number[]>([]);
   
+  const [dbLoaded, setDbLoaded] = useState<boolean>(true);
   const [playback, setPlayback] = useState<Map<string, KeyPressed>[]>([]);
   const [metPlay, setMetPlay] = useState(false);
-  const [controlsPressed, setControlsPressed] = useState<(string | boolean)[]>(['', false])
+  const [controlsPressed, setControlsPressed] = useState<(string | boolean)[]>(['', false]);
   const [focus, setFocus] = useState(false);
-  const [selectorsHeight, setSelectorsHeight] = useState<number>()
+  const [selectorsHeight, setSelectorsHeight] = useState<number>();
   const [trackName, setTrackName] = useState('');
-  const [menuShown, setMenuShown] = useState('')
-  const [infoModal, setInfoModal] = useState<React.ReactPortal | null>()
+  const [menuShown, setMenuShown] = useState('');
+  const [infoModal, setInfoModal] = useState<React.ReactPortal | null>();
   const selectorsRef = useRef<HTMLDivElement>(null);
   const noteTracksRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<HTMLDivElement>(null);
@@ -96,7 +97,23 @@ function App() {
   const labelsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    async function isLoggedIn() {
+    (async () => {
+      const url = `${process.env.REACT_APP_API}/db-loaded`;
+      const options = {
+        method: 'GET',
+        // headers: {
+        //   'Content-Type': 'application/json',
+        // }
+      }
+
+      await axios.get(url, options)
+      .then(res => {
+        setDbLoaded(res.data.dbLoaded);
+        console.log(res.data);
+      })
+    })();
+
+    const isLoggedIn = async () => {
       const url = `${process.env.REACT_APP_API}/logged-in`;
       const options = {
         method: 'POST',
@@ -111,12 +128,12 @@ function App() {
       .then(res => {
         setUsername(res.data.username)
       }).catch((err) => console.error(err))
-    }
+    };
 
     if(window.localStorage.getItem('loggedIn') === 'true') {
       isLoggedIn();
     } else if(window.innerWidth > 500){
-      info()
+      info();
     }
 
     setXGridSize(0);
@@ -394,7 +411,7 @@ function App() {
           <button id='info-button' className='info' onClick={() => info()}><FaInfoCircle style={{color: 'white', margin: '2px 2px'}} /></button>
           <div className='login-elems'>
             {(username.length > 0) ? <span id='welcome-user'> welcome {username} </span>: <></>}
-            <ShowLoginModal username={username} setFocus={setFocus} setUsername={setUsername} />
+            <ShowLoginModal username={username} dbLoaded={dbLoaded} setFocus={setFocus} setUsername={setUsername} />
           </div>
           <br></br>
           <br></br>

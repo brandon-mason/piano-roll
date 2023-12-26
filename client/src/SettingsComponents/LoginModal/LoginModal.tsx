@@ -177,6 +177,7 @@ function LoginModal(props: LoginModalProps) {
 
 interface ShowLoginModalProps {
   username: string;
+  dbLoaded: boolean;
   setFocus: Function;
   setUsername: Function;
 }
@@ -207,7 +208,16 @@ function ShowLoginModal(props: ShowLoginModalProps) {
       // setUsername('');
       props.setUsername('')
     }
-    return (props.username.length === 0) ? <button className='loginout settings button' onClick={() => setShowLogin(true)} >Login</button> : <button className='loginout settings button' onClick={() => {logout()}}>Logout</button>
+    return (
+    (props.dbLoaded) ? 
+      <button className='loginout settings button' title='Login is unavailable(mongodb cluster most likely paused due to inactivity)' disabled>Login</button> 
+      : (
+      (props.username.length === 0) ? 
+        <button className='loginout settings button' onClick={() => setShowLogin(true)} >Login</button>
+        : 
+        <button className='loginout settings button' onClick={() => {logout()}}>Logout</button>
+      )
+    )
   }, [props.username])
   const logreg = useMemo<JSX.Element>(() => {
     if(showLogin && !showRegister) {
