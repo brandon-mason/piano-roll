@@ -109,7 +109,6 @@ function App() {
       await axios.get(url, options)
       .then(res => {
         setDbLoaded(res.data.dbLoaded);
-        console.log(res.data);
       })
     })();
 

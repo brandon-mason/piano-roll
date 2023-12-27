@@ -46,7 +46,7 @@ function SaveExport(props: SaveExportProps) {
     }
     if(props.username.length > 0) getSavedTracks();
     if(props.username.length === 0) {
-      props.setMidiNoteInfo([]);
+      // props.setMidiNoteInfo([]);
       setTrackNames([]);
     }
 
@@ -86,7 +86,7 @@ function SaveExport(props: SaveExportProps) {
     const track = axios.get(url, options)
     .then((res) => {
       Object.entries(res.data).forEach((midiNote: any) => {
-        midiNoteInfo.push(midiNote[1])
+        midiNoteInfo.push(midiNote[1]);
       })
       props.setMidiNoteInfo(midiNoteInfo);
     })
@@ -263,6 +263,10 @@ function SaveExport(props: SaveExportProps) {
       }
     }
   }
+
+  useEffect(() => {
+    console.log(props.midiNoteInfo)
+  }, [props.midiNoteInfo]);
 
   return (
     <>
