@@ -6,7 +6,6 @@
     "rootDir": "./src",
     "outDir": "./dist",
     "target": "esnext",
-    "watch": true,
     "lib": [
       "es5", "es6", "dom", "dom.iterable", "ES2022",
     ],
