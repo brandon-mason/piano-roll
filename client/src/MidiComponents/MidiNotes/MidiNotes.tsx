@@ -22,6 +22,9 @@ function MidiNotes(props: MidiNotesProps) {
   const [widths, setWidths] = useState<Widths>({});
   const [midiNotes, setMidiNotes] = useState<ReactPortal[]>([]);
 
+  /*
+    Creates a note via mouse click events.
+  */
   const onStart = useCallback((e: MouseEvent) => {
     if(e.target instanceof Element) {
       let noteOct = e.target.id.substring(0, e.target.id.indexOf('-'));
@@ -43,6 +46,9 @@ function MidiNotes(props: MidiNotesProps) {
     }
   }, [props.midiNoteInfo])
 
+  /*
+    Updates note lengths within the state variable widths.
+  */
   useLayoutEffect(() => {
     setWidths((widths) => {
       let state: Widths = {...widths};
@@ -62,6 +68,9 @@ function MidiNotes(props: MidiNotesProps) {
     })
   }, [props.pulseNum, props.midiNoteInfo, props.gridSize, props.midiState.numMeasures])
 
+  /*
+    Updates the state variable containing all note information.
+  */
   useLayoutEffect(() => {
     setMidiNotes([])
     function renderPortals() {

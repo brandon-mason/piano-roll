@@ -22,6 +22,9 @@ import './App.css';
 var JZZ = require('jzz');
 require('jzz-midi-smf')(JZZ);
 
+/*
+  Modifies the attributes of the sound output.
+*/
 function soundReducer(state: SoundState, action: any) {
   switch(action.type) {
     case 'sound':
@@ -35,6 +38,9 @@ function soundReducer(state: SoundState, action: any) {
   }
 }
 
+/*
+  Modifies the attributes of the grid.
+*/
 function midiReducer(state: MidiState, action: any) {
   switch(action.type) {
     case 'numMeasures':
@@ -52,6 +58,9 @@ function midiReducer(state: MidiState, action: any) {
   }
 }
 
+/*
+  Modifies the attributes of the input and output.
+*/
 function controlsReducer(state: ControlsState, action: any) {
   switch(action.type) {
     case 'export':
@@ -96,6 +105,10 @@ function App() {
   const pianoRollKeyRef = useRef<any[] | null>(null)
   const labelsRef = useRef<HTMLDivElement>(null);
 
+  /*
+    Checks if the database is available and loaded.
+    This lets the app know whether or not to allow logins.
+  */
   useEffect(() => {
     (async () => {
       const url = `${process.env.REACT_APP_API}/db-loaded`;
@@ -163,6 +176,9 @@ function App() {
     getSoundDetails();
   }, []);
 
+  /*
+    Updates the number of octaves available when the selected instrument changes.
+  */
   useEffect(() => {
     if(Object.keys(soundDetails).length > 0) {
       let octavesArray = Object.keys(soundDetails[soundState.sound as keyof typeof soundDetails]);
@@ -175,6 +191,11 @@ function App() {
     }
   }, [soundDetails]);
 
+  /*
+    Runs everytime the grid time changes.
+    Checks if playback has reached the end of the track.
+    Controls what keys are detected as pressed during playback.
+  */
   useEffect(() => {
     if(pulseNum === midiLength * pulseRate) {
       midiDispatch({type: 'mode', mode: 'keyboard'});
@@ -203,6 +224,9 @@ function App() {
     }
   }, [pulseNum])
 
+  /*
+    Controls what happens when the playing state changes..
+  */
   useEffect(() => {
     if(pulseNum === midiLength * pulseRate && (midiState.mode === 'playing' || midiState.mode === 'recording')) {
       let mode = midiState.mode;
@@ -233,6 +257,9 @@ function App() {
     }
   }, []);
 
+  /*
+    Runs when the user chooses to export a track.
+  */
   useEffect(() => {
     if(controlsState.export) {
       if(!/[a-zA-Z]/g.test(trackName)) {
@@ -284,6 +311,9 @@ function App() {
     pianoRollKeyRef.current = keyPressed;
   }
 
+  /*
+    Sets the state of the metronome.
+  */
   function metPlayed(dut: boolean) {
     setMetPlay(dut);
   }
@@ -307,6 +337,9 @@ function App() {
     })
   }
 
+  /*
+    Renders information modal.
+  */
   function info() {
     var picked = 'none';
 

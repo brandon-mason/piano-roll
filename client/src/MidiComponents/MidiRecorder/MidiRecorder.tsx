@@ -25,6 +25,9 @@ function MidiRecorder(props: MidiRecorderProps) {
   const [origVal, setOrigVal] = useState<number>(0)
   const moveNote = useRef<MidiNoteInfo>({});
 
+  /*
+    This useEffect hook is for editing existing notes on the grid.
+  */
   useEffect(() => {
     const changeStart = (midiNoteInfo: MidiNoteInfo[], midiNote: MidiNoteInfo, modifier: number, noteOct: string) => {
       let state = [...midiNoteInfo];
@@ -168,7 +171,9 @@ function MidiRecorder(props: MidiRecorderProps) {
   }, [props.midiNoteInfo, startVal, origVal]);
 
 
-  // Add or remove note upon clicking a note track or a note
+  /*
+    Adds or removes a note upon double clicking it.
+  */
   useEffect(() => {
     const addRemNote = (e: MouseEvent) => {
       var elem: HTMLElement;
@@ -232,7 +237,9 @@ function MidiRecorder(props: MidiRecorderProps) {
   //   }
   // }, [props.midiState.mode]);
 
-  // Add new notes to midiRecorded so that they can be added to playback.
+  /* 
+    Add recorded notes to midiRecorder state variable so that they can be added to the grid.
+  */
   useEffect(() => {
     if(props.midiNoteInfo.length > 0) {
       let midiRecTemp: Map<string, KeyPressed>[] = [];
@@ -281,7 +288,9 @@ function MidiRecorder(props: MidiRecorderProps) {
     }
   }, [props.midiNoteInfo])
 
-  // Add notes from clicking grid to midiNoteInfo.
+  /*
+    Adds notes from double clicking a grid cell to midiNoteInfo state variable.
+  */
   useEffect(() => {
     if(props.noteTracksRef.current) {
       let noteTrackElem: Element ;
@@ -344,7 +353,7 @@ function MidiRecorder(props: MidiRecorderProps) {
     }
   }, [clickCoords])
 
-  // Undo add or remove note from midiNoteInfo.
+  // Undo adding or removing a note from midiNoteInfo.
   useEffect(() => {
     if(props.controlsState.undo && orderOfEvents.length > 1) {
       props.setMidiNoteInfo(orderOfEvents[1]);
@@ -352,6 +361,7 @@ function MidiRecorder(props: MidiRecorderProps) {
     }
   }, [props.controlsState.undo])
 
+  // Ensures there are no overlapping notes in midiNoteInfo.
   useEffect(() => {
     if(!props.controlsState.undo && !isDragging) {
       setOrderOfEvents((orderOfEvents) => [props.midiNoteInfo, ...orderOfEvents]);

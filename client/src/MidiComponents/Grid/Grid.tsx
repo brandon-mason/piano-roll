@@ -6,6 +6,10 @@ const qwertyNote = require('../../Tools/JSON/note-to-qwerty-key-obj');
 function Grid(props: GridProps) {
   const [grid, setGrid] = useState<JSX.Element[]>();
   const [position, setPosition] = useState<any>();
+
+  /*
+    Memoizes the elements making up the grid measures to avoid discrepancies in its display between renders.
+  */
   const gridMeasure = useMemo(() => {
     const qwertyKeys = Object.keys(qwertyNote);
     let gridMeasure = []
@@ -18,12 +22,14 @@ function Grid(props: GridProps) {
     return gridMeasure;
   }, [props.subdiv, props.octaveArray]);
 
-  const renderCount = useRef(1);
-  useEffect(() => {
-    renderCount.current = renderCount.current + 1;
-    
-  })
+  // const renderCount = useRef(1);
+  // useEffect(() => {
+  //   renderCount.current = renderCount.current + 1;
+  // })
 
+  /*
+    Memoizes the elements making up the subdivisions of the grid to avoid discrepancies in its display between renders.
+  */
   const gridSubdivisions = useMemo(() => {
     let gridSubdivisions = []
     for(var i = 0; i < props.subdiv * props.numMeasures; i++) {
@@ -36,6 +42,10 @@ function Grid(props: GridProps) {
     return gridSubdivisions;
   }, [props.subdiv, props.octaveArray, props.numMeasures])
 
+  /*
+    Updates the display of the grid.
+    If gridSubdivisions and gridMeasure are altered this will run after those changes are made.
+  */
   useLayoutEffect(() => {
     let gridMidi = [];
 
@@ -47,6 +57,9 @@ function Grid(props: GridProps) {
     }
   }, [props.subdiv, props.octaveArray, props.numMeasures]);
   
+  /*
+    Updates the position of the track position element to reflect the current time of the track.
+  */
   useEffect(() => {
       let position = {};
       if(props.noteTracksRef.current) {
@@ -56,9 +69,6 @@ function Grid(props: GridProps) {
       }
       setPosition(position);
   }, [props.pulseNum]);
-  
-
-  const bgSizeTrack = 100 / props.numMeasures;
   
   return (
     <>
