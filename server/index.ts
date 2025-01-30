@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as mongoose from 'mongoose';
 // import MongoDBStore from 'connect-mongodb-session';
 import * as dotenv from 'dotenv';
-dotenv.config({ path: __dirname + '/../.env' });
+dotenv.config({ path: __dirname + '/.env' });
 
 const app = express();
 const PORT = process.env.SERVER_PORT || 3001;
