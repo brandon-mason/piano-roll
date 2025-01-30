@@ -166,6 +166,7 @@ function LoginModal(props: LoginModalProps) {
             .then((res) => {
               console.log(res.data);
             })
+            .catch((err) => console.error(err))
           }}>Forgot Password</span>
           <label className='register-label'> Don't have an account?</label>
           <button id='register' className='loginreg-element button' onClick={() => props.onRegister(true)}>Register</button>
@@ -209,7 +210,7 @@ function ShowLoginModal(props: ShowLoginModalProps) {
       props.setUsername('')
     }
     return (
-    (props.dbLoaded) ? 
+    (!props.dbLoaded) ? 
       <button className='loginout settings button' title='Login is unavailable(mongodb cluster most likely paused due to inactivity)' disabled>Login</button> 
       : (
       (props.username.length === 0) ? 
@@ -218,7 +219,7 @@ function ShowLoginModal(props: ShowLoginModalProps) {
         <button className='loginout settings button' onClick={() => {logout()}}>Logout</button>
       )
     )
-  }, [props.username])
+  }, [props.username, props.dbLoaded])
   const logreg = useMemo<JSX.Element>(() => {
     if(showLogin && !showRegister) {
       return createPortal(
