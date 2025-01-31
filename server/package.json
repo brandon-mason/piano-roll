@@ -5,11 +5,12 @@
   "main": "index.ts",
   "proxy": "http://localhost:3002",
   "scripts": {
-    "start": "ts-node-dev index.ts",
-    "dev": "nodemon -L index.ts"
+    "start": "ts-node index.ts",
+    "dev": "ts-node-dev index.ts",
+    "build": "tsc"
   },
   "engines": {
-    "node": "18.x"
+    "node": "22.x"
   },
   "keywords": [],
   "author": "",

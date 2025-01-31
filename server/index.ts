@@ -1,8 +1,8 @@
-import * as express from 'express';
-import * as cors from 'cors';
+import express from 'express';
+import cors from 'cors';
 // import session from 'express-session';
 import * as path from 'path';
-import * as mongoose from 'mongoose';
+import mongoose from 'mongoose';
 // import MongoDBStore from 'connect-mongodb-session';
 import * as dotenv from 'dotenv';
 dotenv.config({ path: __dirname + '/.env' });
