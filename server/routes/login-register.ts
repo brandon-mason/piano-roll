@@ -62,7 +62,6 @@ logregRouter
 
   })
   .post('/login', async (req: any, res: any) => {
-    // console.log(req.session)
     const {username, password} = req.body;
     
     // const password = req.body.password;
@@ -76,10 +75,6 @@ logregRouter
       .then((match: any) => {
         if(match) {
           const token = jsonwebtoken.sign({username}, process.env.SECRET);
-          // res.setHeader('Access-Control-Allow-Credentials', true);
-          // res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-          // res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-          // res.cookie('piano-roll', token, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: false, overwrite: true});
           res.status(200);
           res.send({message: 'Login Successfull', data: token});
         } else {
@@ -94,7 +89,6 @@ logregRouter
     });
   })
   .post('/logged-in', (req: any, res: any) => {
-    // console.log(jsonwebtoken.verify(req.body.token, process.env.SECRET).username)
     if(!jsonwebtoken.verify(req.body.token, process.env.SECRET).username) return res.status(422).json({error: 'Invalid username'})
     User.findOne({username: jsonwebtoken.verify(req.body.token, process.env.SECRET).username})
     .then((savedUser: any) => {
@@ -103,8 +97,7 @@ logregRouter
     }).catch((err: Error) => console.error(err))
   })
   .post('/logout', (req: any, res: any) => {
-    // console.log(req.sessionID);
-    // console.log('ie', req.cookies);
+    console.log("Logout successful.");
   })
   .post('/reset-password', (req: any, res: any) => {
     

@@ -47,7 +47,6 @@ function SavedTracks(props: SavedTracksProps) {
     var midiNoteInfo: MidiNoteInfo[] = [];
     const track = axios.get(url, options)
     .then((res) => {
-      // console.log(res.data);
       Object.entries(res.data).forEach((midiNote: any) => {
         midiNoteInfo.push(midiNote[1])
       })

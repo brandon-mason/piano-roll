@@ -88,18 +88,6 @@ function KeyNoteInput(props: KeyNoteInputProps) {
       document.removeEventListener('keyup', onKeyUp);
     }
   }, [props.octave, props.pulseNum, props.focus, props.keysPressed, props.keysUnpressed]);
-
-  // useEffect(() => {
-  //   props.setKeysPressed(keysPressed);
-  //   // eslint-disable-next-line
-  // }, [keysPressed]);
-
-  // useEffect(() => {
-  //   console.log(keysUnpressed)
-  //   props.setKeysUnpressed(keysUnpressed);
-  //   // eslint-disable-next-line
-  // }, [keysUnpressed]);
-
   return null;
 }
 

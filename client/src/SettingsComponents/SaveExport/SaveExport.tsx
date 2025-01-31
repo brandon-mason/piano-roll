@@ -218,7 +218,6 @@ function SaveExport(props: SaveExportProps) {
     }
 
     axios.delete(url, options)
-    .then((res) => console.log(res.data))
     .catch((err) => console.error(err));
   }
 
@@ -263,10 +262,6 @@ function SaveExport(props: SaveExportProps) {
       }
     }
   }
-
-  useEffect(() => {
-    console.log(props.midiNoteInfo)
-  }, [props.midiNoteInfo]);
 
   return (
     <>

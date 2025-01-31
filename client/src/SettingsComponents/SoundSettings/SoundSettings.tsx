@@ -24,7 +24,7 @@ function Settings(props: SoundSettingsProps) {
   useEffect(() => {
     const selectors: HTMLElement = document.getElementById('selectors')!;
     const keyNoteInput: HTMLElement = document.getElementById('key-note-input')!;
-    // console.log(selectors, keyNoteInput)
+
     if(selectors && keyNoteInput) {
       selectors.appendChild(keyNoteInput);
     }
@@ -74,7 +74,6 @@ function Settings(props: SoundSettingsProps) {
     let volumesArr: string[] = []
     if(Object.keys(props.soundDetails).length > 0) {
       octavesObj = props.soundDetails[props.sound];
-      // console.log(octavesObj)
       volumesArr = octavesObj[props.octave as keyof typeof octavesObj];
       octavesObj[props.octave as keyof typeof octavesObj].forEach((volume: string) => {
         volumes.push(<option key={volume} value={volume}>{volume.replace(/[0-9]/g, '')}</option>);

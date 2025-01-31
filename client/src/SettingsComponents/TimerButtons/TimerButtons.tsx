@@ -10,13 +10,10 @@ interface TimerButtonProps {
 }
 
 function TimerButtons(props: TimerButtonProps) {
-  useEffect(() => {
-    // console.log(props.metPlay)
-  }, [props.metPlay])
-
   const recordingClassName = `playback-button recording-button${(props.mode === 'recording') ? ' active' : ''}`;
   const playingClassName = `playback-button playing-button${(props.mode === 'playing') ? ' active' : ''}`;
   const metronomeClassName = `playback-button metronome-button${props.metronome === 'on' ? ' active' : ''}`;
+  
   return (
     <>
       <button type='button' className='playback-button stop-button' onClick={() => {props.midiDispatch({type: 'mode', mode: (props.mode === 'keyboard') ? 'stop' : 'keyboard'}); setTimeout(() => props.midiDispatch({type: 'mode', mode: 'keyboard'}))}}><FaStop style={{verticalAlign: 'middle'}} /></button>

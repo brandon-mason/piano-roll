@@ -28,7 +28,7 @@ function RegModal(props: RegModalProps) {
               username: {value: string};
               password: { value: string };
             };
-            const email = target.email.value; // typechecks!
+            // const email = target.email.value; // typechecks!
             const username = target.username.value;
             const password = target.password.value; // typechecks!
             const url = `${process.env.REACT_APP_API}/register`;
@@ -39,14 +39,14 @@ function RegModal(props: RegModalProps) {
                   'Content-Type': 'application/json',
                   'Access-Control-Origin-Allow': true
               },
-              email: email,
+              email: "filler@email.com",
               username: username,
               password: password,
             };
-            if(email.includes('@') && email.includes('.com') && email.length < 7) {
-              alert('Invalid Email')
-              return;
-            }
+            // if(email.includes('@') && email.includes('.com') && email.length < 7) {
+            //   alert('Invalid Email')
+            //   return;
+            // }
             if(username.length < 6) {
               alert('Invalid Username')
               return;
@@ -63,8 +63,8 @@ function RegModal(props: RegModalProps) {
             }).catch((err) => console.error(err));
           }}
         >
-          <label className='credentials-label'>Email:</label>
-          <input type='email' name='email' id='email' className='loginreg-element' required></input>
+          {/* <label className='credentials-label'>Email:</label> */}
+          {/* <input type='email' name='email' id='email' className='loginreg-element' required></input> */}
           <label className='credentials-label'>Username:</label>
           <input type='username' name='username' id='reg-username' className='loginreg-element' required></input>
           <label className='credentials-label'> Password:</label>
@@ -91,7 +91,6 @@ function LoginModal(props: LoginModalProps) {
   useEffect(() => {
     if(user.length > 0) {
       props.setUser(user);
-      // getCookie();
     }
   }, [user]);
  
@@ -139,11 +138,8 @@ function LoginModal(props: LoginModalProps) {
             .then((res) => {
               window.localStorage.setItem('token', res.data.data);
               window.localStorage.setItem('loggedIn', 'true');
-              // alert(res.data.message);
               setUser(username);
             }).catch((err) => console.error(err));
-            
-            // console.log(credentials)
           }}
         >
           <label className='credentials-label'>Username/Email:</label>
@@ -163,9 +159,6 @@ function LoginModal(props: LoginModalProps) {
             }
 
             await axios.post(url, options)
-            .then((res) => {
-              console.log(res.data);
-            })
             .catch((err) => console.error(err))
           }}>Forgot Password</span>
           <label className='register-label'> Don't have an account?</label>
@@ -202,9 +195,7 @@ function ShowLoginModal(props: ShowLoginModalProps) {
         username: props.username
       }
       axios.post(url, options)
-      .then((res) => {
-        console.log(res.data);
-      }).catch((err) => console.error(err))
+      .catch((err) => console.error(err))
 
       // setUsername('');
       props.setUsername('')
