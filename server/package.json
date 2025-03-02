@@ -9,9 +9,6 @@
     "dev": "ts-node-dev index.ts",
     "build": "tsc"
   },
-  "engines": {
-    "node": "22.x"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",

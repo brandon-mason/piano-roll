@@ -6,3 +6,5 @@ client/dist
 server/sounds/Instruments/GrandPiano/0
 server/dist
 .env
+*build
+*.vercel
