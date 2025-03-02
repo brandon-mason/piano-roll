@@ -1,4 +1,6 @@
 # Recordable Piano Instrument Web App
+Was under development from December 2022 - December 2023.
+
 ## Landing Page and Instructions
 <img width="1512" alt="landing-page" src="https://user-images.githubusercontent.com/60440397/222621555-19cfa0df-277f-4274-bfe8-be9248b5c293.png">
 
